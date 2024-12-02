@@ -1,5 +1,3 @@
-# uber-qoute-bot-tool
+# Qoute Bot
 
-Just a discord bot to munipulate the qoute api from ub3r bot.
-
-_Not associated with the ub3r-bot team_
+A qoute bot I made cause I was bored.

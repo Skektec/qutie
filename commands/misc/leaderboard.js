@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
 const axios = require("axios");
+const qoutes = require('./qoutes.json')
 
 async function fetcher(url) {
   try {
