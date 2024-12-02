@@ -1,3 +1,3 @@
-# Qoute Bot
+# Quote Bot
 
-A qoute bot I made cause I was bored.
+A quote bot I made cause I was bored.
