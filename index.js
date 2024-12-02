@@ -33,6 +33,8 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
 
         if (reaction.emoji.name !== '💬') return
 
+        if (reaction.message.author.bot) return
+
         if (!reaction.message.author) {
             await reaction.message.fetch()
         }
