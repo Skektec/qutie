@@ -1,4 +1,5 @@
 config.json
 node_modules
 .eslintrc.json
-qoutes.json
+quotes.json
+.prettierrc.json
