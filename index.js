@@ -8,6 +8,7 @@ const {
     Partials,
 } = require('discord.js')
 const { token } = require('./config.json')
+const fetchquote = require('./fetchquote')
 const quotes = './quotes.json'
 
 const client = new Client({
@@ -36,12 +37,20 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
             await reaction.message.fetch()
         }
 
-        await reaction.message.reply(
-            `New quote added by ${user.username}:\n"${reaction.message.content}"`
-        )
-
         const data = await fs.promises.readFile(quotes, 'utf8')
         const jsonData = JSON.parse(data)
+
+        const existingQuote = jsonData.find(
+            (quote) => quote.messageId === reaction.message.id
+        )
+        if (existingQuote) {
+            return
+        }
+
+        await reaction.message.reply({
+            content: `New quote added by ${user.username}:\n"${reaction.message.content}"`,
+            allowedMentions: { repliedUser: false },
+        })
 
         const nextId =
             Array.isArray(jsonData) && jsonData.length > 0
@@ -71,6 +80,14 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
     } catch (error) {
         console.error('An error occurred in MessageReactionAdd:', error)
     }
+})
+
+client.on('messageCreate', (message) => {
+    if (message.author.bot || !message.content.startsWith('.q')) return
+
+    const args = message.content.slice(2).trim().split(/ +/)
+
+    fetchquote.execute(message, args)
 })
 
 for (const folder of commandFolders) {
