@@ -1,35 +1,49 @@
-const { SlashCommandBuilder } = require("discord.js");
-const axios = require("axios");
-const qoutes = require('./qoutes.json')
-
-async function fetcher(url) {
-  try {
-    const response = await axios.get(url);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching JSON data:", error);
-    return null;
-  }
-}
+const { SlashCommandBuilder } = require('discord.js')
+const fs = require('fs')
+const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("leaderboard")
-    .setDescription("Creates a leaderboard of all quotes in the server."),
-  async execute(interaction) {
-    const serverId = interaction.guild?.id;
+    data: new SlashCommandBuilder()
+        .setName('leaderboard')
+        .setDescription('Creates a leaderboard of all quotes in the server.'),
+    async execute(interaction) {
+        await interaction.deferReply()
 
-    const url = `https://admin.ub3r-b0t.com/api/quotes/${serverId}`;
-    console.log(url);
+        fs.readFile('./quotes.json', 'utf8', (err, data) => {
+            if (err) {
+                console.error('Error reading file:', err)
+                interaction.editReply(
+                    'There was an error reading the quotes data.'
+                )
+                return
+            }
 
-    const data = await fetcher(url);
+            const quotes = JSON.parse(data)
+            const counts = {}
 
-    if (data) {
-      console.log("Fetched data:", data);
+            quotes.forEach((item) => {
+                const userId = item.userId
+                counts[userId] = (counts[userId] || 0) + 1
+            })
 
-      await interaction.reply(`Leaderboard data: ${JSON.stringify(data)}`);
-    } else {
-      await interaction.reply("Failed to fetch leaderboard data");
-    }
-  },
-};
+            const sortedCounts = Object.entries(counts).sort(
+                (a, b) => b[1] - a[1]
+            )
+
+            const leaderboardText = sortedCounts
+                .map(
+                    ([userId, count], index) =>
+                        `${index + 1}. **<@${userId}>** - ${count} quotes`
+                )
+                .join('\n')
+
+            const leaderboardEmbed = new EmbedBuilder()
+                .setColor(0x0099ff)
+                .setTitle('Quote Leaderboard')
+                .setDescription(leaderboardText || 'No quotes yet.')
+                .setFooter({ text: 'This is just so guh.' })
+
+            interaction.editReply({ embeds: [leaderboardEmbed] })
+        })
+    },
+}
