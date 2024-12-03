@@ -68,7 +68,7 @@ module.exports = {
                         `${randomQuote.text} \n - <@${randomQuote.userId}> [(Jump)](https://discordapp.com/channels/${randomQuote.server}/${randomQuote.channel}/${randomQuote.messageId})`
                     )
                     .setFooter({
-                        text: `${formattedDate}`,
+                        text: `${formattedDate} UTC`,
                     })
 
                 message.channel.send({ embeds: [quoteEmbed] })
