@@ -27,17 +27,22 @@ const commandFolders = fs.readdirSync(foldersPath)
 
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
     try {
-        if (reaction.partial) {
-            await reaction.fetch()
-        }
+        if (reaction.partial) await reaction.fetch()
+        if (reaction.message.partial) await reaction.message.fetch()
 
         if (reaction.emoji.name !== '💬') return
 
         if (reaction.message.author.bot) return
 
-        if (!reaction.message.author) {
-            await reaction.message.fetch()
+        const botHasReacted = await reaction.users
+            .fetch()
+            .then((users) => users.has(client.user.id))
+
+        if (botHasReacted) {
+            return
         }
+
+        await reaction.message.react('💬')
 
         const data = await fs.promises.readFile(quotes, 'utf8')
         const jsonData = JSON.parse(data)
@@ -45,9 +50,7 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
         const existingQuote = jsonData.find(
             (quote) => quote.messageId === reaction.message.id
         )
-        if (existingQuote) {
-            return
-        }
+        if (existingQuote) return
 
         await reaction.message.reply({
             content: `New quote added by ${user.username}:\n"${reaction.message.content}"`,
