@@ -34,7 +34,7 @@ module.exports = {
                         .setColor(0x0099ff)
                         .setTitle(`#${quote.id}`)
                         .setDescription(
-                            `"${quote.text}" \n - <@${quote.userId}> [Jump](https://discordapp.com/channels/${quote.server}/${quote.channel}/${quote.messageId})`
+                            `${quote.text} \n - <@${quote.userId}> [(Jump)](https://discordapp.com/channels/${quote.server}/${quote.channel}/${quote.messageId})`
                         )
                         .setFooter({
                             text: `${formattedDate}`,
@@ -65,7 +65,7 @@ module.exports = {
                     .setColor(0x0099ff)
                     .setTitle(`#${randomQuote.id}`)
                     .setDescription(
-                        `"${randomQuote.text}" \n - <@${randomQuote.userId}> [Jump](https://discordapp.com/channels/${randomQuote.server}/${randomQuote.channel}/${randomQuote.messageId})`
+                        `${randomQuote.text} \n - <@${randomQuote.userId}> [(Jump)](https://discordapp.com/channels/${randomQuote.server}/${randomQuote.channel}/${randomQuote.messageId})`
                     )
                     .setFooter({
                         text: `${formattedDate}`,
