@@ -51,16 +51,15 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
             (quote) => quote.messageId === reaction.message.id
         )
         if (existingQuote) return
-
-        await reaction.message.reply({
-            content: `New quote added by ${user.username}:\n"${reaction.message.content}"`,
-            allowedMentions: { repliedUser: false },
-        })
-
         const nextId =
             Array.isArray(jsonData) && jsonData.length > 0
-                ? Number(jsonData[jsonData.length - 1].id || 0) + 1
-                : 1
+                ? (Number(jsonData[jsonData.length - 1].id || 0) + 1).toString()
+                : '1'
+
+        await reaction.message.reply({
+            content: `New quote added by ${user.username} as #${nextId}\n"${reaction.message.content}"`,
+            allowedMentions: { repliedUser: false },
+        })
 
         const newEntry = {
             id: nextId,

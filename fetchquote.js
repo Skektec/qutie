@@ -14,10 +14,17 @@ module.exports = {
                 return
             }
 
-            if (quoteId) {
-                const quote = quotes.find((q) => q.id === parseInt(quoteId))
-                if (quote) {
-                    const quoteTimestamp = quote.time * 1000
+            if ((args[0] && args[0].startsWith('<@')) || quoteId) {
+                const userId = args[0].replace(/[<@!>]/g, '')
+                const userQuotes = quotes.filter((q) => q.userId === userId)
+
+                if (userQuotes.length > 0) {
+                    const randomQuote =
+                        userQuotes[
+                            Math.floor(Math.random() * userQuotes.length)
+                        ]
+
+                    const quoteTimestamp = randomQuote.time * 1000
                     const quoteDate = new Date(quoteTimestamp)
                     const formattedDate = quoteDate.toLocaleString('en-US', {
                         weekday: 'long',
@@ -32,17 +39,52 @@ module.exports = {
 
                     const quoteEmbed = new EmbedBuilder()
                         .setColor(0x0099ff)
-                        .setTitle(`#${quote.id}`)
+                        .setTitle(`#${randomQuote.id}`)
                         .setDescription(
-                            `${quote.text} \n - <@${quote.userId}> [(Jump)](https://discordapp.com/channels/${quote.server}/${quote.channel}/${quote.messageId})`
+                            `${randomQuote.text} \n - <@${randomQuote.userId}> [(Jump)](https://discordapp.com/channels/${randomQuote.server}/${randomQuote.channel}/${randomQuote.messageId})`
                         )
                         .setFooter({
                             text: `${formattedDate}`,
                         })
 
                     message.channel.send({ embeds: [quoteEmbed] })
+                } else if (quoteId) {
+                    const quote = quotes.find((q) => q.id === quoteId)
+                    if (quote) {
+                        const quoteTimestamp = quote.time * 1000
+                        const quoteDate = new Date(quoteTimestamp)
+                        const formattedDate = quoteDate.toLocaleString(
+                            'en-US',
+                            {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: 'numeric',
+                                minute: 'numeric',
+                                second: 'numeric',
+                                hour12: true,
+                            }
+                        )
+
+                        const quoteEmbed = new EmbedBuilder()
+                            .setColor(0x0099ff)
+                            .setTitle(`#${quote.id}`)
+                            .setDescription(
+                                `${quote.text} \n - <@${quote.userId}> [(Jump)](https://discordapp.com/channels/${quote.server}/${quote.channel}/${quote.messageId})`
+                            )
+                            .setFooter({
+                                text: `${formattedDate}`,
+                            })
+
+                        message.channel.send({ embeds: [quoteEmbed] })
+                    } else {
+                        message.channel.send(
+                            `Quote with ID ${quoteId} not found.`
+                        )
+                    }
                 } else {
-                    message.channel.send(`Quote with ID ${quoteId} not found.`)
+                    message.channel.send(`No quotes found for <@${userId}>.`)
                 }
             } else {
                 const randomQuote =
