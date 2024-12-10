@@ -41,6 +41,6 @@ module.exports = {
 
     await fs.writeFile(quotes, JSON.stringify(jsonData, null, 2), 'utf8');
 
-    await interaction.reply(`Quote added: "${quote}" by ${user.username}`);
+    await interaction.reply(`Quote added: "${quote}" - ${user.username}`);
   },
 };
