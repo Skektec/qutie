@@ -145,7 +145,7 @@ for (const file of eventFiles) {
     }
 }
 
-cron.schedule("* * * * *", async () => {
+cron.schedule("0 12 * * *", async () => {
     try {
         console.log('Looking for birthdays today.');
         const data = await fs.promises.readFile(birthdays, "utf8");
