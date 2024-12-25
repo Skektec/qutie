@@ -1,6 +1,6 @@
 const fs = require('node:fs')
 const path = require('node:path')
-const cron = require("node-cron");
+const cron = require('node-cron')
 const {
     Client,
     Events,
@@ -9,8 +9,8 @@ const {
     Partials,
 } = require('discord.js')
 const { token, serverChannel } = require('./config.json')
-const fetchquote = require('./fetchquote');
-const { channel } = require('node:diagnostics_channel');
+const fetchquote = require('./fetchquote')
+// const { channel } = require('node:diagnostics_channel');
 const quotes = './quotes.json'
 const birthdays = './birthdays.json'
 
@@ -29,19 +29,19 @@ const foldersPath = path.join(__dirname, 'commands')
 const commandFolders = fs.readdirSync(foldersPath)
 
 const monthNames = {
-    "January": "01",
-    "February": "02",
-    "March": "03",
-    "April": "04",
-    "May": "05",
-    "June": "06",
-    "July": "07",
-    "August": "08",
-    "September": "09",
-    "October": "10",
-    "November": "11",
-    "December": "12"
-};
+    January: '01',
+    February: '02',
+    March: '03',
+    April: '04',
+    May: '05',
+    June: '06',
+    July: '07',
+    August: '08',
+    September: '09',
+    October: '10',
+    November: '11',
+    December: '12',
+}
 
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
     try {
@@ -145,60 +145,63 @@ for (const file of eventFiles) {
     }
 }
 
-cron.schedule("0 12 * * *", async () => {
+cron.schedule('0 12 * * *', async () => {
     try {
-        console.log('Looking for birthdays today.');
-        const data = await fs.promises.readFile(birthdays, "utf8");
-        const jsonData = JSON.parse(data);
+        console.log('Looking for birthdays today.')
+        const data = await fs.promises.readFile(birthdays, 'utf8')
+        const jsonData = JSON.parse(data)
 
-        const today = new Date();
-        const currentDate = `${today.getDate()}-${(today.getMonth() + 1).toString().padStart(2, '0')}`;
-        console.log("Today's date is:", currentDate);
+        const today = new Date()
+        const currentDate = `${today.getDate()}-${(today.getMonth() + 1)
+            .toString()
+            .padStart(2, '0')}`
+        console.log("Today's date is:", currentDate)
 
         for (const entry of jsonData) {
-            const [day, monthName] = entry.date.split('-');
-            const month = monthNames[monthName];
-            const birthdayDate = `${day}-${month}`;
+            const [day, monthName] = entry.date.split('-')
+            const month = monthNames[monthName]
+            const birthdayDate = `${day}-${month}`
 
-            console.log("Checking birthday:", entry.date);
+            console.log('Checking birthday:', entry.date)
             if (birthdayDate === currentDate) {
-                console.log(`Found a birthday: ${entry.nick}`);
+                console.log(`Found a birthday: ${entry.nick}`)
                 try {
-                    const channel = await client.channels.fetch(serverChannel);
+                    const channel = await client.channels.fetch(serverChannel)
                     if (channel) {
-                        console.log("Sending message to channel");
-                        channel.send(`🎉 Happy Birthday <@${entry.id}>! 🎉`);
+                        console.log('Sending message to channel')
+                        channel.send(`🎉 Happy Birthday <@${entry.id}>! 🎉`)
                     } else {
-                        console.log("Channel not found");
+                        console.log('Channel not found')
                     }
                 } catch (channelError) {
-                    console.error("Error fetching channel:", channelError);
+                    console.error('Error fetching channel:', channelError)
                 }
             }
         }
     } catch (err) {
-        console.error("Error reading or processing birthdays:", err);
+        console.error('Error reading or processing birthdays:', err)
     }
-});
-
+})
 
 client.login(token)
 
-client.on(Events.InteractionCreate, async interaction => {
+client.on(Events.InteractionCreate, async (interaction) => {
     if (interaction.isChatInputCommand()) {
         // command handling
     } else if (interaction.isAutocomplete()) {
-        const command = interaction.client.commands.get(interaction.commandName);
+        const command = interaction.client.commands.get(interaction.commandName)
 
         if (!command) {
-            console.error(`No command matching ${interaction.commandName} was found.`);
-            return;
+            console.error(
+                `No command matching ${interaction.commandName} was found.`
+            )
+            return
         }
 
         try {
-            await command.autocomplete(interaction);
+            await command.autocomplete(interaction)
         } catch (error) {
-            console.error(error);
+            console.error(error)
         }
     }
-});
+})

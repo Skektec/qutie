@@ -44,6 +44,8 @@ module.exports = {
                 .setFooter({ text: 'This is just so guh.' })
 
             interaction.editReply({ embeds: [leaderboardEmbed] })
+
+            console.log('Quote leaderboard presented')
         })
     },
 }
