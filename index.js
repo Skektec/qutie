@@ -43,6 +43,16 @@ const monthNames = {
     December: '12',
 }
 
+const recentLinks = new Map()
+const platforms = [
+    'youtu.be',
+    'youtube.com',
+    'x.com',
+    'vxtwitter.com',
+    'fxtwitter.com',
+    'fixupx.com',
+]
+
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
     try {
         if (reaction.partial) await reaction.fetch()
@@ -105,11 +115,33 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
 })
 
 client.on('messageCreate', (message) => {
-    if (message.author.bot || !message.content.startsWith('.q')) return
+    if (message.author.bot) return
+    if (message.content.startsWith('.q')) {
+        const args = message.content.slice(2).trim().split(/ +/)
 
-    const args = message.content.slice(2).trim().split(/ +/)
+        fetchquote.execute(message, args)
+    }
 
-    fetchquote.execute(message, args)
+    const foundLink = platforms.find((platform) =>
+        message.content.includes(platform)
+    )
+    if (!foundLink) return
+
+    console.log(`Found link: ${foundLink}, Content: ${message.content}`)
+
+    if (recentLinks.has(message.content)) {
+        const emoji = '♻️'
+        try {
+            message.react(emoji)
+            console.log('Erm repost detected')
+        } catch (error) {
+            console.error('Failed to react to the message:', error)
+        }
+    } else {
+        recentLinks.set(message.content, Date.now())
+
+        setTimeout(() => recentLinks.delete(message.content), 43200000)
+    }
 })
 
 for (const folder of commandFolders) {
