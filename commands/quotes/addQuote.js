@@ -38,7 +38,7 @@ module.exports = {
             channel: interaction.channelId,
             server: interaction.guildId,
             text: quote,
-            time: interaction.createdTimestamp,
+            time: Math.floor(reaction.message.createdTimestamp / 1000),
         }
 
         jsonData.push(newEntry)

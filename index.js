@@ -97,7 +97,7 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
             server: reaction.message.guild.id,
             text: reaction.message.content,
             messageId: reaction.message.id,
-            time: reaction.message.createdTimestamp,
+            time: Math.floor(reaction.message.createdTimestamp / 1000),
         }
 
         jsonData.push(newEntry)
