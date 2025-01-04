@@ -1,4 +1,5 @@
 const fs = require('node:fs')
+const { exec } = require('child_process')
 const path = require('node:path')
 const cron = require('node-cron')
 const {
@@ -120,6 +121,75 @@ client.on('messageCreate', (message) => {
         const args = message.content.slice(2).trim().split(/ +/)
 
         fetchquote.execute(message, args)
+    }
+
+    if (message.content.startsWith('!p') && !message.author.bot) {
+        const args = message.content.slice(3).trim().split(' ')
+        const command = args.shift()
+        const extraArguments = args.join(' ')
+
+        const commandFilePath = path.join(
+            __dirname,
+            'commands',
+            'python_commands',
+            `${command}.py`
+        )
+
+        fs.access(commandFilePath, fs.constants.F_OK, (err) => {
+            if (err) {
+                message.reply(`Command "${command}" not found.`)
+                return
+            }
+
+            if (!extraArguments.trim()) {
+                exec(`python "${commandFilePath}"`, (error, stdout, stderr) => {
+                    if (error) {
+                        message.reply(`Error: ${error.message}`)
+                        return
+                    }
+                    if (stderr) {
+                        message.reply(`Python Error: ${stderr}`)
+                        return
+                    }
+
+                    const response = stdout.trim()
+                    console.log(
+                        `Running command: python "${commandFilePath}" with no arguments`
+                    )
+
+                    if (response === '') {
+                        message.reply('No response from the command.')
+                    } else {
+                        message.reply(response)
+                    }
+                })
+            } else {
+                exec(
+                    `python "${commandFilePath}" "${extraArguments}"`,
+                    (error, stdout, stderr) => {
+                        if (error) {
+                            message.reply(`Error: ${error.message}`)
+                            return
+                        }
+                        if (stderr) {
+                            message.reply(`Python Error: ${stderr}`)
+                            return
+                        }
+
+                        const response = stdout.trim()
+                        console.log(
+                            `Running command: python "${commandFilePath}" "${extraArguments}"`
+                        )
+
+                        if (response === '') {
+                            message.reply('No response from the command.')
+                        } else {
+                            message.reply(response)
+                        }
+                    }
+                )
+            }
+        })
     }
 
     const foundLink = platforms.find((platform) =>
