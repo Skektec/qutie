@@ -192,17 +192,17 @@ client.on('messageCreate', (message) => {
         })
     }
 
-    const foundLink = platforms.find((platform) =>
-        message.content.includes(platform)
-    )
-    if (!foundLink) return
+    const linkRegex = /(https?:\/\/[^\s]+)/
 
-    console.log(`Found link: ${foundLink}, Content: ${message.content}`)
+    const match = message.content.match(linkRegex)
 
-    if (recentLinks.has(message.content)) {
-        const emoji = '♻️'
+    if (!match) return
+
+    console.log(`Found link: ${foundLink}, Full message: ${message.content}`)
+
+    if (recentLinks.has(link)) {
         try {
-            message.react(emoji)
+            message.react('♻️')
             console.log('Erm repost detected')
         } catch (error) {
             console.error('Failed to react to the message:', error)
