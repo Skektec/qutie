@@ -198,7 +198,8 @@ client.on('messageCreate', (message) => {
 
     if (!match) return
 
-    console.log(`Found link: ${foundLink}, Full message: ${message.content}`)
+    const link = match[0]
+    console.log(`Found link: ${match}, Full message: ${message.content}`)
 
     if (recentLinks.has(link)) {
         try {
@@ -247,7 +248,7 @@ for (const file of eventFiles) {
     }
 }
 
-cron.schedule('0 12 * * *', async () => {
+cron.schedule('0 13 * * *', async () => {
     try {
         console.log('Looking for birthdays today.')
         const data = await fs.promises.readFile(birthdays, 'utf8')
