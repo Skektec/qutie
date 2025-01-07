@@ -5,3 +5,5 @@ quotes.json
 .prettierrc.json
 birthdays.json
 links.json
+.vscode
+launch.json
