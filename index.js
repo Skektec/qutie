@@ -192,9 +192,7 @@ client.on('messageCreate', (message) => {
         })
     }
 
-    const linkRegex = /(https?:\/\/[^\s]+)/
-
-    const match = message.content.match(linkRegex)
+    const match = message.content.match(/(https?:\/\/[^\s]+)/)
 
     if (!match) return
 
