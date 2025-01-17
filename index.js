@@ -190,7 +190,7 @@ client.on('messageCreate', (message) => {
 
     const link = match[0]
 
-    if (/\.(png|jpg|webp|gif)$/i.test(link)) {
+    if (/\.(png|jpg|webp|gif|mp4|mp3)$/i.test(link)) {
         console.log(`Ignoring image link: ${link}`)
         return
     }
