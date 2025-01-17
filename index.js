@@ -201,7 +201,7 @@ client.on('messageCreate', (message) => {
 
     if (recentLinks.has(link)) {
         try {
-            message.react('♻️')
+            message.reply('♻️')
             console.log('Erm repost detected')
         } catch (error) {
             console.error('Failed to react to the message:', error)
