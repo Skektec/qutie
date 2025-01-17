@@ -45,14 +45,6 @@ const monthNames = {
 }
 
 const recentLinks = new Map()
-const platforms = [
-    'youtu.be',
-    'youtube.com',
-    'x.com',
-    'vxtwitter.com',
-    'fxtwitter.com',
-    'fixupx.com',
-]
 
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
     try {
@@ -197,6 +189,12 @@ client.on('messageCreate', (message) => {
     if (!match) return
 
     const link = match[0]
+
+    if (/\.(png|jpg|webp|gif)$/i.test(link)) {
+        console.log(`Ignoring image link: ${link}`)
+        return
+    }
+
     console.log(`Found link: ${match}, Full message: ${message.content}`)
 
     if (recentLinks.has(link)) {
