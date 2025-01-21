@@ -50,58 +50,63 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
     try {
         if (reaction.partial) await reaction.fetch()
         if (reaction.message.partial) await reaction.message.fetch()
-
-        if (reaction.emoji.name !== '💬') return
-
         if (reaction.message.author.bot) return
 
-        const botHasReacted = await reaction.users
-            .fetch()
-            .then((users) => users.has(client.user.id))
+        if (reaction.emoji.name == '💬') {
+            const botHasReacted = await reaction.users
+                .fetch()
+                .then((users) => users.has(client.user.id))
 
-        if (botHasReacted) {
-            return
+            if (botHasReacted) {
+                return
+            }
+
+            await reaction.message.react('💬')
+
+            const data = await fs.promises.readFile(quotes, 'utf8')
+            const jsonData = JSON.parse(data)
+
+            const existingQuote = jsonData.find(
+                (quote) => quote.messageId === reaction.message.id
+            )
+            if (existingQuote) return
+            const nextId =
+                Array.isArray(jsonData) && jsonData.length > 0
+                    ? (
+                          Number(jsonData[jsonData.length - 1].id || 0) + 1
+                      ).toString()
+                    : '1'
+
+            await reaction.message.reply({
+                content: `New quote added by ${user.username} as #${nextId}\n"${reaction.message.content}"`,
+                allowedMentions: { repliedUser: false },
+            })
+
+            const newEntry = {
+                id: nextId,
+                nick: reaction.message.author.username,
+                userId: reaction.message.author.id,
+                channel: reaction.message.channel.id,
+                server: reaction.message.guild.id,
+                text: reaction.message.content,
+                messageId: reaction.message.id,
+                time: Math.floor(reaction.message.createdTimestamp / 1000),
+            }
+
+            jsonData.push(newEntry)
+
+            await fs.promises.writeFile(
+                quotes,
+                JSON.stringify(jsonData, null, 2),
+                'utf8'
+            )
+
+            console.log('Entry added successfully!')
         }
 
-        await reaction.message.react('💬')
-
-        const data = await fs.promises.readFile(quotes, 'utf8')
-        const jsonData = JSON.parse(data)
-
-        const existingQuote = jsonData.find(
-            (quote) => quote.messageId === reaction.message.id
-        )
-        if (existingQuote) return
-        const nextId =
-            Array.isArray(jsonData) && jsonData.length > 0
-                ? (Number(jsonData[jsonData.length - 1].id || 0) + 1).toString()
-                : '1'
-
-        await reaction.message.reply({
-            content: `New quote added by ${user.username} as #${nextId}\n"${reaction.message.content}"`,
-            allowedMentions: { repliedUser: false },
-        })
-
-        const newEntry = {
-            id: nextId,
-            nick: reaction.message.author.username,
-            userId: reaction.message.author.id,
-            channel: reaction.message.channel.id,
-            server: reaction.message.guild.id,
-            text: reaction.message.content,
-            messageId: reaction.message.id,
-            time: Math.floor(reaction.message.createdTimestamp / 1000),
+        if (reaction.emoji.name == '♻️') {
+            reaction.message.reply('Errmm Repost ♻️♻️♻️')
         }
-
-        jsonData.push(newEntry)
-
-        await fs.promises.writeFile(
-            quotes,
-            JSON.stringify(jsonData, null, 2),
-            'utf8'
-        )
-
-        console.log('Entry added successfully!')
     } catch (error) {
         console.error('An error occurred in MessageReactionAdd:', error)
     }
@@ -182,32 +187,6 @@ client.on('messageCreate', (message) => {
                 )
             }
         })
-    }
-
-    const match = message.content.match(/(https?:\/\/[^\s]+)/)
-
-    if (!match) return
-
-    const link = match[0]
-
-    if (/\.(png|jpg|webp|gif|mp4|mp3)$/i.test(link)) {
-        console.log(`Ignoring image link: ${link}`)
-        return
-    }
-
-    console.log(`Found link: ${match}, Full message: ${message.content}`)
-
-    if (recentLinks.has(link)) {
-        try {
-            message.reply('♻️')
-            console.log('Erm repost detected')
-        } catch (error) {
-            console.error('Failed to react to the message:', error)
-        }
-    } else {
-        recentLinks.set(message.content, Date.now())
-
-        setTimeout(() => recentLinks.delete(message.content), 43200000)
     }
 })
 
