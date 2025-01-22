@@ -11,7 +11,6 @@ const {
 } = require('discord.js')
 const { token, serverChannel } = require('./config.json')
 const fetchquote = require('./fetchquote')
-// const { channel } = require('node:diagnostics_channel');
 const quotes = './quotes.json'
 const birthdays = './birthdays.json'
 
@@ -45,6 +44,10 @@ const monthNames = {
 }
 
 const recentLinks = new Map()
+
+client.on('ready', () => {
+    bot.user.setActivity('with your mom', { type: 'PLAYING' })
+})
 
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
     try {
