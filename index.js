@@ -46,7 +46,7 @@ const monthNames = {
 const recentLinks = new Map()
 
 client.on('ready', () => {
-    bot.user.setActivity('with your mom', { type: 'PLAYING' })
+    client.user.setActivity('with your mom', { type: 1 })
 })
 
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
