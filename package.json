@@ -5,6 +5,7 @@
     "fs": "^0.0.1-security",
     "mysql2": "^3.11.5",
     "node-cron": "^3.0.3",
+    "node-fetch": "^3.3.2",
     "string-similarity": "^4.0.4"
   },
   "devDependencies": {

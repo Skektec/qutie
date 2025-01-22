@@ -9,10 +9,11 @@ const {
     GatewayIntentBits,
     Partials,
 } = require('discord.js')
-const { token, serverChannel } = require('./config.json')
+const { discordToken, serverChannel } = require('./config.json')
 const fetchquote = require('./fetchquote')
 const quotes = './quotes.json'
 const birthdays = './birthdays.json'
+const jarvis = require('./jarvis')
 
 const client = new Client({
     intents: [
@@ -28,6 +29,11 @@ client.commands = new Collection()
 const foldersPath = path.join(__dirname, 'commands')
 const commandFolders = fs.readdirSync(foldersPath)
 
+const eventsPath = path.join(__dirname, 'events')
+const eventFiles = fs
+    .readdirSync(eventsPath)
+    .filter((file) => file.endsWith('.js'))
+
 const monthNames = {
     January: '01',
     February: '02',
@@ -42,12 +48,6 @@ const monthNames = {
     November: '11',
     December: '12',
 }
-
-const recentLinks = new Map()
-
-client.on('ready', () => {
-    client.user.setActivity('with your mom', { type: 1 })
-})
 
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
     try {
@@ -123,7 +123,7 @@ client.on('messageCreate', (message) => {
         fetchquote.execute(message, args)
     }
 
-    if (message.content.startsWith('!p') && !message.author.bot) {
+    if (message.content.startsWith('!p')) {
         const args = message.content.slice(3).trim().split(' ')
         const command = args.shift()
         const extraArguments = args.join(' ')
@@ -191,6 +191,10 @@ client.on('messageCreate', (message) => {
             }
         })
     }
+
+    if (message.content.startsWith('jarvis')) {
+        jarvis.execute(message)
+    }
 })
 
 for (const folder of commandFolders) {
@@ -210,11 +214,6 @@ for (const folder of commandFolders) {
         }
     }
 }
-
-const eventsPath = path.join(__dirname, 'events')
-const eventFiles = fs
-    .readdirSync(eventsPath)
-    .filter((file) => file.endsWith('.js'))
 
 for (const file of eventFiles) {
     const filePath = path.join(eventsPath, file)
@@ -236,20 +235,18 @@ cron.schedule('0 13 * * *', async () => {
         const currentDate = `${today.getDate()}-${(today.getMonth() + 1)
             .toString()
             .padStart(2, '0')}`
-        console.log("Today's date is:", currentDate)
 
         for (const entry of jsonData) {
             const [day, monthName] = entry.date.split('-')
             const month = monthNames[monthName]
             const birthdayDate = `${day}-${month}`
 
-            console.log('Checking birthday:', entry.date)
             if (birthdayDate === currentDate) {
                 console.log(`Found a birthday: ${entry.nick}`)
                 try {
                     const channel = await client.channels.fetch(serverChannel)
                     if (channel) {
-                        console.log('Sending message to channel')
+                        console.log('Sending birthday message to channel')
                         channel.send(`🎉 Happy Birthday <@${entry.id}>! 🎉`)
                     } else {
                         console.log('Channel not found')
@@ -264,7 +261,7 @@ cron.schedule('0 13 * * *', async () => {
     }
 })
 
-client.login(token)
+client.login(discordToken)
 
 client.on(Events.InteractionCreate, async (interaction) => {
     if (interaction.isChatInputCommand()) {
