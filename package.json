@@ -4,7 +4,8 @@
     "discord.js": "^14.16.3",
     "fs": "^0.0.1-security",
     "mysql2": "^3.11.5",
-    "node-cron": "^3.0.3"
+    "node-cron": "^3.0.3",
+    "string-similarity": "^4.0.4"
   },
   "devDependencies": {
     "eslint": "^9.15.0"
