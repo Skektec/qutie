@@ -7,3 +7,4 @@ birthdays.json
 links.json
 .vscode
 launch.json
+deploy-commands.js
