@@ -27,8 +27,8 @@ module.exports = {
 
     async execute(interaction) {
         const quote = interaction.options.getString('quote')
-        const user = interaction.options.getUser('user')
-        const nick = interaction.options.getUser('nick')
+        let user = interaction.options.getUser('user')
+        const nick = interaction.options.getString('nick')
 
         if (!user && !nick) {
             return interaction.reply({
@@ -40,14 +40,9 @@ module.exports = {
         let userObject
 
         if (!user) {
-            userObject = {
+            user = {
                 id: 0,
                 username: nick,
-            }
-        } else {
-            userObject = {
-                id: user.id,
-                username: user.username,
             }
         }
 
@@ -73,7 +68,9 @@ module.exports = {
 
         await fs.writeFile(quotes, JSON.stringify(jsonData, null, 2), 'utf8')
 
-        await interaction.reply(`Quote added: "${quote}" - ${user.username}`)
+        await interaction.reply(
+            `Quote added as #${nextId}\n"${quote}" - ${user.username}`
+        )
         console.log(`Quote added: "${quote}" - ${user.username}`)
     },
 }
