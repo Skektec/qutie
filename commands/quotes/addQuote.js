@@ -18,7 +18,7 @@ module.exports = {
                 .setDescription(`The person you're quoting.`)
                 .setRequired(false)
         )
-        .addUserOption((option) =>
+        .addStringOption((option) =>
             option
                 .setName('nick')
                 .setDescription(`Nickname if the person isn't on the server.`)
