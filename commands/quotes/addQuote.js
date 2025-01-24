@@ -16,12 +16,40 @@ module.exports = {
             option
                 .setName('user')
                 .setDescription(`The person you're quoting.`)
-                .setRequired(true)
+                .setRequired(false)
+        )
+        .addUserOption((option) =>
+            option
+                .setName('nick')
+                .setDescription(`Nickname if the person isn't on the server.`)
+                .setRequired(false)
         ),
 
     async execute(interaction) {
         const quote = interaction.options.getString('quote')
         const user = interaction.options.getUser('user')
+        const nick = interaction.options.getUser('nick')
+
+        if (!user && !nick) {
+            return interaction.reply({
+                content: 'You must provide either a user or a nickname.',
+                ephemeral: true,
+            })
+        }
+
+        let userObject
+
+        if (!user) {
+            userObject = {
+                id: 0,
+                username: nick,
+            }
+        } else {
+            userObject = {
+                id: user.id,
+                username: user.username,
+            }
+        }
 
         const data = await fs.readFile(quotes, 'utf8')
         const jsonData = JSON.parse(data)
