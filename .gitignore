@@ -1,10 +1,10 @@
-config.json
 node_modules
 .eslintrc.json
-quotes.json
 .prettierrc.json
-birthdays.json
 links.json
 .vscode
 launch.json
 deploy-commands.js
+config.json
+quotes.json
+birthdays.json

@@ -1,4 +1,4 @@
-const { tenorToken } = require('../config.json')
+const { tenorToken } = require('../data/config.json')
 
 module.exports = {
     execute: async (message) => {

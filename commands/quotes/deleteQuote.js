@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js')
-const { serverChannel } = require('../../config.json')
+const { serverChannel } = require('../../data/config.json')
 const fs = require('fs').promises
-const quotes = './quotes.json'
+const quotes = './data/quotes.json'
 
 const channel = serverChannel
 

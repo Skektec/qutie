@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js')
 const fs = require('fs/promises')
 const { EmbedBuilder } = require('discord.js')
-const quotes = './quotes.json'
+const quotes = './data/quotes.json'
 const stringSimilarity = require('string-similarity')
 const { match } = require('assert')
 

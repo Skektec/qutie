@@ -9,7 +9,7 @@ module.exports = {
     async execute(interaction) {
         await interaction.deferReply()
 
-        fs.readFile('./quotes.json', 'utf8', (err, data) => {
+        fs.readFile('./data/quotes.json', 'utf8', (err, data) => {
             if (err) {
                 console.error('Error reading file:', err)
                 interaction.editReply(

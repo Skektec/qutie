@@ -7,7 +7,10 @@ module.exports = {
         const nick = args[0]
 
         try {
-            const data = await fs.promises.readFile('./quotes.json', 'utf8')
+            const data = await fs.promises.readFile(
+                './data/quotes.json',
+                'utf8'
+            )
             const quotes = JSON.parse(data)
 
             if (!quotes || quotes.length === 0) {

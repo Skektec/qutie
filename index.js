@@ -9,11 +9,12 @@ const {
     GatewayIntentBits,
     Partials,
 } = require('discord.js')
-const { discordToken, serverChannel } = require('./config.json')
+const { discordToken, serverChannel } = require('./data/config.json')
 const fetchquote = require('./fetchquote')
-const quotes = './quotes.json'
-const birthdays = './birthdays.json'
+const quotes = './data/quotes.json'
+const birthdays = './data/birthdays.json'
 const jarvis = require('./jarvis')
+const respond = require('./events/onMessage')
 
 const client = new Client({
     intents: [
@@ -33,6 +34,8 @@ const eventsPath = path.join(__dirname, 'events')
 const eventFiles = fs
     .readdirSync(eventsPath)
     .filter((file) => file.endsWith('.js'))
+
+const words = ['uwu', 'owo', 'blahaj']
 
 const monthNames = {
     January: '01',
@@ -195,6 +198,10 @@ client.on('messageCreate', (message) => {
     if (message.content.startsWith('jarvis')) {
         jarvis.execute(message)
     }
+
+    if (words.includes(message.content)) {
+        respond.execute(message)
+    }
 })
 
 for (const folder of commandFolders) {
@@ -265,7 +272,6 @@ client.login(discordToken)
 
 client.on(Events.InteractionCreate, async (interaction) => {
     if (interaction.isChatInputCommand()) {
-        // command handling
     } else if (interaction.isAutocomplete()) {
         const command = interaction.client.commands.get(interaction.commandName)
 

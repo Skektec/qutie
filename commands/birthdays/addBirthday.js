@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js')
 const fs = require('fs').promises
-const quotes = './birthdays.json'
+const quotes = './data/birthdays.json'
 
 module.exports = {
     data: new SlashCommandBuilder()
