@@ -1,0 +1,10 @@
+node_modules
+.eslintrc.json
+.prettierrc.json
+links.json
+.vscode
+launch.json
+config.json
+quotes.json
+birthdays.json
+general.db
