@@ -6,7 +6,7 @@ const client = new Mistral({ apiKey: config.mistralToken });
 
 module.exports = {
 	execute: async (message) => {
-		console.log(message.content + '2');
+		console.log(message.content);
 		try {
 			// console.log('Sending to mistral: ' + message.content);
 			const chatResponse = await client.chat.complete({
@@ -24,7 +24,7 @@ module.exports = {
 			});
 
 			const content = chatResponse.choices[0].message.content;
-			console.log(content + '3');
+			console.log(content);
 
 			// for (let i = 0; i < content.length; i += 2000) {
 			// 	await message.channel.send(content.slice(i, i + 2000));
@@ -33,7 +33,7 @@ module.exports = {
 			const match = content.match(/\$\$gif of (.*?)\$\$/);
 
 			if (match) {
-				gif.execute(match);
+				gif.execute(match, message);
 			}
 		} catch (err) {
 			console.error('Error:', err);

@@ -136,11 +136,6 @@ client.on('messageCreate', (message) => {
 	}
 
 	if (message.content.startsWith('jarvis')) jarvis.execute(message);
-	if (
-		message.mentions.has(client.user.id) &&
-		message.author.id != client.user.id
-	)
-		jarvis.execute(message);
 
 	if (message.content.startsWith('runTest')) {
 		message.channel.send({
