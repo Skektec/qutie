@@ -14,8 +14,7 @@ module.exports = {
 				messages: [
 					{
 						role: 'system',
-						content:
-							'You are to interpret various sentences and determine what command a user is trying to run and then running that commands. In order to run the command you are to type $$<the command>$$ and a regex will detect it and execute it. For now there is only the gif command which requires: gif of <search term>. Users will often be unclear of what they want so when in doubt send a gif of what theyre talking about. Whenever you receive a sentence you are to send a command. BE EXACT BE PRECISE',
+						content: config.prompt,
 					},
 					{
 						role: 'user',
