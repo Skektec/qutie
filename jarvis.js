@@ -1,24 +1,25 @@
 const { Mistral } = require('@mistralai/mistralai');
 const config = require('./data/config.json');
+const pubconfig = require('./data/pubconfig.json');
 const gif = require('./jarvis_commands/gif');
 
 const client = new Mistral({ apiKey: config.mistralToken });
 
 module.exports = {
 	execute: async (message) => {
-		console.log(message.content);
 		try {
+			const commandSen = message.content.replace(/^jarvis\s*/i, '');
 			// console.log('Sending to mistral: ' + message.content);
 			const chatResponse = await client.chat.complete({
 				model: 'mistral-small-latest',
 				messages: [
 					{
 						role: 'system',
-						content: config.prompt,
+						content: pubconfig.prompt,
 					},
 					{
 						role: 'user',
-						content: message.content,
+						content: commandSen,
 					},
 				],
 			});
