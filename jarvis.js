@@ -1,41 +1,42 @@
-const path = require('path')
+const { Mistral } = require('@mistralai/mistralai');
+const config = require('./data/config.json');
+const gif = require('./jarvis_commands/gif');
+
+const client = new Mistral({ apiKey: config.mistralToken });
 
 module.exports = {
-    execute: (message) => {
-        const commandSen = message.content.split(' ')
+	execute: async (message) => {
+		console.log(message.content);
+		try {
+			// console.log('Sending to mistral: ' + message.content);
+			const chatResponse = await client.chat.complete({
+				model: 'mistral-small-latest',
+				messages: [
+					{
+						role: 'system',
+						content: config.prompt,
+					},
+					{
+						role: 'user',
+						content: message.content,
+					},
+				],
+			});
 
-        // Spliting the sentence into each element
-        commandSen.shift()
+			const content = chatResponse.choices[0].message.content;
+			console.log(content);
 
-        const commandArray = []
-        for (let i = 0; i < commandSen.length; i++) {
-            commandArray.push(`${commandSen[i]}`)
-        }
+			// for (let i = 0; i < content.length; i += 2000) {
+			// 	await message.channel.send(content.slice(i, i + 2000));
+			// }
 
-        runCommand(commandArray, message)
-    },
-}
+			const match = content.match(/\$\$gif of (.*?)\$\$/);
 
-const runCommand = (commandArray, message) => {
-    const commandWord = commandArray[0]
-
-    // executes a command file matching the word if it exists
-    // else looks at the next word.
-    if (commandWord == 'ping' || commandWord == 'gif') {
-        const commandPath = path.join(
-            __dirname,
-            'jarvis_commands',
-            `${commandWord}.js`
-        )
-        const command = require(commandPath)
-
-        if (command && typeof command.execute === 'function') {
-            command.execute(message)
-        } else {
-            message.reply(`Command "${commandWord}" not found or invalid.`)
-        }
-    } else if (commandArray.length > 0) {
-        commandArray.shift()
-        runCommand(commandArray, message)
-    }
-}
+			if (match) {
+				gif.execute(match, message);
+			}
+		} catch (err) {
+			console.error('Error:', err);
+		}
+	},
+};
