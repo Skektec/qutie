@@ -11,9 +11,9 @@ module.exports = {
 		async () => {
 			await client.guilds.cache.fetch();
 			let serverCount = client.guilds.cache.size;
-			serverChannel.send(
-				`<@703303649870217309>! I am online in ${serverCount} servers!`
-			);
+			client.channels.cache
+				.get(serverChannel)
+				.send(`<@703303649870217309>! I am online in ${serverCount} servers!`);
 		};
 	},
 };
