@@ -221,11 +221,13 @@ cron.schedule('0 13 * * *', async () => {
 						}
 
 						channel.send(`🎉 Happy Birthday <@${row.id}>! 🎉`);
+						return;
 					} catch (channelError) {
 						console.error(
 							`Error fetching channel ${row.channel}:`,
 							channelError
 						);
+						return;
 					}
 				}
 			}
