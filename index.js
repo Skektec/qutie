@@ -15,6 +15,8 @@ const fetchquote = require('./events/fetchquote');
 const jarvis = require('./jarvis');
 const respond = require('./events/onMessage');
 const addquote = require('./events/addquote');
+const errorLog = require('./events/errorLog');
+const { setClient } = require('./data/clientInstance');
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./data/general.db');
 
@@ -27,6 +29,9 @@ const client = new Client({
 	],
 	partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
+
+//Stores the client instance.
+setClient(client);
 
 client.commands = new Collection();
 const foldersPath = path.join(__dirname, 'commands');
@@ -55,10 +60,12 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
 			reaction.message.reactions.cache
 				.get('♻️')
 				.remove()
-				.catch((error) => console.error('Failed to remove reactions:', error));
+				.catch((error) =>
+					errorLog.execute('Failed to remove reactions:', error)
+				);
 		}
 	} catch (error) {
-		console.error('An error occurred in MessageReactionAdd:', error);
+		errorLog.execute('An error occurred in MessageReactionAdd:', error);
 	}
 });
 
@@ -203,7 +210,7 @@ cron.schedule('0 13 * * *', async () => {
 			[currentDate],
 			async (err, rows) => {
 				if (err) {
-					console.error('Error querying the database:', err);
+					errorLog.execute('Error querying the database:', err);
 					return;
 				}
 
@@ -223,7 +230,7 @@ cron.schedule('0 13 * * *', async () => {
 						channel.send(`🎉 Happy Birthday <@${row.id}>! 🎉`);
 						return;
 					} catch (channelError) {
-						console.error(
+						errorLog.execute(
 							`Error fetching channel ${row.channel}:`,
 							channelError
 						);
@@ -233,7 +240,7 @@ cron.schedule('0 13 * * *', async () => {
 			}
 		);
 	} catch (err) {
-		console.error('Error displaying birthday:', err);
+		errorLog.execute('Error displaying birthday:', err);
 	}
 });
 
@@ -242,7 +249,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 	} else if (interaction.isAutocomplete()) {
 		const command = interaction.client.commands.get(interaction.commandName);
 		if (!command) {
-			console.error(
+			errorLog.execute(
 				`No command matching ${interaction.commandName} was found.`
 			);
 			return;
@@ -251,7 +258,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 	try {
 		await command.autocomplete(interaction);
 	} catch (error) {
-		console.error(error);
+		errorLog.execute(error);
 	}
 });
 

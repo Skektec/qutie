@@ -1,5 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 const database = new sqlite3.Database('./data/general.db');
+const errorLog = require('./errorLog');
 
 module.exports = {
 	execute: async (reaction, bot, user) => {
@@ -31,7 +32,7 @@ module.exports = {
         time INTEGER
       )`,
 			(err) => {
-				if (err) console.error(`Error creating table ${tableName}:`, err);
+				if (err) errorLog.execute(`Error creating table ${tableName}:`, err);
 			}
 		);
 
@@ -40,7 +41,10 @@ module.exports = {
 			[messageId],
 			(err, row) => {
 				if (err) {
-					console.error(`Error checking for duplicate in ${tableName}:`, err);
+					errorLog.execute(
+						`Error checking for duplicate in ${tableName}:`,
+						err
+					);
 					return;
 				}
 
@@ -57,7 +61,7 @@ module.exports = {
 					[nick, userId, channel, server, text, messageId, time],
 					function (err) {
 						if (err) {
-							console.error(`Error inserting into ${tableName}:`, err);
+							errorLog.execute(`Error inserting into ${tableName}:`, err);
 						} else {
 							reaction.message.react('💬');
 							reaction.message.reply({

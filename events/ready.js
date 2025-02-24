@@ -1,18 +1,14 @@
 const { Events } = require('discord.js');
-const { serverChannel, guildId } = require('../data/config.json');
+const errorLog = require('./errorLog');
 
 module.exports = {
 	name: Events.ClientReady,
 	once: true,
 	execute(client) {
 		const sendNotif = async () => {
-			const guild = await client.guilds.fetch(guildId);
-			const channel = await guild.channels.fetch(serverChannel);
-
 			let serverCount = client.guilds.cache.size;
-			channel.send(
-				`<@703303649870217309>! I am online in ${serverCount} servers!`
-			);
+			let message = `<@703303649870217309>! I am online in ${serverCount} servers!`;
+			errorLog.execute(message);
 		};
 
 		console.log(`Ready! Logged in as ${client.user.tag}`);

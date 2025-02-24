@@ -1,6 +1,7 @@
 const sqlite3 = require('sqlite3').verbose();
 const { EmbedBuilder } = require('discord.js');
 const database = new sqlite3.Database('./data/general.db');
+const errorLog = require('./errorLog');
 
 module.exports = {
 	execute: async (message, args) => {
@@ -47,7 +48,7 @@ module.exports = {
 			[tableName],
 			(err, row) => {
 				if (err) {
-					console.error(`Error checking table ${tableName}:`, err);
+					errorLog.execute(`Error checking table ${tableName}:`, err);
 					message.channel.send('An error occurred while fetching quotes.');
 					return;
 				}
@@ -91,7 +92,7 @@ module.exports = {
 				if (useAll) {
 					database.all(query, params, (err, rows) => {
 						if (err) {
-							console.error(`Error querying ${tableName}:`, err);
+							errorLog.execute(`Error querying ${tableName}:`, err);
 							message.channel.send(
 								'An error occurred while retrieving quotes.'
 							);
@@ -109,7 +110,7 @@ module.exports = {
 				} else {
 					database.get(query, params, (err, row) => {
 						if (err) {
-							console.error(`Error querying ${tableName}:`, err);
+							errorLog.execute(`Error querying ${tableName}:`, err);
 							message.channel.send(
 								'An error occurred while retrieving quotes.'
 							);
