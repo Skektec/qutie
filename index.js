@@ -51,8 +51,7 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
 		if (reaction.message.author.bot) return;
 
 		if (reaction.emoji.name == '💬') {
-			const bot = client;
-			addquote.execute(reaction, bot, user);
+			addquote.execute(reaction, user);
 		}
 
 		if (reaction.emoji.name == '♻️') {

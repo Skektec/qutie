@@ -17,7 +17,7 @@ module.exports = {
 				.setRequired(true)
 		),
 	async execute(interaction) {
-		const user = interaction.options.getString('user');
+		const user = interaction.options.getUser('user');
 		const nick = interaction.options.getString('nick');
 		message.guild.members.get(user.id).setNickname(nick);
 	},

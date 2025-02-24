@@ -3,6 +3,8 @@ const sqlite3 = require('sqlite3').verbose();
 const database = new sqlite3.Database('./data/general.db');
 const errorLog = require('../../events/errorLog');
 
+// this command is slightly different from the event/addquote, it doesn't require a user.
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('addquote')

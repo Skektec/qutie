@@ -1,12 +1,14 @@
 const sqlite3 = require('sqlite3').verbose();
 const database = new sqlite3.Database('./data/general.db');
 const errorLog = require('./errorLog');
+const { getClient } = require('../data/clientInstance');
 
 module.exports = {
-	execute: async (reaction, bot, user) => {
+	execute: async (reaction, user) => {
+		client = getClient();
 		const botHasReacted = await reaction.users
 			.fetch()
-			.then((users) => users.has(bot.user.id));
+			.then((users) => users.has(client.user.id));
 
 		if (botHasReacted) {
 			return;
