@@ -4,7 +4,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('nick')
 		.setDescription('Change a users nickname')
-		.addStringOption((option) =>
+		.addUserOption((option) =>
 			option
 				.setName('user')
 				.setDescription(`Who's nickname to change.`)
