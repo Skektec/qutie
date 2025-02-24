@@ -258,7 +258,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 	try {
 		await command.autocomplete(interaction);
 	} catch (error) {
-		errorLog.execute(error);
+		return;
 	}
 });
 
