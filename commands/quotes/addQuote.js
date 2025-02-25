@@ -94,7 +94,7 @@ module.exports = {
 							errorLog.execute(`Error inserting into ${tableName}:`, err);
 						} else {
 							interaction.reply({
-								content: `New quote added by ${interaction.user} as #${this.lastID}\n"${text}"`,
+								content: `New quote added by ${interaction.user} as #${this.lastID}\n"${text}" - ${user.username}`,
 								allowedMentions: { repliedUser: false },
 							});
 						}
