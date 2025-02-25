@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
+const errorLog = require('../../events/errorLog');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -19,6 +20,13 @@ module.exports = {
 	async execute(interaction) {
 		const user = interaction.options.getUser('user');
 		const nick = interaction.options.getString('nick');
-		message.guild.members.get(user.id).setNickname(nick);
+		const guild = interaction.guild;
+
+		try {
+			const member = await guild.members.fetch(user.id);
+			member.setNickname(nick);
+		} catch (error) {
+			errorLog.execute('Nickname change error: ' + error);
+		}
 	},
 };
