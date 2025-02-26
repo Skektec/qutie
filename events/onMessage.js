@@ -1,12 +1,106 @@
-const fs = require('fs')
-
-const emojis = JSON.parse(fs.readFileSync('./data/emojis.json', 'utf-8'))
-
 module.exports = {
-    execute(message) {
-        const match = emojis.find((item) => item.name === message.content)
-        if (match) {
-            message.channel.send(`<:${match.name}:${match.id}>`)
-        } else return
-    },
-}
+	execute: async (message) => {
+		if (message.author.bot) return;
+		if (message.content.startsWith('.q')) {
+			const args = message.content.slice(2).trim().split(/ +/);
+
+			fetchquote.execute(message, args);
+		}
+		if (message.content.startsWith('!p')) {
+			const args = message.content.slice(3).trim().split(' ');
+			const command = args.shift();
+			const extraArguments = args.join(' ');
+
+			const commandFilePath = path.join(
+				__dirname,
+				'commands',
+				'python_commands',
+				`${command}.py`
+			);
+
+			fs.access(commandFilePath, fs.constants.F_OK, (err) => {
+				if (err) {
+					message.reply(`Command "${command}" not found.`);
+					return;
+				}
+
+				if (!extraArguments.trim()) {
+					exec(`python "${commandFilePath}"`, (error, stdout, stderr) => {
+						if (error) {
+							message.reply(`Error: ${error.message}`);
+							return;
+						}
+						if (stderr) {
+							message.reply(`Python Error: ${stderr}`);
+							return;
+						}
+
+						const response = stdout.trim();
+						console.log(
+							`Running command: python "${commandFilePath}" with no arguments`
+						);
+
+						if (response === '') {
+							message.reply('No response from the command.');
+						} else {
+							message.reply(response);
+						}
+					});
+				} else {
+					exec(
+						`python "${commandFilePath}" "${extraArguments}"`,
+						(error, stdout, stderr) => {
+							if (error) {
+								message.reply(`Error: ${error.message}`);
+								return;
+							}
+							if (stderr) {
+								message.reply(`Python Error: ${stderr}`);
+								return;
+							}
+
+							const response = stdout.trim();
+							console.log(
+								`Running command: python "${commandFilePath}" "${extraArguments}"`
+							);
+
+							if (response === '') {
+								message.reply('No response from the command.');
+							} else {
+								message.reply(response);
+							}
+						}
+					);
+				}
+			});
+		}
+
+		if (message.content.startsWith('jarvis')) {
+			jarvis.execute(message);
+		}
+
+		const getEmbed = async (message) => {
+			const output = await message.channel.messages.fetch(message.id);
+			console.log(output.embeds[0].data.description);
+		};
+
+		if (message.embeds.length > 0) {
+			getEmbed(message);
+		}
+
+		if (message.content.startsWith('runTest')) {
+			message.channel.send({
+				content: 'No test to execute.',
+				flags: MessageFlags.Ephemeral,
+			});
+		}
+
+		if (words.includes(message.content)) {
+			sendEmoji.execute(message);
+		}
+
+		if (message.tts === true) {
+			message.reply('kys');
+		}
+	},
+};
