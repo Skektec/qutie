@@ -27,6 +27,10 @@ module.exports = {
 			member.setNickname(nick);
 		} catch (error) {
 			errorLog.execute('Nickname change error: ' + error);
+			interaction.reply({
+				content: 'Make sure the bot has the correct permissions.',
+				flags: MessageFlags.Ephemeral,
+			});
 		}
 	},
 };
