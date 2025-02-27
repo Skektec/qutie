@@ -1,3 +1,11 @@
+const fetchquote = require('./fetchquote');
+const jarvis = require('../jarvis');
+const sendEmoji = require('./sendEmoji');
+const repostDetection = require('./repostDetection');
+const { exec } = require('child_process');
+
+const words = ['uwu', 'owo', 'blahaj'];
+
 module.exports = {
 	execute: async (message) => {
 		if (message.author.bot) return;
@@ -75,17 +83,12 @@ module.exports = {
 			});
 		}
 
-		if (message.content.startsWith('jarvis')) {
-			jarvis.execute(message);
+		if (message.embeds.length > 0) {
+			repostDetection.execute(message);
 		}
 
-		const getEmbed = async (message) => {
-			const output = await message.channel.messages.fetch(message.id);
-			console.log(output.embeds[0].data.description);
-		};
-
-		if (message.embeds.length > 0) {
-			getEmbed(message);
+		if (message.content.startsWith('jarvis')) {
+			jarvis.execute(message);
 		}
 
 		if (message.content.startsWith('runTest')) {

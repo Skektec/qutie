@@ -1,5 +1,4 @@
 const fs = require('node:fs');
-const { exec } = require('child_process');
 const path = require('node:path');
 const cron = require('node-cron');
 const {
@@ -11,9 +10,6 @@ const {
 	MessageFlags,
 } = require('discord.js');
 const { discordToken } = require('./data/config.json');
-const fetchquote = require('./events/fetchquote');
-const jarvis = require('./jarvis');
-const sendEmoji = require('./events/sendEmoji');
 const addquote = require('./events/addquote');
 const errorLog = require('./events/errorLog');
 const { setClient } = require('./data/clientInstance');
@@ -42,8 +38,6 @@ const eventsPath = path.join(__dirname, 'events');
 const eventFiles = fs
 	.readdirSync(eventsPath)
 	.filter((file) => file.endsWith('.js'));
-
-const words = ['uwu', 'owo', 'blahaj'];
 
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
 	try {
