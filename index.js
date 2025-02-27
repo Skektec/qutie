@@ -1,5 +1,4 @@
 const fs = require('node:fs');
-const { exec } = require('child_process');
 const path = require('node:path');
 const cron = require('node-cron');
 const {
@@ -11,12 +10,10 @@ const {
 	MessageFlags,
 } = require('discord.js');
 const { discordToken } = require('./data/config.json');
-const fetchquote = require('./events/fetchquote');
-const jarvis = require('./jarvis');
-const respond = require('./events/onMessage');
 const addquote = require('./events/addquote');
 const errorLog = require('./events/errorLog');
 const { setClient } = require('./data/clientInstance');
+const onMessage = require('./events/onMessage');
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./data/general.db');
 
@@ -41,8 +38,6 @@ const eventsPath = path.join(__dirname, 'events');
 const eventFiles = fs
 	.readdirSync(eventsPath)
 	.filter((file) => file.endsWith('.js'));
-
-const words = ['uwu', 'owo', 'blahaj'];
 
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
 	try {
@@ -69,104 +64,7 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
 });
 
 client.on('messageCreate', (message) => {
-	if (message.author.bot) return;
-	if (message.content.startsWith('.q')) {
-		const args = message.content.slice(2).trim().split(/ +/);
-
-		fetchquote.execute(message, args);
-	}
-	if (message.content.startsWith('!p')) {
-		const args = message.content.slice(3).trim().split(' ');
-		const command = args.shift();
-		const extraArguments = args.join(' ');
-
-		const commandFilePath = path.join(
-			__dirname,
-			'commands',
-			'python_commands',
-			`${command}.py`
-		);
-
-		fs.access(commandFilePath, fs.constants.F_OK, (err) => {
-			if (err) {
-				message.reply(`Command "${command}" not found.`);
-				return;
-			}
-
-			if (!extraArguments.trim()) {
-				exec(`python "${commandFilePath}"`, (error, stdout, stderr) => {
-					if (error) {
-						message.reply(`Error: ${error.message}`);
-						return;
-					}
-					if (stderr) {
-						message.reply(`Python Error: ${stderr}`);
-						return;
-					}
-
-					const response = stdout.trim();
-					console.log(
-						`Running command: python "${commandFilePath}" with no arguments`
-					);
-
-					if (response === '') {
-						message.reply('No response from the command.');
-					} else {
-						message.reply(response);
-					}
-				});
-			} else {
-				exec(
-					`python "${commandFilePath}" "${extraArguments}"`,
-					(error, stdout, stderr) => {
-						if (error) {
-							message.reply(`Error: ${error.message}`);
-							return;
-						}
-						if (stderr) {
-							message.reply(`Python Error: ${stderr}`);
-							return;
-						}
-
-						const response = stdout.trim();
-						console.log(
-							`Running command: python "${commandFilePath}" "${extraArguments}"`
-						);
-
-						if (response === '') {
-							message.reply('No response from the command.');
-						} else {
-							message.reply(response);
-						}
-					}
-				);
-			}
-		});
-	}
-
-	if (message.content.startsWith('jarvis')) {
-		jarvis.execute(message);
-	}
-
-	if (message.content.startsWith('runTest')) {
-		message.channel.send({
-			content: 'No test to execute.',
-			flags: MessageFlags.Ephemeral,
-		});
-	}
-	if (message.content.startsWith('runTest')) {
-		message.channel.send({
-			content: 'No test to execute.',
-			flags: MessageFlags.Ephemeral,
-		});
-	}
-
-	if (words.includes(message.content)) {
-		respond.execute(message);
-	}
-	if (words.includes(message.content)) {
-		respond.execute(message);
-	}
+	onMessage.execute(message);
 });
 
 for (const folder of commandFolders) {
