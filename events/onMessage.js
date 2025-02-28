@@ -83,9 +83,9 @@ module.exports = {
 			});
 		}
 
-		if (message.embeds.length > 0) {
-			repostDetection.execute(message);
-		}
+		// if (message.embeds.length > 0) {
+		// 	repostDetection.execute(message);
+		// }
 
 		if (message.content.startsWith('jarvis')) {
 			jarvis.execute(message);
