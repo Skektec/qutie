@@ -37,7 +37,7 @@ module.exports = {
 				.setDescription(
 					`${quote.text} \n - <@${quote.userId}> [(Jump)](https://discordapp.com/channels/${serverId}/${quote.channel}/${quote.messageId})`
 				)
-				.setImage(image)
+				.setImage(image || quote.image)
 				.setFooter({ text: `${formattedDate}` });
 
 			message.channel.send({ embeds: [quoteEmbed] });

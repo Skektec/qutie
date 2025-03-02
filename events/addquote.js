@@ -22,6 +22,7 @@ module.exports = {
 		const messageId = reaction.message.id;
 		const time = Math.floor(reaction.message.createdTimestamp / 1000);
 		const tableName = `${server}-quotes`;
+		const image = reaction.message.attachments.first()?.url;
 
 		database.run(
 			`CREATE TABLE IF NOT EXISTS "${tableName}" (
@@ -31,7 +32,8 @@ module.exports = {
         server TEXT,
         text TEXT,
         messageId TEXT UNIQUE,
-        time INTEGER
+        time INTEGER,
+		image TEXT
       )`,
 			(err) => {
 				if (err) errorLog.execute(`Error creating table ${tableName}:`, err);
@@ -55,12 +57,12 @@ module.exports = {
 				}
 
 				const insertQuery = `
-          INSERT INTO "${tableName}" (nick, userId, channel, server, text, messageId, time)
-          VALUES (?, ?, ?, ?, ?, ?, ?)
+          INSERT INTO "${tableName}" (nick, userId, channel, server, text, messageId, time, image)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `;
 				database.run(
 					insertQuery,
-					[nick, userId, channel, server, text, messageId, time],
+					[nick, userId, channel, server, text, messageId, time, image],
 					function (err) {
 						if (err) {
 							errorLog.execute(`Error inserting into ${tableName}:`, err);

@@ -26,6 +26,12 @@ module.exports = {
 				.setName('nick')
 				.setDescription(`Nickname if the person isn't on the server.`)
 				.setRequired(false)
+		)
+		.addStringOption((option) =>
+			option
+				.setName('imageurl')
+				.setDescription('Image URL that you want in the quote.')
+				.setRequired(false)
 		),
 	execute: async (interaction) => {
 		const nick = interaction.options.getString('nick');
@@ -35,6 +41,7 @@ module.exports = {
 		const messageId = interaction.id;
 		const text = interaction.options.getString('quote');
 		const time = Math.floor(interaction.createdTimestamp / 1000);
+		const image = interaction.options.getString('imageurl');
 		const tableName = `${server}-quotes`;
 
 		if (!user && !nick) {
@@ -59,7 +66,8 @@ module.exports = {
         server TEXT,
         messageId TEXT,
         text TEXT,
-        time INTEGER
+        time INTEGER,
+		image TEXT
       )`,
 			(err) => {
 				if (err) errorLog.execute(`Error creating table ${tableName}:`, err);
@@ -83,12 +91,21 @@ module.exports = {
 				}
 
 				const insertQuery = `
-          INSERT INTO "${tableName}" (nick, userId, channel, server, text, messageId, time)
-          VALUES (?, ?, ?, ?, ?, ?, ?)
+          INSERT INTO "${tableName}" (nick, userId, channel, server, text, messageId, time, image)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `;
 				database.run(
 					insertQuery,
-					[user.username, user.id, channel, server, text, messageId, time],
+					[
+						user.username,
+						user.id,
+						channel,
+						server,
+						text,
+						messageId,
+						time,
+						image,
+					],
 					function (err) {
 						if (err) {
 							errorLog.execute(`Error inserting into ${tableName}:`, err);
