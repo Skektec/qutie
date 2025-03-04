@@ -49,14 +49,14 @@ module.exports = {
 		if (!text && !image) {
 			return interaction.reply({
 				content: 'You must provide something to quote.',
-				ephemeral: true,
+				flags: MessageFlags.Ephemeral,
 			});
 		}
 
 		if (!user && !nick) {
 			return interaction.reply({
 				content: 'You must provide either a user or a nickname.',
-				ephemeral: true,
+				flags: MessageFlags.Ephemeral,
 			});
 		}
 

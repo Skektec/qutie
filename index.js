@@ -3,17 +3,13 @@ const path = require('node:path');
 const cron = require('node-cron');
 const {
 	Client,
-	Events,
 	Collection,
 	GatewayIntentBits,
 	Partials,
-	MessageFlags,
 } = require('discord.js');
 const { discordToken } = require('./data/config.json');
-const addquote = require('./events/addquote');
 const errorLog = require('./events/errorLog');
 const { setClient } = require('./data/clientInstance');
-const onMessage = require('./events/onMessage');
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./data/general.db');
 
