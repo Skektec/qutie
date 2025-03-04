@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const dbPath = path.resolve(__dirname, '../../data/general.db');

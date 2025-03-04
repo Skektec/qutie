@@ -1,4 +1,4 @@
-const { Events } = require('discord.js');
+const { Events, MessageFlags } = require('discord.js');
 const fetchquote = require('./fetchquote');
 const jarvis = require('../jarvis');
 const sendEmoji = require('./sendEmoji');
