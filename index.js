@@ -39,34 +39,6 @@ const eventFiles = fs
 	.readdirSync(eventsPath)
 	.filter((file) => file.endsWith('.js'));
 
-client.on(Events.MessageReactionAdd, async (reaction, user) => {
-	try {
-		if (reaction.partial) await reaction.fetch();
-		if (reaction.message.partial) await reaction.message.fetch();
-		if (reaction.message.author.bot) return;
-
-		if (reaction.emoji.name == '💬') {
-			addquote.execute(reaction, user);
-		}
-
-		if (reaction.emoji.name == '♻️') {
-			reaction.message.reply('Errmm Repost ♻️♻️♻️');
-			reaction.message.reactions.cache
-				.get('♻️')
-				.remove()
-				.catch((error) =>
-					errorLog.execute('Failed to remove reactions:', error)
-				);
-		}
-	} catch (error) {
-		errorLog.execute('An error occurred in MessageReactionAdd:', error);
-	}
-});
-
-client.on('messageCreate', (message) => {
-	onMessage.execute(message);
-});
-
 for (const folder of commandFolders) {
 	const commandsPath = path.join(foldersPath, folder);
 	const commandFiles = fs

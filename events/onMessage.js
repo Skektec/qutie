@@ -1,3 +1,4 @@
+const { Events } = require('discord.js');
 const fetchquote = require('./fetchquote');
 const jarvis = require('../jarvis');
 const sendEmoji = require('./sendEmoji');
@@ -7,6 +8,7 @@ const { exec } = require('child_process');
 const words = ['uwu', 'owo', 'blahaj'];
 
 module.exports = {
+	name: Events.MessageCreate,
 	execute: async (message) => {
 		if (message.author.bot) return;
 		if (message.content.startsWith('.q')) {

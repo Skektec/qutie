@@ -4,7 +4,7 @@ const errorLog = require('./errorLog');
 const { getClient } = require('../data/clientInstance');
 
 module.exports = {
-	execute: async (reaction, user) => {
+	execute: async (reaction) => {
 		client = getClient();
 		const botHasReacted = await reaction.users
 			.fetch()
@@ -69,7 +69,7 @@ module.exports = {
 						} else {
 							reaction.message.react('💬');
 							reaction.message.reply({
-								content: `New quote added by ${user.username} as #${this.lastID}\n"${text}" - ${nick}`,
+								content: `New quote added by ${reaction.author.user.username} as #${this.lastID}\n"${text}" - ${nick}`,
 								allowedMentions: { repliedUser: false },
 							});
 						}
