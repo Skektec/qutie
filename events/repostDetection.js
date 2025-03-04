@@ -18,6 +18,8 @@ module.exports = {
 		const embed = message.embeds[0]?.data?.description || '';
 		if (!embed) return;
 
+		if (!message.embeds[0]?.data?.description) return;
+
 		let aiOutput;
 
 		try {
@@ -25,7 +27,7 @@ module.exports = {
 
 			history.push({ role: 'user', content: embed });
 
-			if (history.length > 10) {
+			if (history.length > 15) {
 				history.shift();
 			}
 
