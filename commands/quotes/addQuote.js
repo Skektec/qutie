@@ -1,6 +1,8 @@
 const { SlashCommandBuilder } = require('discord.js');
 const sqlite3 = require('sqlite3').verbose();
-const database = new sqlite3.Database('./data/general.db');
+const path = require('path');
+const dbPath = path.resolve(__dirname, '../../data/general.db');
+const database = new sqlite3.Database(dbPath);
 const errorLog = require('../../events/errorLog');
 
 // this command is slightly different from the event/addquote, it doesn't require a user.
@@ -35,7 +37,7 @@ module.exports = {
 		),
 	execute: async (interaction) => {
 		const nick = interaction.options.getString('nick');
-		const user = interaction.options.getUser('user');
+		let user = interaction.options.getUser('user');
 		const channel = interaction.channelId;
 		const server = interaction.guildId;
 		const messageId = interaction.id;
@@ -43,6 +45,13 @@ module.exports = {
 		const time = Math.floor(interaction.createdTimestamp / 1000);
 		const image = interaction.options.getString('imageurl');
 		const tableName = `${server}-quotes`;
+
+		if (!text && !image) {
+			return interaction.reply({
+				content: 'You must provide something to quote.',
+				ephemeral: true,
+			});
+		}
 
 		if (!user && !nick) {
 			return interaction.reply({
@@ -108,7 +117,9 @@ module.exports = {
 					],
 					function (err) {
 						if (err) {
-							errorLog.execute(`Error inserting into ${tableName}:`, err);
+							errorLog.execute(
+								`Error inserting into ${tableName}: ${err.message}`
+							);
 						} else {
 							interaction.reply({
 								content: `New quote added by ${interaction.user} as #${this.lastID}\n"${text}" - ${user.username}`,

@@ -20,10 +20,9 @@ module.exports = {
 
 		try {
 			const server = interaction.guildId;
-			const tableName = `${server}-quotes`;
 
 			const quotesArray = db
-				.prepare(`SELECT *, rowid FROM "${tableName}"`)
+				.prepare(`SELECT *, rowid FROM "${server}-quotes"`)
 				.all();
 
 			const matches = quotesArray.filter((quote) => {
@@ -40,7 +39,9 @@ module.exports = {
 			});
 
 			const matchesText = matchesArray
-				.map((match) => `"${match.text}" - #${match.rowid}`)
+				.map(
+					(match) => `"${match.text}" - <@${match.userId}> as #${match.rowid}`
+				)
 				.join('\n');
 
 			const foundMatches = new EmbedBuilder()
@@ -48,13 +49,13 @@ module.exports = {
 				.setTitle('Searched for: ' + search)
 				.addFields({
 					name: 'Matches:',
-					value: matchesText,
+					value: matchesText || 'None Found',
 					inline: true,
 				});
 
 			interaction.reply({ embeds: [foundMatches] });
 		} catch (err) {
-			errorLog.execute('Error: ' + err);
+			errorLog.execute(err);
 		}
 	},
 };

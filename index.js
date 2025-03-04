@@ -141,22 +141,4 @@ cron.schedule('0 13 * * *', async () => {
 	}
 });
 
-client.on(Events.InteractionCreate, async (interaction) => {
-	if (interaction.isChatInputCommand()) {
-	} else if (interaction.isAutocomplete()) {
-		const command = interaction.client.commands.get(interaction.commandName);
-		if (!command) {
-			errorLog.execute(
-				`No command matching ${interaction.commandName} was found.`
-			);
-			return;
-		}
-	}
-	try {
-		await command.autocomplete(interaction);
-	} catch (error) {
-		return;
-	}
-});
-
 client.login(discordToken);
