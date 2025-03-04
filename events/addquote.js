@@ -1,5 +1,7 @@
 const sqlite3 = require('sqlite3').verbose();
-const database = new sqlite3.Database('./data/general.db');
+const path = require('path');
+const dbPath = path.resolve(__dirname, '../data/general.db');
+const database = new sqlite3.Database(dbPath);
 const errorLog = require('./errorLog');
 const { getClient } = require('../data/clientInstance');
 
@@ -65,14 +67,19 @@ module.exports = {
 					insertQuery,
 					[nick, userId, channel, server, text, messageId, time, image],
 					function (err) {
-						if (err) {
-							errorLog.execute(`Error inserting into ${tableName}:`, err);
-						} else {
+						try {
 							reaction.message.react('💬');
 							reaction.message.reply({
-								content: `New quote added by ${reaction.author.username} as #${this.lastID}\n"${text}" - ${nick}`,
+								content: `New quote added by <@${reaction.users.cache.firstKey()}> as #${
+									this.lastID
+								}\n"${text}" - ${nick}`,
 								allowedMentions: { repliedUser: false },
 							});
+						} catch (err) {
+							errorLog.execute(`Error replying to user: ${err}`);
+						}
+						if (err) {
+							errorLog.execute(`Error adding quote: ${err}`);
 						}
 					}
 				);
