@@ -60,6 +60,7 @@ module.exports = {
           INSERT INTO "${tableName}" (nick, userId, channel, server, text, messageId, time, image)
           VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `;
+
 				database.run(
 					insertQuery,
 					[nick, userId, channel, server, text, messageId, time, image],
@@ -69,7 +70,7 @@ module.exports = {
 						} else {
 							reaction.message.react('💬');
 							reaction.message.reply({
-								content: `New quote added by ${reaction.author.user.username} as #${this.lastID}\n"${text}" - ${nick}`,
+								content: `New quote added by ${reaction.author.username} as #${this.lastID}\n"${text}" - ${nick}`,
 								allowedMentions: { repliedUser: false },
 							});
 						}
