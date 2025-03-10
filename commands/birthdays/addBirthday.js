@@ -110,6 +110,34 @@ module.exports = {
 		const channelId = interaction.channel.id;
 		const serverId = interaction.guild.id;
 
+		const monthToNumber = {
+			January: 1,
+			February: 2,
+			March: 3,
+			April: 4,
+			May: 5,
+			June: 6,
+			July: 7,
+			August: 8,
+			September: 9,
+			October: 10,
+			November: 11,
+			December: 12,
+		};
+
+		function getMonthNumber(month) {
+			return monthToNumber[month] || null;
+		}
+
+		if (day.length === 1) {
+			correctedDay = '0' + day;
+			errorLog.execute('test: ' + day);
+		} else {
+			correctedDay = day;
+		}
+
+		const dateNum = `${getMonthNumber(month)}${correctedDay}${year}`;
+
 		try {
 			db.prepare(
 				`CREATE TABLE IF NOT EXISTS birthdays (
@@ -117,7 +145,8 @@ module.exports = {
           nick TEXT,
           date TEXT,
           channel TEXT,
-          server TEXT 
+          server TEXT,
+		  dateNum INTEGER 
         )`
 			).run();
 
@@ -127,8 +156,8 @@ module.exports = {
 
 			if (existing) {
 				db.prepare(
-					'UPDATE birthdays SET nick = ?, date = ?, channel = ?, server = ? WHERE id = ?'
-				).run(user.username, date, channelId, serverId, user.id);
+					'UPDATE birthdays SET nick = ?, date = ?, channel = ?, server = ?, dateNum = ? WHERE id = ?'
+				).run(user.username, date, channelId, serverId, dateNum, user.id);
 
 				console.log(`Updated ${user.username}'s birthday.`);
 				await interaction.reply({
@@ -138,7 +167,7 @@ module.exports = {
 			} else {
 				db.prepare(
 					'INSERT INTO birthdays (id, nick, date, channel, server) VALUES (?, ?, ?, ?, ?)'
-				).run(user.id, user.username, date, channelId, serverId);
+				).run(user.id, user.username, date, channelId, dateNum, serverId);
 
 				console.log(`Added ${user.username}'s birthday.`);
 				await interaction.reply({
