@@ -72,7 +72,7 @@ module.exports = {
 							reaction.message.reply({
 								content: `New quote added by <@${reaction.users.cache.firstKey()}> as #${
 									this.lastID
-								}\n"${text}" - ${nick}`,
+								}\n"${text}" - <@${userId}>`,
 								allowedMentions: { repliedUser: false },
 							});
 						} catch (err) {
