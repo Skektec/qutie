@@ -2,9 +2,10 @@ const { SlashCommandBuilder } = require('discord.js');
 const errorLog = require('../../events/errorLog');
 const path = require('path');
 const Database = require('better-sqlite3');
+const fs = require('fs');
+
 const dbPath = path.resolve(__dirname, '../../data/general.db');
 const database = new Database(dbPath);
-const fs = require('fs');
 const deletedQuotesPath = path.resolve(
 	__dirname,
 	'../../data/deletedQuotes.json'
@@ -34,14 +35,16 @@ module.exports = {
 					.get();
 
 				if (!row) {
-					return await interaction.respond('No row');
+					return await interaction.respond([
+						{ name: 'No row found', value: '0' },
+					]);
 				}
 
 				await interaction.respond([
 					{ name: String(row.rowid), value: String(row.rowid) },
 				]);
 			} catch (err) {
-				return errorLog.execute('Delete Autocomplete error: ' + err.message);
+				errorLog.execute('Delete Autocomplete error: ' + err.message);
 			}
 		}
 	},
@@ -60,16 +63,26 @@ module.exports = {
 			}
 
 			let deletedQuotes = [];
-			if (fs.existsSync(deletedQuotesPath)) {
-				deletedQuotes = JSON.parse(fs.readFileSync(deletedQuotesPath, 'utf8'));
+			try {
+				if (fs.existsSync(deletedQuotesPath)) {
+					const fileData = fs.readFileSync(deletedQuotesPath, 'utf8').trim();
+					deletedQuotes = fileData ? JSON.parse(fileData) : [];
+				}
+			} catch (err) {
+				errorLog.execute('Error reading deletedQuotes.json: ' + err.message);
+				deletedQuotes = [];
 			}
 
 			deletedQuotes.push({ id, guildId: interaction.guild.id, ...quote });
 
-			fs.writeFileSync(
-				deletedQuotesPath,
-				JSON.stringify(deletedQuotes, null, 2)
-			);
+			try {
+				fs.writeFileSync(
+					deletedQuotesPath,
+					JSON.stringify(deletedQuotes, null, 2)
+				);
+			} catch (err) {
+				errorLog.execute('Error saving deletedQuotes.json: ' + err.message);
+			}
 
 			const deleteStmt = database.prepare(
 				`DELETE FROM "${interaction.guild.id}-quotes" WHERE rowid = ?`
