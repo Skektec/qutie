@@ -1,4 +1,5 @@
 const { Events, MessageFlags } = require('discord.js');
+const { botAdimn } = require('./data/config.json');
 // const mutedUsers = require('../data/mutedUsers.json');
 const fetchquote = require('./fetchquote');
 const jarvis = require('../jarvis');
@@ -30,7 +31,10 @@ module.exports = {
 		// }
 
 		if (message.author.bot) return;
-		if (message.content.startsWith('.answer')) {
+		if (
+			message.content.startsWith('.answer') &&
+			message.author.id === botAdimn
+		) {
 			const args = message.content.slice(7).trim().split(/ +/);
 
 			support.answer(message, args);
