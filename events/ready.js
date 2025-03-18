@@ -1,4 +1,4 @@
-const { Events } = require('discord.js');
+const { Events, ActivityType } = require('discord.js');
 const errorLog = require('./errorLog');
 
 module.exports = {
@@ -11,8 +11,16 @@ module.exports = {
 			errorLog.execute(message);
 		};
 
+		client.user.setPresence({
+			activities: [
+				{
+					name: 'with you',
+					type: ActivityType.Playing,
+				},
+			],
+		});
+
 		console.log(`Ready! Logged in as ${client.user.tag}`);
-		client.user.setActivity('with your mom', { type: 1 });
 		// sendNotif();
 	},
 };

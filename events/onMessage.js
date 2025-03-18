@@ -1,15 +1,33 @@
 const { Events, MessageFlags } = require('discord.js');
+const mutedUsers = require('../data/mutedUsers.json');
 const fetchquote = require('./fetchquote');
 const jarvis = require('../jarvis');
 const sendEmoji = require('./sendEmoji');
-const repostDetection = require('./repostDetection');
+const fs = require('fs');
+// const repostDetection = require('./repostDetection');
 const { exec } = require('child_process');
 
 const words = ['uwu', 'owo', 'blahaj'];
 
+function delay(time) {
+	return new Promise((resolve) => setTimeout(resolve, time));
+}
+
 module.exports = {
 	name: Events.MessageCreate,
 	execute: async (message) => {
+		// Just messing around with a mute function that deletes messages, not implemented.
+
+		// if (Array.isArray(mutedUsers) && mutedUsers.includes(message.author.id)) {
+		// 	message.reply({
+		// 		content: 'You are muted.',
+		// 		flags: MessageFlags.Ephemeral,
+		// 	});
+
+		// 	message.delete();
+		// 	return;
+		// }
+
 		if (message.author.bot) return;
 		if (message.content.startsWith('.q')) {
 			const args = message.content.slice(2).trim().split(/ +/);

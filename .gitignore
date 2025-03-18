@@ -1,12 +1,19 @@
 node_modules
+
+// dotFiles
+
 .eslintrc.json
 .prettierrc.json
-links.json
 .vscode
+.env
+
+// Data
+
+deletedQuotes.json
+mutedUsers.json
 launch.json
 config.json
 quotes.json
 birthdays.json
+links.json
 general.db
-.env
-deletedQuotes.json
