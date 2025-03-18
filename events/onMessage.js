@@ -1,7 +1,8 @@
 const { Events, MessageFlags } = require('discord.js');
-const mutedUsers = require('../data/mutedUsers.json');
+// const mutedUsers = require('../data/mutedUsers.json');
 const fetchquote = require('./fetchquote');
 const jarvis = require('../jarvis');
+const support = require('./support');
 const sendEmoji = require('./sendEmoji');
 const fs = require('fs');
 // const repostDetection = require('./repostDetection');
@@ -29,6 +30,11 @@ module.exports = {
 		// }
 
 		if (message.author.bot) return;
+		if (message.content.startsWith('.answer')) {
+			const args = message.content.slice(7).trim().split(/ +/);
+
+			support.answer(message, args);
+		}
 		if (message.content.startsWith('.q')) {
 			const args = message.content.slice(2).trim().split(/ +/);
 
@@ -55,7 +61,7 @@ module.exports = {
 				if (!extraArguments.trim()) {
 					exec(`python "${commandFilePath}"`, (error, stdout, stderr) => {
 						if (error) {
-							message.reply(`Error: ${error.message}`);
+							message.reply(`Error: ${error.message} (Occured in python code)`);
 							return;
 						}
 						if (stderr) {
@@ -79,7 +85,9 @@ module.exports = {
 						`python "${commandFilePath}" "${extraArguments}"`,
 						(error, stdout, stderr) => {
 							if (error) {
-								message.reply(`Error: ${error.message}`);
+								message.reply(
+									`Error: ${error.message}  (Occured in python code)`
+								);
 								return;
 							}
 							if (stderr) {

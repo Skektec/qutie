@@ -55,7 +55,7 @@ module.exports = {
 
 			interaction.reply({ embeds: [foundMatches] });
 		} catch (err) {
-			errorLog.execute(err);
+			errorLog.execute('Error searching for quotes:', err);
 		}
 	},
 };

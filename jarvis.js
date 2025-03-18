@@ -38,7 +38,7 @@ module.exports = {
 				gif.execute(match, message);
 			}
 		} catch (err) {
-			errorLog.execute('Error:', err);
+			errorLog.execute(`Error:, ${err}, (This occured in jarvis.js)`);
 		}
 	},
 };

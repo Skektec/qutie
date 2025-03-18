@@ -6,6 +6,7 @@ module.exports = {
 	execute: async (message) => {
 		const client = getClient();
 		const user = await client.users.fetch(botAdimn);
-		user.send(message);
+		if (message) user.send(message);
+		else user.send('A blank error occured');
 	},
 };

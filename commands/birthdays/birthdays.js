@@ -92,7 +92,7 @@ module.exports = {
 		} catch (err) {
 			errorLog.execute('Database error:', err);
 			await interaction.reply({
-				content: `Error: ${err.message}`,
+				content: `Error: ${err.message} (Occured in birthday code)`,
 				flags: MessageFlags.Ephemeral,
 			});
 		}

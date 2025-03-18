@@ -176,7 +176,7 @@ module.exports = {
 				});
 			}
 		} catch (err) {
-			errorLog.execute(err);
+			errorLog.execute(`Error: , ${err}, (This occured in addBirthday.js)`);
 			return interaction.reply({
 				content:
 					'An error occurred while saving your birthday. Please try again later.',

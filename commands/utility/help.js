@@ -1,5 +1,6 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const { helpChannel } = require('../../data/config.json');
+const { getClient } = require('../../data/clientInstance');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -12,12 +13,19 @@ module.exports = {
 				.setRequired(true)
 		),
 	async execute(interaction) {
-		const question = interaction.options.getInteger('question');
+		client = getClient();
+
+		const question = interaction.options.getString('question');
 		const fromChannel = interaction.channel;
 		const supportChannel = await client.channels.fetch(helpChannel);
 
 		supportChannel.send(
-			`Support requested from: ${fromChannel.id}\n Question: ${question}`
+			`Support requested from: ${fromChannel.id}\n **Question:** ${question}`
 		);
+
+		await interaction.reply({
+			content: 'Ticket sent.',
+			Flags: MessageFlags.Ephemeral,
+		});
 	},
 };
