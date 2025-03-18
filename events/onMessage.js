@@ -103,6 +103,8 @@ module.exports = {
 			});
 		}
 
+		// This was removed as it was unreliable
+
 		// if (message.embeds.length > 0) {
 		// 	repostDetection.execute(message);
 		// }
