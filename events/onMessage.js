@@ -1,5 +1,5 @@
 const { Events, MessageFlags } = require('discord.js');
-const { botAdimn } = require('./data/config.json');
+const { botAdimn } = require('../data/config.json');
 // const mutedUsers = require('../data/mutedUsers.json');
 const fetchquote = require('./fetchquote');
 const jarvis = require('../jarvis');
