@@ -1,4 +1,4 @@
-const { Events, MessageFlags } = require('discord.js');
+const { Events, MessageFlags, EmbedBuilder } = require('discord.js');
 const { botAdimn } = require('../data/config.json');
 // const mutedUsers = require('../data/mutedUsers.json');
 const fetchquote = require('./fetchquote');
@@ -14,6 +14,8 @@ const words = ['uwu', 'owo', 'blahaj'];
 function delay(time) {
 	return new Promise((resolve) => setTimeout(resolve, time));
 }
+
+const prevMessages = [];
 
 module.exports = {
 	name: Events.MessageCreate,
@@ -31,6 +33,20 @@ module.exports = {
 		// }
 
 		if (message.author.bot) return;
+
+		prevMessages.push(message.content);
+
+		if (prevMessages.length > 3) {
+			prevMessages.shift();
+		}
+
+		if (
+			prevMessages.length === 3 &&
+			prevMessages.every((msg) => msg === prevMessages[0])
+		) {
+			message.channel.send(prevMessages[2]);
+		}
+
 		if (
 			message.content.startsWith('.answer') &&
 			message.author.id === botAdimn
