@@ -27,7 +27,7 @@ module.exports = {
 		// 		content: 'You are muted.',
 		// 		flags: MessageFlags.Ephemeral,
 		// 	});
-
+		//
 		// 	message.delete();
 		// 	return;
 		// }
@@ -42,7 +42,9 @@ module.exports = {
 
 		if (
 			prevMessages.length === 3 &&
-			prevMessages.every((msg) => msg === prevMessages[0])
+			prevMessages.every(
+				(msg) => msg === prevMessages[0] && message.content != '.q'
+			)
 		) {
 			message.channel.send(prevMessages[2]);
 		}
