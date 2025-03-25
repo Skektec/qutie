@@ -53,9 +53,14 @@ module.exports = {
 				.setLabel('Leave a Team')
 				.setStyle(ButtonStyle.Danger);
 
-			const row = new ActionRowBuilder().addComponents(join, leave);
+			const lockin = new ButtonBuilder()
+				.setCustomId('lockin')
+				.setLabel('Lock In')
+				.setStyle(ButtonStyle.Success);
 
-			const originalMessage = await interaction.reply({
+			const row = new ActionRowBuilder().addComponents(join, leave, lockin);
+
+			await interaction.reply({
 				embeds: [formedTeam],
 				components: [row],
 			});
@@ -69,6 +74,35 @@ module.exports = {
 
 				const userId = buttonInteraction.user.id;
 				const username = buttonInteraction.user.username;
+
+				if (buttonInteraction.customId === 'lockin') {
+					const disabledRow = new ActionRowBuilder().addComponents(
+						new ButtonBuilder()
+							.setCustomId('join')
+							.setLabel('Join a Team')
+							.setStyle(ButtonStyle.Primary)
+							.setDisabled(true),
+						new ButtonBuilder()
+							.setCustomId('leave')
+							.setLabel('Leave a Team')
+							.setStyle(ButtonStyle.Danger)
+							.setDisabled(true),
+						new ButtonBuilder()
+							.setCustomId('lockin')
+							.setLabel('Lock In')
+							.setStyle(ButtonStyle.Success)
+							.setDisabled(true)
+					);
+
+					await fetchedMessage.edit({
+						components: [disabledRow],
+					});
+
+					await interaction.channel.send('Teams have been locked in!');
+
+					client.removeListener('interactionCreate', arguments.callee);
+					return;
+				}
 
 				if (buttonInteraction.customId === 'join') {
 					function shuffleTeam(team1, team2) {

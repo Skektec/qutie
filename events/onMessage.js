@@ -41,8 +41,6 @@ module.exports = {
 			prevMessages.shift();
 		}
 
-		const excludeQuoteCall = message.content.slice(2);
-		console.log(excludeQuoteCall);
 		if (
 			prevMessages.length === 3 &&
 			prevMessages.every(
