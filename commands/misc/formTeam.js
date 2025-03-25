@@ -20,10 +20,13 @@ module.exports = {
 
 	async execute(interaction) {
 		try {
-			const mapNames = Object.keys(maps);
-			const randomMapName =
-				mapNames[Math.floor(Math.random() * mapNames.length)];
-			const randomMapUrl = maps[randomMapName];
+			getMap = (maps) => {
+				const mapNames = Object.keys(maps);
+				randomMapName = mapNames[Math.floor(Math.random() * mapNames.length)];
+				randomMapUrl = maps[randomMapName];
+			};
+
+			getMap(maps);
 
 			const formedTeam = new EmbedBuilder()
 				.setColor(0x0ff08b)
@@ -53,12 +56,22 @@ module.exports = {
 				.setLabel('Leave a Team')
 				.setStyle(ButtonStyle.Danger);
 
+			const newMap = new ButtonBuilder()
+				.setCustomId('newmap')
+				.setLabel('Roll Map')
+				.setStyle(ButtonStyle.Primary);
+
 			const lockin = new ButtonBuilder()
 				.setCustomId('lockin')
 				.setLabel('Lock In')
 				.setStyle(ButtonStyle.Success);
 
-			const row = new ActionRowBuilder().addComponents(join, leave, lockin);
+			const row = new ActionRowBuilder().addComponents(
+				join,
+				leave,
+				newMap,
+				lockin
+			);
 
 			await interaction.reply({
 				embeds: [formedTeam],
@@ -72,37 +85,36 @@ module.exports = {
 
 				await buttonInteraction.deferUpdate();
 
+				if (buttonInteraction.customId === 'newmap') {
+					getMap(maps);
+
+					const updatedTeam = new EmbedBuilder()
+						.setColor(0x0ff08b)
+						.setTitle('Team Tank Battles')
+						.setDescription('Team Composition and Map')
+						.addFields(
+							{
+								name: 'Team 1',
+								value:
+									team1.map((member) => member.username).join('\n') ||
+									'No members',
+							},
+							{
+								name: 'Team 2',
+								value:
+									team2.map((member) => member.username).join('\n') ||
+									'No members',
+							}
+						)
+						.addFields({ name: 'Map is: ', value: randomMapName, inline: true })
+						.setImage(randomMapUrl)
+						.setTimestamp();
+
+					fetchedMessage.edit({ embeds: [updatedTeam] });
+				}
+
 				const userId = buttonInteraction.user.id;
 				const username = buttonInteraction.user.username;
-
-				if (buttonInteraction.customId === 'lockin') {
-					const disabledRow = new ActionRowBuilder().addComponents(
-						new ButtonBuilder()
-							.setCustomId('join')
-							.setLabel('Join a Team')
-							.setStyle(ButtonStyle.Primary)
-							.setDisabled(true),
-						new ButtonBuilder()
-							.setCustomId('leave')
-							.setLabel('Leave a Team')
-							.setStyle(ButtonStyle.Danger)
-							.setDisabled(true),
-						new ButtonBuilder()
-							.setCustomId('lockin')
-							.setLabel('Lock In')
-							.setStyle(ButtonStyle.Success)
-							.setDisabled(true)
-					);
-
-					await fetchedMessage.edit({
-						components: [disabledRow],
-					});
-
-					await interaction.channel.send('Teams have been locked in!');
-
-					client.removeListener('interactionCreate', arguments.callee);
-					return;
-				}
 
 				if (buttonInteraction.customId === 'join') {
 					function shuffleTeam(team1, team2) {
@@ -163,6 +175,38 @@ module.exports = {
 					.setTimestamp();
 
 				fetchedMessage.edit({ embeds: [updatedTeam] });
+
+				if (buttonInteraction.customId === 'lockin') {
+					const disabledRow = new ActionRowBuilder().addComponents(
+						new ButtonBuilder()
+							.setCustomId('join')
+							.setLabel('Join a Team')
+							.setStyle(ButtonStyle.Primary)
+							.setDisabled(true),
+						new ButtonBuilder()
+							.setCustomId('leave')
+							.setLabel('Leave a Team')
+							.setStyle(ButtonStyle.Danger)
+							.setDisabled(true),
+						new ButtonBuilder()
+							.setCustomId('newmap')
+							.setLabel('Roll Map')
+							.setStyle(ButtonStyle.Primary)
+							.setDisabled(true),
+						new ButtonBuilder()
+							.setCustomId('lockin')
+							.setLabel('Lock In')
+							.setStyle(ButtonStyle.Success)
+							.setDisabled(true)
+					);
+
+					await fetchedMessage.edit({
+						components: [disabledRow],
+					});
+
+					interaction.deleteReply();
+					await interaction.channel.send({ embeds: [updatedTeam] });
+				}
 			});
 		} catch (err) {
 			errorLog.execute('Error forming team: ' + err);
