@@ -171,8 +171,7 @@ module.exports = {
 
 				console.log(`Added ${user.username}'s birthday.`);
 				await interaction.reply({
-					content: `Your birthday (${date}) has been added! 🎉`,
-					flags: MessageFlags.Ephemeral,
+					content: `${user.username}'s birthday (${date}) has been added! 🎉`,
 				});
 			}
 		} catch (err) {
