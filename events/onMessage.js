@@ -1,5 +1,6 @@
 const { Events, MessageFlags, EmbedBuilder } = require('discord.js');
 const { botAdimn } = require('../data/config.json');
+const { nvmGif } = require('../data/pubconfig.json');
 const maps = require('../data/wtMaps.json');
 // const mutedUsers = require('../data/mutedUsers.json');
 const fetchquote = require('./fetchquote');
@@ -48,6 +49,10 @@ module.exports = {
 			)
 		) {
 			message.channel.send(prevMessages[2]);
+		}
+
+		if (message.content === 'nvm') {
+			message.reply(nvmGif);
 		}
 
 		if (
