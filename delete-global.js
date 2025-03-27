@@ -4,6 +4,6 @@ const { clientId, discordToken } = require('./data/config.json');
 const rest = new REST().setToken(discordToken);
 
 rest
-	.delete(Routes.applicationCommand(clientId, '1353791453700165768'))
+	.delete(Routes.applicationCommand(clientId, ''))
 	.then(() => console.log('Successfully deleted application command'))
 	.catch(console.error);

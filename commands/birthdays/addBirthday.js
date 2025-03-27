@@ -88,7 +88,7 @@ module.exports = {
 
 		if (!validMonths.includes(month)) {
 			return interaction.reply({
-				content: 'Please enter a valid month (e.g., August).',
+				content: 'Please select a valid month (e.g., August).',
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -131,7 +131,6 @@ module.exports = {
 
 		if (day.length === 1) {
 			correctedDay = '0' + day;
-			errorLog.execute('test: ' + day);
 		} else {
 			correctedDay = day;
 		}

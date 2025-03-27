@@ -22,13 +22,21 @@ module.exports = {
 		const nick = interaction.options.getString('nick');
 		const guild = interaction.guild;
 
+		const member = await guild.members.fetch(user.id);
+
 		try {
-			const member = await guild.members.fetch(user.id);
-			member.setNickname(nick);
+			if (member.manageable) {
+				member.setNickname(nick);
+			} else {
+				interaction.reply({
+					content: `I don't have the permissions for that.`,
+					flags: MessageFlags.Ephemeral,
+				});
+			}
 		} catch (error) {
 			errorLog.execute('Nickname change error: ' + error);
 			interaction.reply({
-				content: 'Make sure the bot has the correct permissions.',
+				content: 'Something went wrong, developer notified.',
 				flags: MessageFlags.Ephemeral,
 			});
 		}
