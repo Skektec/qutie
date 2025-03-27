@@ -166,8 +166,8 @@ module.exports = {
 				});
 			} else {
 				db.prepare(
-					'INSERT INTO birthdays (id, nick, date, channel, server) VALUES (?, ?, ?, ?, ?, ?)'
-				).run(user.id, user.username, date, channelId, dateNum, serverId);
+					'INSERT INTO birthdays (nick, date, channel, server,, dateNum id,) VALUES (?, ?, ?, ?, ?, ?)'
+				).run(user.username, date, channelId, serverId, dateNum, user.id);
 
 				console.log(`Added ${user.username}'s birthday.`);
 				await interaction.reply({
