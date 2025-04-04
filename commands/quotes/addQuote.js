@@ -121,8 +121,14 @@ module.exports = {
 								`Error inserting into ${tableName}: ${err.message}`
 							);
 						} else {
+							if (text && image) {
+								quotedContent = `${text} \n ${image}`;
+							} else {
+								quotedContent = text || image;
+							}
+
 							interaction.reply({
-								content: `New quote added by ${interaction.user} as #${this.lastID}\n"${text}" - ${user.username}`,
+								content: `New quote added by ${interaction.user} as #${this.lastID}\n"${quotedContent}" - ${user.username}`,
 								allowedMentions: { repliedUser: false },
 							});
 						}

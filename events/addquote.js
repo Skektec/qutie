@@ -1,3 +1,4 @@
+const { EmbedBuilder } = require('discord.js');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const dbPath = path.resolve(__dirname, '../data/general.db');
@@ -69,10 +70,17 @@ module.exports = {
 					function (err) {
 						try {
 							reaction.message.react('💬');
+
+							if (text && image) {
+								quotedContent = `${text} \n ${image}`;
+							} else {
+								quotedContent = text || image;
+							}
+
 							reaction.message.reply({
 								content: `New quote added by <@${reaction.users.cache.firstKey()}> as #${
 									this.lastID
-								}\n"${text}" - <@${userId}>`,
+								}\n"${quotedContent}" - <@${userId}>`,
 								allowedMentions: { repliedUser: false },
 							});
 						} catch (err) {
