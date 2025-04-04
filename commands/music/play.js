@@ -33,6 +33,8 @@ module.exports = {
 
 		const results = await player.search(query);
 
+		console.log(results);
+
 		return interaction.respond(
 			results.tracks.slice(0, 10).map((t) => ({
 				name: t.title || 'Unknown Title',
