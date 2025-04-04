@@ -68,7 +68,7 @@ module.exports = {
 
 	async execute(interaction) {
 		try {
-			await interaction.deferReply({flags: MessageFlags.Ephemeral});
+			await interaction.deferReply();
 
 			const player = await initializePlayer();
 			if (!player) {

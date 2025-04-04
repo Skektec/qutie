@@ -4,7 +4,7 @@ const { DefaultExtractors } = require('@discord-player/extractor');
 let client = null;
 let player = null;
 
-module.exports = {
+const clientInstance = {
 	//Discord Bot Client
 	setClient: (botClient) => {
 		client = botClient;
@@ -35,7 +35,7 @@ module.exports = {
 			
 			console.log('Registering extractors');
 			
-			setPlayer(newPlayer);
+			clientInstance.setPlayer(newPlayer);
 			
 			console.log('Player initialized successfully with extractors');
 			return newPlayer;
@@ -45,3 +45,5 @@ module.exports = {
 		}
 	}
 };
+
+module.exports = clientInstance;
