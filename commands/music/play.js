@@ -5,37 +5,9 @@ const {
 	ButtonStyle,
 	MessageFlags,
 } = require('discord.js');
-const { Player, QueryType } = require('discord-player');
+const { QueryType } = require('discord-player');
 const { DefaultExtractors } = require('@discord-player/extractor');
-const { getClient, getPlayer, setPlayer } = require('../../data/clientInstance');
-
-let globalPlayer = null;
-
-function initializePlayer() {
-	const client = getClient();
-	const existingPlayer = getPlayer();
-
-	if (existingPlayer) {
-		console.log('Using existing player');
-		return existingPlayer;
-	}
-
-	if (!client) {
-		console.error('Client not initialized');
-		return null;
-	}
-
-	try {
-		const newPlayer = new Player(client);
-		newPlayer.extractors.register(DefaultExtractors);
-		setPlayer(newPlayer);
-		console.log('Player initialized successfully');
-		return newPlayer;
-	} catch (error) {
-		console.error('Error initializing player:', error);
-		return null;
-	}
-}
+const { getClient, getPlayer, initializePlayer } = require('../../data/clientInstance');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -116,13 +88,38 @@ module.exports = {
 				return;
 			}
 
-			const searchResult = await player.search(query, {
-				requestedBy: interaction.user,
-				searchEngine: QueryType.AUTO
-			});
+			console.log('Searching for track:', query);
 
-			if (!searchResult.hasTracks()) {
-				await interaction.editReply(`We found no tracks for "${query}"!`);
+			const searchMethods = [
+				{ type: QueryType.YOUTUBE, name: 'YouTube' },
+				{ type: QueryType.SPOTIFY, name: 'Spotify' },
+				{ type: QueryType.SOUNDCLOUD, name: 'SoundCloud' },
+				{ type: QueryType.AUTO, name: 'Auto' }
+			];
+
+			let searchResult = null;
+			for (const method of searchMethods) {
+				try {
+					console.log(`Attempting search with ${method.name} search engine`);
+					searchResult = await player.search(query, {
+						requestedBy: interaction.user,
+						searchEngine: method.type
+					});
+
+					console.log(`${method.name} search results:`, searchResult.tracks.length);
+
+					if (searchResult.hasTracks()) {
+						break;
+					}
+				} catch (searchError) {
+					console.error(`Error searching with ${method.name} search engine:`, searchError);
+				}
+			}
+
+			if (!searchResult || !searchResult.hasTracks()) {
+				console.log(`No tracks found for query: "${query}"`);
+				console.log('Search result details:', JSON.stringify(searchResult, null, 2));
+				await interaction.editReply(`We found no tracks for "${query}"! Try a different search query.`);
 				return;
 			}
 
