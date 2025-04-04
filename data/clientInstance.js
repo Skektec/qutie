@@ -17,7 +17,7 @@ module.exports = {
 	},
 	getPlayer: () => player,
 
-	initializePlayer: () => {
+	initializePlayer: async () => {
 		if (!client) {
 			console.error('Client not initialized');
 			return null;
@@ -31,12 +31,12 @@ module.exports = {
 		try {
 			const newPlayer = new Player(client);
 			
-			newPlayer.extractors.register(DefaultExtractors);
+			await newPlayer.extractors.loadMulti(DefaultExtractors);
 			
 			console.log('Registering extractors');
-			newPlayer.extractors.loadDefault();
 			
 			setPlayer(newPlayer);
+			
 			console.log('Player initialized successfully with extractors');
 			return newPlayer;
 		} catch (error) {

@@ -28,7 +28,7 @@ module.exports = {
 				return;
 			}
 
-			const player = initializePlayer();
+			const player = await initializePlayer();
 			if (!player) {
 				console.log('No player found');
 				await interaction.respond([]);
@@ -70,7 +70,7 @@ module.exports = {
 		try {
 			await interaction.deferReply({flags: MessageFlags.Ephemeral});
 
-			const player = initializePlayer();
+			const player = await initializePlayer();
 			if (!player) {
 				await interaction.editReply('Music player is not initialized.');
 				return;
