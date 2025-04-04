@@ -3,10 +3,39 @@ const {
 	EmbedBuilder,
 	ButtonBuilder,
 	ButtonStyle,
+	MessageFlags,
 } = require('discord.js');
-const { Player, QueryType, useMainPlayer } = require('discord-player');
+const { Player, QueryType } = require('discord-player');
 const { DefaultExtractors } = require('@discord-player/extractor');
-const { getClient } = require('../../data/clientInstance');
+const { getClient, getPlayer, setPlayer } = require('../../data/clientInstance');
+
+let globalPlayer = null;
+
+function initializePlayer() {
+	const client = getClient();
+	const existingPlayer = getPlayer();
+
+	if (existingPlayer) {
+		console.log('Using existing player');
+		return existingPlayer;
+	}
+
+	if (!client) {
+		console.error('Client not initialized');
+		return null;
+	}
+
+	try {
+		const newPlayer = new Player(client);
+		newPlayer.extractors.register(DefaultExtractors);
+		setPlayer(newPlayer);
+		console.log('Player initialized successfully');
+		return newPlayer;
+	} catch (error) {
+		console.error('Error initializing player:', error);
+		return null;
+	}
+}
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -27,14 +56,12 @@ module.exports = {
 				return;
 			}
 
-			const player = useMainPlayer();
+			const player = initializePlayer();
 			if (!player) {
 				console.log('No player found');
 				await interaction.respond([]);
 				return;
 			}
-
-			await player.extractors.loadMulti(DefaultExtractors);
 
 			const query = interaction.options.getString('song');
 			console.log('Autocomplete query:', query);
@@ -69,15 +96,13 @@ module.exports = {
 
 	async execute(interaction) {
 		try {
-			await interaction.deferReply({ ephemeral: false });
+			await interaction.deferReply({flags: MessageFlags.Ephemeral});
 
-			const player = useMainPlayer();
+			const player = initializePlayer();
 			if (!player) {
 				await interaction.editReply('Music player is not initialized.');
 				return;
 			}
-
-			await player.extractors.loadMulti(DefaultExtractors);
 
 			const voiceChannel = interaction.member.voice.channel;
 			if (!voiceChannel) {

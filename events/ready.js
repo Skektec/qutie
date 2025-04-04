@@ -1,5 +1,6 @@
 const { Events, ActivityType } = require('discord.js');
 const errorLog = require('./errorLog');
+const { setPlayer } = require('../data/clientInstance');
 
 module.exports = {
 	name: Events.ClientReady,
@@ -8,7 +9,10 @@ module.exports = {
 		client.on('ready', function (readyClient) {
 			// Discord Player Initialization
 			const { Player } = require('discord-player');
-			player = new Player(readyClient);
+			const player = new Player(readyClient);
+			
+			// Store the player in clientInstance
+			setPlayer(player);
 		});
 
 		console.log('Player ready');
