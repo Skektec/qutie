@@ -8,7 +8,7 @@ const {
 	Partials,
 } = require('discord.js');
 const { discordToken } = require('./data/config.json');
-const errorLog = require('./events/errorLog');
+const error = require('./events/error');
 const { setClient } = require('./data/clientInstance');
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./data/general.db');
@@ -77,7 +77,7 @@ cron.schedule('0 13 * * *', async () => {
 			[currentDate],
 			async (err, rows) => {
 				if (err) {
-					errorLog.execute('Error querying the database:', err);
+					error.log('Error querying the database:', err);
 					return;
 				}
 
@@ -97,7 +97,7 @@ cron.schedule('0 13 * * *', async () => {
 						channel.send(`🎉 Happy Birthday <@${row.id}>! 🎉`);
 						return;
 					} catch (channelError) {
-						errorLog.execute(
+						error.log(
 							`Error fetching channel ${row.channel}:`,
 							channelError
 						);
@@ -107,7 +107,7 @@ cron.schedule('0 13 * * *', async () => {
 			}
 		);
 	} catch (err) {
-		errorLog.execute('Error displaying birthday:', err);
+		error.log('Error displaying birthday:', err);
 	}
 });
 

@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const errorLog = require('../events/errorLog');
+const error = require('../events/error');
 
 const mutedUsersPath = path.join(__dirname, '../../data/mutedUsers.json');
 
@@ -21,7 +21,7 @@ module.exports = {
 
 		fs.readFile(mutedUsersPath, 'utf8', (err, data) => {
 			if (err) {
-				errorLog.execute(`Error reading file: ${err}`);
+				error.log(`Error reading file: ${err}`);
 				return interaction.reply({
 					content: 'Failed to read muted users.',
 					flags: MessageFlags.Ephemeral,
@@ -34,7 +34,7 @@ module.exports = {
 				try {
 					mutedUsers = JSON.parse(data);
 				} catch (parseErr) {
-					errorLog.execute(`Error parsing JSON: ${parseErr}`);
+					error.log(`Error parsing JSON: ${parseErr}`);
 					return;
 				}
 			}
@@ -54,13 +54,13 @@ module.exports = {
 				'utf8',
 				(writeErr) => {
 					if (writeErr) {
-						errorLog.execute(`Error unmuting user: ${writeErr}`);
+						error.log(`Error unmuting user: ${writeErr}`);
 						interaction.reply({
 							content: 'Failed to unmute the user.',
 							flags: MessageFlags.Ephemeral,
 						});
 					} else {
-						errorLog.execute(`Unmuted ${user.username}`);
+						error.log(`Unmuted ${user.username}`);
 						interaction.reply({
 							content: `Unmuted ${user.username}.`,
 							flags: MessageFlags.Ephemeral,

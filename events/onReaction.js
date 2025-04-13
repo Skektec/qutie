@@ -1,5 +1,5 @@
 const { Events } = require('discord.js');
-const errorLog = require('./errorLog');
+const error = require('./error');
 const addquote = require('./addquote');
 
 module.exports = {
@@ -28,7 +28,7 @@ module.exports = {
 					);
 			}
 		} catch (error) {
-			errorLog.execute('An error occurred in MessageReactionAdd:', error);
+			error.log('An error occurred in MessageReactionAdd:', error);
 		}
 	},
 };

@@ -1,6 +1,6 @@
 const { Mistral } = require('@mistralai/mistralai');
 const prompt = require('../data/pubconfig.json').embedDetectPrompt;
-const errorLog = require('./errorLog');
+const error = require('./error');
 const { mistralToken } = require('../data/config.json');
 const client = new Mistral({ apiKey: mistralToken });
 
@@ -40,7 +40,7 @@ module.exports = {
 
 			history.push({ role: 'assistant', content: aiOutput });
 		} catch (err) {
-			errorLog.execute('Repost Detection Error: ' + err);
+			error.log('Repost Detection Error: ' + err);
 			return;
 		}
 

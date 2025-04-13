@@ -3,7 +3,7 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const dbPath = path.resolve(__dirname, '../../data/general.db');
 const database = new sqlite3.Database(dbPath);
-const errorLog = require('../../events/errorLog');
+const error = require('../../events/error');
 
 // this command is slightly different from the event/addquote, it doesn't require a user.
 
@@ -79,7 +79,7 @@ module.exports = {
 		image TEXT
       )`,
 			(err) => {
-				if (err) errorLog.execute(`Error creating table ${tableName}:`, err);
+				if (err) error.log(`Error creating table ${tableName}:`, err);
 			}
 		);
 
@@ -88,7 +88,7 @@ module.exports = {
 			[messageId],
 			(err, row) => {
 				if (err) {
-					errorLog.execute(
+					error.log(
 						`Error checking for duplicate in ${tableName}:`,
 						err
 					);
@@ -117,7 +117,7 @@ module.exports = {
 					],
 					function (err) {
 						if (err) {
-							errorLog.execute(
+							error.log(
 								`Error inserting into ${tableName}: ${err.message}`
 							);
 						} else {

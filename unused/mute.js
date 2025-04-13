@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const errorLog = require('../events/errorLog');
+const error = require('../events/error');
 
 const mutedUsersPath = path.join(__dirname, '../../data/mutedUsers.json');
 
@@ -26,7 +26,7 @@ module.exports = {
 				try {
 					mutedUsers = JSON.parse(data);
 				} catch (parseErr) {
-					errorLog.execute(`Error parsing muted users JSON: ${parseErr}`);
+					error.log(`Error parsing muted users JSON: ${parseErr}`);
 					return interaction.reply({
 						content: 'Corrupted mute data.',
 						flags: MessageFlags.Ephemeral,
@@ -49,14 +49,14 @@ module.exports = {
 				'utf8',
 				(writeErr) => {
 					if (writeErr) {
-						errorLog.execute(`Error muting user: ${writeErr}`);
+						error.log(`Error muting user: ${writeErr}`);
 						return interaction.reply({
 							content: 'Failed to mute the user.',
 							flags: MessageFlags.Ephemeral,
 						});
 					}
 
-					errorLog.execute(`Muted ${user.username}`);
+					error.log(`Muted ${user.username}`);
 					interaction.reply({
 						content: `${user.username} has been muted.`,
 						flags: MessageFlags.Ephemeral,

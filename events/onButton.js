@@ -5,7 +5,7 @@ const {
 	ButtonStyle,
 } = require('discord.js');
 const maps = require('../data/wtMaps.json');
-const errorLog = require('../events/errorLog');
+const error = require('./error');
 const {
 	teamDataMap,
 	getMap,

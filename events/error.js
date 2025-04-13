@@ -3,7 +3,7 @@ const { botAdimn } = require('../data/config.json');
 const { getClient } = require('../data/clientInstance');
 
 module.exports = {
-	execute: async (message) => {
+	log: async (message) => {
 		const client = getClient();
 		const user = await client.users.fetch(botAdimn);
 		if (message.length < 2000) user.send(message);

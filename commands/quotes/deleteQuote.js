@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const errorLog = require('../../events/errorLog');
+const error = require('../../events/error');
 const path = require('path');
 const Database = require('better-sqlite3');
 const fs = require('fs');
@@ -44,7 +44,7 @@ module.exports = {
 					{ name: String(row.rowid), value: String(row.rowid) },
 				]);
 			} catch (err) {
-				errorLog.execute('Delete Autocomplete error: ' + err.message);
+				error.log('Delete Autocomplete error: ' + err.message);
 			}
 		}
 	},
@@ -69,7 +69,7 @@ module.exports = {
 					deletedQuotes = fileData ? JSON.parse(fileData) : [];
 				}
 			} catch (err) {
-				errorLog.execute('Error reading deletedQuotes.json: ' + err.message);
+				error.log('Error reading deletedQuotes.json: ' + err.message);
 				deletedQuotes = [];
 			}
 
@@ -81,7 +81,7 @@ module.exports = {
 					JSON.stringify(deletedQuotes, null, 2)
 				);
 			} catch (err) {
-				errorLog.execute('Error saving deletedQuotes.json: ' + err.message);
+				error.log('Error saving deletedQuotes.json: ' + err.message);
 			}
 
 			const deleteStmt = database.prepare(
@@ -91,7 +91,7 @@ module.exports = {
 
 			await interaction.reply(`Deleted quote: #${id} - "${quote.text}"`);
 		} catch (err) {
-			errorLog.execute('Delete Func Error: ' + err.message);
+			error.log('Delete Func Error: ' + err.message);
 			await interaction.reply({
 				content: 'An error occurred while deleting the quote.',
 				allowedMentions: { repliedUser: false },

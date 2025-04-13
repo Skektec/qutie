@@ -3,7 +3,7 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const dbPath = path.resolve(__dirname, '../data/general.db');
 const database = new sqlite3.Database(dbPath);
-const errorLog = require('./errorLog');
+const error = require('./error');
 const { getClient } = require('../data/clientInstance');
 
 module.exports = {
@@ -39,7 +39,7 @@ module.exports = {
 		image TEXT
       )`,
 			(err) => {
-				if (err) errorLog.execute(`Error creating table ${tableName}:`, err);
+				if (err) error.log(`Error creating table ${tableName}:`, err);
 			}
 		);
 
@@ -48,7 +48,7 @@ module.exports = {
 			[messageId],
 			(err, row) => {
 				if (err) {
-					errorLog.execute(
+					error.log(
 						`Error checking for duplicate in ${tableName}:`,
 						err
 					);
@@ -84,10 +84,10 @@ module.exports = {
 								allowedMentions: { repliedUser: false },
 							});
 						} catch (err) {
-							errorLog.execute(`Error replying to user: ${err}`);
+							error.log(`Error replying to user: ${err}`);
 						}
 						if (err) {
-							errorLog.execute(`Error adding quote: ${err}`);
+							error.log(`Error adding quote: ${err}`);
 						}
 					}
 				);

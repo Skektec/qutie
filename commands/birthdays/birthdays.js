@@ -4,7 +4,7 @@ const path = require('path');
 const Database = require('better-sqlite3');
 const dbPath = path.resolve(__dirname, '../../data/general.db');
 const db = new Database(dbPath);
-const errorLog = require('../../events/errorLog');
+const error = require('../../events/error');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -90,7 +90,7 @@ module.exports = {
 
 			await interaction.reply({ embeds: [birthdayEmbed] });
 		} catch (err) {
-			errorLog.execute('Database error:', err);
+			error.log('Database error:', err);
 			await interaction.reply({
 				content: `Error: ${err.message} (Occured in birthday code)`,
 				flags: MessageFlags.Ephemeral,

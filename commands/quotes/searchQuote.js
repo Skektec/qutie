@@ -5,7 +5,7 @@ const path = require('path');
 const Database = require('better-sqlite3');
 const dbPath = path.resolve(__dirname, '../../data/general.db');
 const db = new Database(dbPath);
-const errorLog = require('../../events/errorLog');
+const error = require('../../events/error');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -55,7 +55,7 @@ module.exports = {
 
 			interaction.reply({ embeds: [foundMatches] });
 		} catch (err) {
-			errorLog.execute('Error searching for quotes:', err);
+			error.log('Error searching for quotes:', err);
 		}
 	},
 };

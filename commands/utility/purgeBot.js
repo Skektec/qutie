@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
-const errorLog = require('../../events/errorLog');
+const error = require('../../events/error');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -44,7 +44,7 @@ module.exports = {
 				content: `Deleted ${botMessages.length} bot messages.`,
 			});
 		} catch (error) {
-			errorLog.execute('Error deleting bot messages:', error);
+			error.log('Error deleting bot messages:', error);
 			interaction.editReply({
 				content: 'Failed to delete messages. Make sure I have permissions!',
 			});

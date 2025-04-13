@@ -1,5 +1,5 @@
 const { Events, ActivityType } = require('discord.js');
-const errorLog = require('./errorLog');
+const error = require('./error');
 const { setPlayer } = require('../data/clientInstance');
 
 module.exports = {
@@ -21,7 +21,7 @@ module.exports = {
 			let serverCount = client.guilds.cache.size;
 			let message = `<@${botAdimn}>! I am online in ${serverCount} servers!`;
 			// The only error log without extra information
-			errorLog.execute(message);
+			error.log(message);
 		};
 
 		client.user.setPresence({
