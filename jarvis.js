@@ -26,7 +26,7 @@ module.exports = {
 			});
 
 			const content = chatResponse.choices[0].message.content;
-			console.log(content);
+			// console.log(content);
 
 			// for (let i = 0; i < content.length; i += 2000) {
 			// 	await message.channel.send(content.slice(i, i + 2000));

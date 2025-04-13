@@ -20,7 +20,11 @@ module.exports = {
 					.get('♻️')
 					.remove()
 					.catch((error) =>
-						errorLog.execute('Failed to remove reactions:', error)
+						console.log(
+							'Failed to remove reactions:',
+							error,
+							'Most likely removed by user already.'
+						)
 					);
 			}
 		} catch (error) {

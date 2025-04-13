@@ -24,7 +24,6 @@ const clientInstance = {
 		}
 
 		if (player) {
-			console.log('Using existing player');
 			return player;
 		}
 
@@ -33,11 +32,9 @@ const clientInstance = {
 			
 			await newPlayer.extractors.loadMulti(DefaultExtractors);
 			
-			console.log('Registering extractors');
 			
 			clientInstance.setPlayer(newPlayer);
 			
-			console.log('Player initialized successfully with extractors');
 			return newPlayer;
 		} catch (error) {
 			console.error('Error initializing player:', error);

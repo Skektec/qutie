@@ -52,7 +52,10 @@ module.exports = {
 		}
 
 		if (message.content === 'nvm') {
-			message.reply(nvmGif);
+			message.reply({
+				content: nvmGif,
+				allowedMentions: { repliedUser: false },
+			});
 		}
 
 		if (
