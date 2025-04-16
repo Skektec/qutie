@@ -58,6 +58,13 @@ module.exports = {
 			});
 		}
 
+		if (message.content === 'kms' || message.content === 'kill myself') {
+			message.reply({
+				content: neverKysVideo,
+				allowedMentions: { repliedUser: false },
+			});
+		}
+
 		if (
 			message.content.startsWith('.answer') &&
 			message.author.id === botAdimn
