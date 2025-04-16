@@ -58,7 +58,7 @@ module.exports = {
 			});
 		}
 
-		if (message.content === 'kms' || message.content === 'kill myself') {
+		if (message.content.match(/kms|kill myself/i)) {
 			message.reply({
 				content: neverKysVideo,
 				allowedMentions: { repliedUser: false },
