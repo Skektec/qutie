@@ -65,7 +65,7 @@ for (const file of eventFiles) {
 	}
 }
 
-cron.schedule('22 17 * * *', async () => {
+cron.schedule('0 13 * * *', async () => {
 	try {
 		const today = new Date();
 		const currentDay = today.getDate();
