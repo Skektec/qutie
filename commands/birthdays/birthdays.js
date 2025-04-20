@@ -81,7 +81,7 @@ module.exports = {
 					? sortedDates
 							.map((b) => {
 								const user =
-									b.id && b.id !== 0 ? `<@${b.id}>` : b.nick || 'unknown';
+									b.id && b.id !== '0' ? `<@${b.id}>` : b.nick || 'unknown';
 								return `${user} - \`${b.date}\` (${b.currentAge})`;
 							})
 							.join('\n')

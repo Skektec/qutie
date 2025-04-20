@@ -88,7 +88,7 @@ cron.schedule('7 17 * * *', async () => {
 				for (const row of rows) {
 					try {
 						const birthdayUser =
-							b.id && b.id !== 0 ? `<@${b.id}>` : b.nick || 'unknown';
+							b.id && b.id !== '0' ? `<@${b.id}>` : b.nick || 'unknown';
 						const channel = await client.channels.fetch(row.channel);
 
 						if (!channel) {
