@@ -65,7 +65,7 @@ for (const file of eventFiles) {
 	}
 }
 
-cron.schedule('7 17 * * *', async () => {
+cron.schedule('17 17 * * *', async () => {
 	try {
 		const today = new Date();
 		const currentDay = today.getDate();
@@ -88,7 +88,7 @@ cron.schedule('7 17 * * *', async () => {
 				for (const row of rows) {
 					try {
 						const birthdayUser =
-							b.id && b.id !== '0' ? `<@${b.id}>` : b.nick || 'unknown';
+							row.id && row.id !== '0' ? `<@${row.id}>` : row.nick || 'unknown';
 						const channel = await client.channels.fetch(row.channel);
 
 						if (!channel) {
@@ -99,7 +99,10 @@ cron.schedule('7 17 * * *', async () => {
 						channel.send(`🎉 Happy Birthday ${birthdayUser}! 🎉`);
 						return;
 					} catch (channelError) {
-						error.log(`Error fetching channel ${row.channel}:`, channelError);
+						error.log(
+							`Error fetching channel ${row.channel} or id ${row.id} or nick ${row.nick}:`,
+							channelError
+						);
 						return;
 					}
 				}
