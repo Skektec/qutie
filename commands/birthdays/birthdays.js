@@ -80,8 +80,7 @@ module.exports = {
 				sortedDates.length > 0
 					? sortedDates
 							.map(
-								(b) =>
-									`<@${b.id ? b.id : b.nick}> - \`${b.date}\` (${b.currentAge})`
+								(b) => `<@${b.id || b.nick}> - \`${b.date}\` (${b.currentAge})`
 							)
 							.join('\n')
 					: 'No birthdays found.';

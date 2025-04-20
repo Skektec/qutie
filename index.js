@@ -94,9 +94,7 @@ cron.schedule('0 13 * * *', async () => {
 							continue;
 						}
 
-						channel.send(
-							`🎉 Happy Birthday <@${row.id ? row.id : row.nick}>! 🎉`
-						);
+						channel.send(`🎉 Happy Birthday <@${row.id || row.nick}>! 🎉`);
 						return;
 					} catch (channelError) {
 						error.log(`Error fetching channel ${row.channel}:`, channelError);
