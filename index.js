@@ -87,6 +87,8 @@ cron.schedule('0 17 * * *', async () => {
 
 				for (const row of rows) {
 					try {
+						const birthdayUser =
+							b.id && b.id !== 0 ? `<@${b.id}>` : b.nick || 'unknown';
 						const channel = await client.channels.fetch(row.channel);
 
 						if (!channel) {
@@ -94,9 +96,7 @@ cron.schedule('0 17 * * *', async () => {
 							continue;
 						}
 
-						channel.send(
-							`🎉 Happy Birthday <@${b.id === 0 ? b.nick : b.id}>! 🎉`
-						);
+						channel.send(`🎉 Happy Birthday ${birthdayUser}! 🎉`);
 						return;
 					} catch (channelError) {
 						error.log(`Error fetching channel ${row.channel}:`, channelError);
