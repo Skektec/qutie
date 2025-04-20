@@ -76,13 +76,14 @@ module.exports = {
 					return aMonthDay - bMonthDay;
 				});
 
-			const birthdayUser =
-				b.id && b.id !== 0 ? `<@${b.id}>` : b.nick || 'unknown';
-
 			const birthdayList =
 				sortedDates.length > 0
 					? sortedDates
-							.map((b) => `${birthdayUser} - \`${b.date}\` (${b.currentAge})`)
+							.map((b) => {
+								const user =
+									b.id && b.id !== 0 ? `<@${b.id}>` : b.nick || 'unknown';
+								return `${user} - \`${b.date}\` (${b.currentAge})`;
+							})
 							.join('\n')
 					: 'No birthdays found.';
 
