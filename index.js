@@ -65,7 +65,7 @@ for (const file of eventFiles) {
 	}
 }
 
-cron.schedule('20 17 * * *', async () => {
+cron.schedule('22 17 * * *', async () => {
 	try {
 		const today = new Date();
 		const currentDay = today.getDate();
@@ -73,7 +73,7 @@ cron.schedule('20 17 * * *', async () => {
 		const currentDate = `${currentDay}-${currentMonth}`;
 
 		db.all(
-			'SELECT id, channel FROM birthdays WHERE SUBSTR(date, 1, LENGTH(date) - 5) = ?',
+			'SELECT id, nick, channel FROM birthdays WHERE SUBSTR(date, 1, LENGTH(date) - 5) = ?',
 			[currentDate],
 			async (err, rows) => {
 				if (err) {
