@@ -65,7 +65,7 @@ for (const file of eventFiles) {
 	}
 }
 
-cron.schedule('0 13 * * *', async () => {
+cron.schedule('0 17 * * *', async () => {
 	try {
 		const today = new Date();
 		const currentDay = today.getDate();
@@ -94,7 +94,9 @@ cron.schedule('0 13 * * *', async () => {
 							continue;
 						}
 
-						channel.send(`🎉 Happy Birthday <@${row.id || row.nick}>! 🎉`);
+						channel.send(
+							`🎉 Happy Birthday <@${b.id === 0 ? b.nick : b.id}>! 🎉`
+						);
 						return;
 					} catch (channelError) {
 						error.log(`Error fetching channel ${row.channel}:`, channelError);
