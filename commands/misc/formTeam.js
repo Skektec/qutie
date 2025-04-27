@@ -68,13 +68,7 @@ function createTeamButtons(disabled = false) {
 		.setStyle(ButtonStyle.Primary)
 		.setDisabled(disabled);
 
-	const lockin = new ButtonBuilder()
-		.setCustomId('lockin')
-		.setLabel('Lock In')
-		.setStyle(ButtonStyle.Success)
-		.setDisabled(disabled);
-
-	return new ActionRowBuilder().addComponents(join, leave, newMap, lockin);
+	return new ActionRowBuilder().addComponents(join, leave, newMap);
 }
 
 module.exports = {

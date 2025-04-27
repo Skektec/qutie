@@ -82,15 +82,6 @@ module.exports = {
 				await fetchedMessage.edit({ embeds: [updatedTeam] });
 			}
 
-			if (buttonInteraction.customId === 'lockin') {
-				const disabledRow = createTeamButtons(true);
-
-				await fetchedMessage.edit({
-					components: [disabledRow],
-				});
-
-				teamDataMap.delete(fetchedMessage.id);
-			}
 		} catch (error) {
 			console.error('Unhandled error in button interaction:', error);
 			try {
