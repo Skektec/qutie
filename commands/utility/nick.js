@@ -27,6 +27,10 @@ module.exports = {
 		try {
 			if (member.manageable) {
 				member.setNickname(nick);
+				interaction.reply({
+					content: `Nickname changed.`,
+					flags: MessageFlags.Ephemeral,
+				});
 			} else {
 				interaction.reply({
 					content: `I don't have the permissions for that.`,
