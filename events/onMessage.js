@@ -1,177 +1,173 @@
-const { Events, MessageFlags, EmbedBuilder } = require('discord.js');
-const { botAdimn } = require('../data/config.json');
-const { nvmGif, neverKysVideo } = require('../data/pubconfig.json');
-const maps = require('../data/wtMaps.json');
+const { Events, MessageFlags, EmbedBuilder } = require("discord.js");
+const { botAdimn } = require("../data/config.json");
+const { nvmGif, neverKysVideo } = require("../data/pubconfig.json");
+const maps = require("../data/wtMaps.json");
 // const mutedUsers = require('../data/mutedUsers.json');
-const fetchquote = require('./fetchquote');
-const jarvis = require('../jarvis');
-const support = require('./support');
-const sendEmoji = require('./sendEmoji');
-const fs = require('fs');
+const fetchquote = require("./fetchquote");
+const jarvis = require("../jarvis");
+const support = require("./support");
+const sendEmoji = require("./sendEmoji");
+const fs = require("fs");
 // const repostDetection = require('./repostDetection');
-const { exec } = require('child_process');
+const { exec } = require("child_process");
 
-const words = ['uwu', 'owo', 'blahaj'];
+const words = ["uwu", "owo", "blahaj"];
 
 function delay(time) {
-	return new Promise((resolve) => setTimeout(resolve, time));
+  return new Promise((resolve) => setTimeout(resolve, time));
 }
 
 const prevMessages = [];
 
 module.exports = {
-	name: Events.MessageCreate,
-	execute: async (message) => {
-		// Just messing around with a mute function that deletes messages, not implemented.
+  name: Events.MessageCreate,
+  execute: async (message) => {
+    // While technically I could have a event handler on each functions page, this allows for each function to be easily managed.
 
-		// if (Array.isArray(mutedUsers) && mutedUsers.includes(message.author.id)) {
-		// 	message.reply({
-		// 		content: 'You are muted.',
-		// 		flags: MessageFlags.Ephemeral,
-		// 	});
-		//
-		// 	message.delete();
-		// 	return;
-		// }
+    // Just messing around with a mute function that deletes messages, not implemented.
 
-		if (message.author.bot) return;
+    // if (Array.isArray(mutedUsers) && mutedUsers.includes(message.author.id)) {
+    // 	message.reply({
+    // 		content: 'You are muted.',
+    // 		flags: MessageFlags.Ephemeral,
+    // 	});
+    //
+    // 	message.delete();
+    // 	return;
+    // }
 
-		prevMessages.push(message.content);
+    if (message.author.bot) return;
 
-		if (prevMessages.length > 3) {
-			prevMessages.shift();
-		}
+    prevMessages.push(message.content);
 
-		if (
-			prevMessages.length === 3 &&
-			prevMessages.every(
-				(msg) => msg === prevMessages[0] && !message.content.startsWith('.q')
-			)
-		) {
-			message.channel.send(prevMessages[2]);
-		}
+    if (prevMessages.length > 3) prevMessages.shift();
 
-		if (message.content === 'nvm') {
-			message.reply({
-				content: nvmGif,
-				allowedMentions: { repliedUser: false },
-			});
-		}
+    if (message.content.startsWith("jarvis")) jarvis.execute(message);
 
-		if (message.content.match(/kms|kill myself|killing myself/i)) {
-			message.reply({
-				content: neverKysVideo,
-				allowedMentions: { repliedUser: false },
-			});
-		}
+    if (words.includes(message.content)) sendEmoji.execute(message);
 
-		if (
-			message.content.startsWith('.answer') &&
-			message.author.id === botAdimn
-		) {
-			const args = message.content.slice(7).trim().split(/ +/);
+    if (message.tts === true) message.reply("kys");
 
-			support.answer(message, args);
-		}
-		if (message.content.startsWith('.q')) {
-			const args = message.content.slice(2).trim().split(/ +/);
+    if (
+      prevMessages.length === 3 &&
+      prevMessages.every(
+        (msg) => msg === prevMessages[0] && !message.content.startsWith(".q")
+      )
+    ) {
+      message.channel.send(prevMessages[2]);
+    }
 
-			fetchquote.execute(message, args);
-		}
-		if (message.content.startsWith('!p')) {
-			const args = message.content.slice(3).trim().split(' ');
-			const command = args.shift();
-			const extraArguments = args.join(' ');
+    // if (message.content === "nvm") {
+    //   message.reply({
+    //     content: nvmGif,
+    //     allowedMentions: { repliedUser: false },
+    //   });
+    // }
 
-			const commandFilePath = path.join(
-				__dirname,
-				'commands',
-				'python_commands',
-				`${command}.py`
-			);
+    if (message.content.match(/kms|kill myself|killing myself/i)) {
+      message.reply({
+        content: neverKysVideo,
+        allowedMentions: { repliedUser: false },
+      });
+    }
 
-			fs.access(commandFilePath, fs.constants.F_OK, (err) => {
-				if (err) {
-					message.reply(`Command "${command}" not found.`);
-					return;
-				}
+    if (
+      message.content.startsWith(".answer") &&
+      message.author.id === botAdimn
+    ) {
+      const args = message.content.slice(7).trim().split(/ +/);
 
-				if (!extraArguments.trim()) {
-					exec(`python "${commandFilePath}"`, (error, stdout, stderr) => {
-						if (error) {
-							message.reply(`Error: ${error.message} (Occured in python code)`);
-							return;
-						}
-						if (stderr) {
-							message.reply(`Python Error: ${stderr}`);
-							return;
-						}
+      support.answer(message, args);
+    }
 
-						const response = stdout.trim();
-						console.log(
-							`Running command: python "${commandFilePath}" with no arguments`
-						);
+    if (message.content.startsWith(".q")) {
+      const args = message.content.slice(2).trim().split(/ +/);
 
-						if (response === '') {
-							message.reply('No response from the command.');
-						} else {
-							message.reply(response);
-						}
-					});
-				} else {
-					exec(
-						`python "${commandFilePath}" "${extraArguments}"`,
-						(error, stdout, stderr) => {
-							if (error) {
-								message.reply(
-									`Error: ${error.message}  (Occured in python code)`
-								);
-								return;
-							}
-							if (stderr) {
-								message.reply(`Python Error: ${stderr}`);
-								return;
-							}
+      fetchquote.execute(message, args);
+    }
 
-							const response = stdout.trim();
-							console.log(
-								`Running command: python "${commandFilePath}" "${extraArguments}"`
-							);
+    if (message.content.startsWith("!p")) {
+      const args = message.content.slice(3).trim().split(" ");
+      const command = args.shift();
+      const extraArguments = args.join(" ");
 
-							if (response === '') {
-								message.reply('No response from the command.');
-							} else {
-								message.reply(response);
-							}
-						}
-					);
-				}
-			});
-		}
+      const commandFilePath = path.join(
+        __dirname,
+        "commands",
+        "python_commands",
+        `${command}.py`
+      );
 
-		// This was removed as it was unreliable
+      fs.access(commandFilePath, fs.constants.F_OK, (err) => {
+        if (err) {
+          message.reply(`Command "${command}" not found.`);
+          return;
+        }
 
-		// if (message.embeds.length > 0) {
-		// 	repostDetection.execute(message);
-		// }
+        if (!extraArguments.trim()) {
+          exec(`python "${commandFilePath}"`, (error, stdout, stderr) => {
+            if (error) {
+              message.reply(`Error: ${error.message} (Occured in python code)`);
+              return;
+            }
+            if (stderr) {
+              message.reply(`Python Error: ${stderr}`);
+              return;
+            }
 
-		if (message.content.startsWith('jarvis')) {
-			jarvis.execute(message);
-		}
+            const response = stdout.trim();
+            console.log(
+              `Running command: python "${commandFilePath}" with no arguments`
+            );
 
-		if (message.content.startsWith('runTest')) {
-			message.channel.send({
-				content: 'No test to execute.',
-				flags: MessageFlags.Ephemeral,
-			});
-		}
+            if (response === "") {
+              message.reply("No response from the command.");
+            } else {
+              message.reply(response);
+            }
+          });
+        } else {
+          exec(
+            `python "${commandFilePath}" "${extraArguments}"`,
+            (error, stdout, stderr) => {
+              if (error) {
+                message.reply(
+                  `Error: ${error.message}  (Occured in python code)`
+                );
+                return;
+              }
+              if (stderr) {
+                message.reply(`Python Error: ${stderr}`);
+                return;
+              }
 
-		if (words.includes(message.content)) {
-			sendEmoji.execute(message);
-		}
+              const response = stdout.trim();
+              console.log(
+                `Running command: python "${commandFilePath}" "${extraArguments}"`
+              );
 
-		if (message.tts === true) {
-			message.reply('kys');
-		}
-	},
+              if (response === "") {
+                message.reply("No response from the command.");
+              } else {
+                message.reply(response);
+              }
+            }
+          );
+        }
+      });
+    }
+
+    if (message.content.startsWith("runTest")) {
+      message.channel.send({
+        content: "No test to execute.",
+        flags: MessageFlags.Ephemeral,
+      });
+    }
+
+    // unreliable
+
+    // if (message.embeds.length > 0) {
+    // 	repostDetection.execute(message);
+    // }
+  },
 };
