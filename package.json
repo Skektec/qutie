@@ -4,7 +4,7 @@
 		"axios": "^1.7.8",
 		"better-sqlite3": "^11.8.1",
 		"discord-player": "^7.1.0",
-		"discord.js": "^14.16.3",
+		"discord.js": "^14.14.1",
 		"dotenv": "^16.4.7",
 		"fs": "^0.0.1-security",
 		"mysql2": "^3.11.5",
