@@ -3,7 +3,7 @@ const path = require("path");
 const Database = require("better-sqlite3");
 const dbPath = path.resolve(__dirname, "../../data/general.db");
 const db = new Database(dbPath);
-const error = require("../../events/error");
+const error = require("../../functions/error");
 
 module.exports = {
   data: new SlashCommandBuilder()

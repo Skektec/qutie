@@ -1,39 +1,39 @@
-const { Events, ActivityType } = require('discord.js');
-const error = require('./error');
-const { setPlayer } = require('../data/clientInstance');
+const { Events, ActivityType } = require("discord.js");
+const error = require("../functions/error");
+const { setPlayer } = require("../data/clientInstance");
 
 module.exports = {
-	name: Events.ClientReady,
-	once: true,
-	execute(client) {
-		client.on('ready', function (readyClient) {
-			// Discord Player Initialization
-			const { Player } = require('discord-player');
-			const player = new Player(readyClient);
-			
-			// Store the player in clientInstance
-			setPlayer(player);
-		});
+  name: Events.ClientReady,
+  once: true,
+  execute(client) {
+    client.on("ready", function (readyClient) {
+      // Discord Player Initialization
+      const { Player } = require("discord-player");
+      const player = new Player(readyClient);
 
-		console.log('Player ready');
+      // Store the player in clientInstance
+      setPlayer(player);
+    });
 
-		const sendNotif = async () => {
-			let serverCount = client.guilds.cache.size;
-			let message = `<@${botAdimn}>! I am online in ${serverCount} servers!`;
-			// The only error log without extra information
-			error.log(message);
-		};
+    console.log("Player ready");
 
-		client.user.setPresence({
-			activities: [
-				{
-					name: 'with you',
-					type: ActivityType.Playing,
-				},
-			],
-		});
+    const sendNotif = async () => {
+      let serverCount = client.guilds.cache.size;
+      let message = `<@${botAdimn}>! I am online in ${serverCount} servers!`;
+      // The only error log without extra information
+      error.log(message);
+    };
 
-		console.log(`Ready! Logged in as ${client.user.tag}`);
-		// sendNotif();
-	},
+    client.user.setPresence({
+      activities: [
+        {
+          name: "with you",
+          type: ActivityType.Playing,
+        },
+      ],
+    });
+
+    console.log(`Ready! Logged in as ${client.user.tag}`);
+    // sendNotif();
+  },
 };

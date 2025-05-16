@@ -3,12 +3,12 @@ const { botAdimn } = require("../data/config.json");
 const { nvmGif, neverKysVideo } = require("../data/pubconfig.json");
 const maps = require("../data/wtMaps.json");
 // const mutedUsers = require('../data/mutedUsers.json');
-const fetchquote = require("./fetchquote");
+const fetchquote = require("../functions/fetchquote");
 const jarvis = require("../jarvis");
-const support = require("./support");
-const sendEmoji = require("./sendEmoji");
+const support = require("../functions/support");
+const sendEmoji = require("../functions/sendEmoji");
 const fs = require("fs");
-// const repostDetection = require('./repostDetection');
+// const repostDetection = require('../functions/repostDetection');
 const { exec } = require("child_process");
 
 const words = ["uwu", "owo", "blahaj"];

@@ -1,97 +1,114 @@
 const {
-	EmbedBuilder,
-	ActionRowBuilder,
-	ButtonBuilder,
-	ButtonStyle,
-} = require('discord.js');
-const maps = require('../data/wtMaps.json');
-const error = require('./error');
+  EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+} = require("discord.js");
+const maps = require("../data/wtMaps.json");
+const error = require("../functions/error");
 const {
-	teamDataMap,
-	getMap,
-	shuffleTeam,
-	updateTeamEmbed,
-	createTeamButtons
-} = require('../commands/misc/formTeam');
+  teamDataMap,
+  getMap,
+  shuffleTeam,
+  updateTeamEmbed,
+  createTeamButtons,
+} = require("../commands/misc/formTeam");
 
 module.exports = {
-	name: 'interactionCreate',
-	async execute(buttonInteraction) {
-		try {
-			if (!buttonInteraction.isButton()) return;
-			
-			const fetchedMessage = buttonInteraction.message;
+  name: "interactionCreate",
+  async execute(buttonInteraction) {
+    try {
+      if (!buttonInteraction.isButton()) return;
 
-			const teamData = teamDataMap.get(fetchedMessage.id);
+      const fetchedMessage = buttonInteraction.message;
 
-			if (!teamData) {
-				console.error('No team data found for message ID:', fetchedMessage.id);
-				console.error('Current Team Data Map keys:', Array.from(teamDataMap.keys()));
-				return;
-			}
+      const teamData = teamDataMap.get(fetchedMessage.id);
 
-			const { team1, team2, randomMapName, randomMapUrl } = teamData;
+      if (!teamData) {
+        console.error("No team data found for message ID:", fetchedMessage.id);
+        console.error(
+          "Current Team Data Map keys:",
+          Array.from(teamDataMap.keys())
+        );
+        return;
+      }
 
-			const userId = buttonInteraction.user.id;
-			const username = buttonInteraction.user.username;
+      const { team1, team2, randomMapName, randomMapUrl } = teamData;
 
-			try {
-				await buttonInteraction.deferUpdate();
-			} catch (deferError) {
-				console.error('Error deferring update:', deferError);
-			}
+      const userId = buttonInteraction.user.id;
+      const username = buttonInteraction.user.username;
 
-			if (buttonInteraction.customId === 'newmap') {
-				const newMapData = getMap(maps);
-				
-				teamData.randomMapName = newMapData.randomMapName;
-				teamData.randomMapUrl = newMapData.randomMapUrl;
+      try {
+        await buttonInteraction.deferUpdate();
+      } catch (deferError) {
+        console.error("Error deferring update:", deferError);
+      }
 
-				const updatedTeam = updateTeamEmbed(team1, team2, newMapData.randomMapName, newMapData.randomMapUrl);
-				await fetchedMessage.edit({ embeds: [updatedTeam] });
-			}
+      if (buttonInteraction.customId === "newmap") {
+        const newMapData = getMap(maps);
 
-			if (buttonInteraction.customId === 'join') {
-				if (
-					team1.some((member) => member.id === userId) ||
-					team2.some((member) => member.id === userId)
-				) {
-					return;
-				}
+        teamData.randomMapName = newMapData.randomMapName;
+        teamData.randomMapUrl = newMapData.randomMapUrl;
 
-				if (team1.length <= team2.length) {
-					team1.push({ id: userId, username });
-				} else {
-					team2.push({ id: userId, username });
-				}
+        const updatedTeam = updateTeamEmbed(
+          team1,
+          team2,
+          newMapData.randomMapName,
+          newMapData.randomMapUrl
+        );
+        await fetchedMessage.edit({ embeds: [updatedTeam] });
+      }
 
-				shuffleTeam(team1, team2);
+      if (buttonInteraction.customId === "join") {
+        if (
+          team1.some((member) => member.id === userId) ||
+          team2.some((member) => member.id === userId)
+        ) {
+          return;
+        }
 
-				const updatedTeam = updateTeamEmbed(team1, team2, randomMapName, randomMapUrl);
-				await fetchedMessage.edit({ embeds: [updatedTeam] });
-			}
+        if (team1.length <= team2.length) {
+          team1.push({ id: userId, username });
+        } else {
+          team2.push({ id: userId, username });
+        }
 
-			if (buttonInteraction.customId === 'leave') {
-				const index1 = team1.findIndex((member) => member.id === userId);
-				if (index1 !== -1) team1.splice(index1, 1);
+        shuffleTeam(team1, team2);
 
-				const index2 = team2.findIndex((member) => member.id === userId);
-				if (index2 !== -1) team2.splice(index2, 1);
+        const updatedTeam = updateTeamEmbed(
+          team1,
+          team2,
+          randomMapName,
+          randomMapUrl
+        );
+        await fetchedMessage.edit({ embeds: [updatedTeam] });
+      }
 
-				const updatedTeam = updateTeamEmbed(team1, team2, randomMapName, randomMapUrl);
-				await fetchedMessage.edit({ embeds: [updatedTeam] });
-			}
+      if (buttonInteraction.customId === "leave") {
+        const index1 = team1.findIndex((member) => member.id === userId);
+        if (index1 !== -1) team1.splice(index1, 1);
 
-		} catch (error) {
-			console.error('Unhandled error in button interaction:', error);
-			try {
-				await buttonInteraction.reply({
-					content: 'An error occurred while processing your interaction.',
-					ephemeral: true
-				});
-			} catch (replyError) {
-				console.error('Error sending error reply:', replyError);
-			}
-		}
-	},
+        const index2 = team2.findIndex((member) => member.id === userId);
+        if (index2 !== -1) team2.splice(index2, 1);
+
+        const updatedTeam = updateTeamEmbed(
+          team1,
+          team2,
+          randomMapName,
+          randomMapUrl
+        );
+        await fetchedMessage.edit({ embeds: [updatedTeam] });
+      }
+    } catch (error) {
+      console.error("Unhandled error in button interaction:", error);
+      try {
+        await buttonInteraction.reply({
+          content: "An error occurred while processing your interaction.",
+          ephemeral: true,
+        });
+      } catch (replyError) {
+        console.error("Error sending error reply:", replyError);
+      }
+    }
+  },
 };
