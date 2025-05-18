@@ -7,6 +7,10 @@ const {
 } = require("discord.js");
 const maps = require("../../data/wtMaps.json");
 const error = require("../../functions/error");
+const formTeamData = require("../../data/formTeamData.json");
+const fs = require("fs");
+const path = require("path");
+const { stringify } = require("querystring");
 
 const teamDataMap = new Map();
 
@@ -17,59 +21,164 @@ function getMap(maps) {
   return { randomMapName, randomMapUrl };
 }
 
-function shuffleTeam(team1, team2) {
-  const allMembers = [...team1, ...team2];
-  const shuffledMembers = allMembers.sort(() => Math.random() - 0.5);
+// math yucky
+function formTeam(team1, team2, userId) {
+  let allIds = [...team1, ...team2].map((m) => m.id);
+  allIds = allIds.filter((id, idx, arr) => arr.indexOf(id) === idx);
 
-  const half = Math.ceil(shuffledMembers.length / 2);
+  if (userId && !allIds.includes(userId)) {
+    allIds.push(userId);
+
+    if (!formTeamData.players.some((player) => player.id === userId)) {
+      formTeamData.players.push({ id: userId, points: 1000 });
+      fs.writeFileSync(
+        path.join(__dirname, "../../data/formTeamData.json"),
+        JSON.stringify(formTeamData, null, 2)
+      );
+    }
+  }
+
+  const allPlayers = allIds.map((id) => {
+    const player = formTeamData.players.find((p) => p.id === id);
+    return {
+      id,
+      points: player?.points || 1000,
+    };
+  });
+
+  let bestSplit = { team1: [], team2: [] };
+  let bestScore = Infinity;
+  const ITERATIONS = 1000;
+
+  for (let i = 0; i < ITERATIONS; i++) {
+    const shuffled = [...allPlayers].sort(() => Math.random() - 0.5);
+
+    const t1 = [],
+      t2 = [];
+    for (let j = 0; j < shuffled.length; j++) {
+      if (t1.length <= t2.length) {
+        t1.push(shuffled[j]);
+      } else {
+        t2.push(shuffled[j]);
+      }
+    }
+
+    const sum1 = t1.reduce((acc, p) => acc + p.points, 0);
+    const sum2 = t2.reduce((acc, p) => acc + p.points, 0);
+    const score = Math.pow(sum1 - sum2, 2);
+
+    if (score < bestScore) {
+      bestScore = score;
+      bestSplit = { team1: t1, team2: t2 };
+    }
+  }
+
   team1.length = 0;
   team2.length = 0;
-  team1.push(...shuffledMembers.slice(0, half));
-  team2.push(...shuffledMembers.slice(half));
+  team1.push(...bestSplit.team1);
+  team2.push(...bestSplit.team2);
 }
 
-function updateTeamEmbed(team1, team2, randomMapName, randomMapUrl) {
+function updateTeamEmbed(
+  team1,
+  team2,
+  randomMapName,
+  randomMapUrl,
+  winner = null
+) {
   return new EmbedBuilder()
     .setColor(0x0ff08b)
     .setTitle("Team Tank Battles")
     .setDescription("Team Composition and Map")
     .addFields(
       {
-        name: "Team 1",
+        name: winner === 1 ? "Team 1  👑" : "Team 1",
         value:
-          team1.map((member) => member.username).join("\n") || "No members",
+          team1.map((member) => `<@${member.id}>`).join("\n") || "No members",
       },
       {
-        name: "Team 2",
+        name: winner === 2 ? "Team 2  👑" : "Team 2",
         value:
-          team2.map((member) => member.username).join("\n") || "No members",
+          team2.map((member) => `<@${member.id}>`).join("\n") || "No members",
       }
     )
-    .addFields({ name: "Map is: ", value: randomMapName, inline: true })
+    .addFields({ name: "Map is: ", value: randomMapName })
     .setImage(randomMapUrl)
     .setTimestamp();
 }
 
-function createTeamButtons(disabled = false) {
+function createTeamButtons(setDisabled = false) {
   const join = new ButtonBuilder()
     .setCustomId("join")
     .setLabel("Join a Team")
     .setStyle(ButtonStyle.Primary)
-    .setDisabled(disabled);
+    .setDisabled(setDisabled);
 
   const leave = new ButtonBuilder()
     .setCustomId("leave")
     .setLabel("Leave a Team")
     .setStyle(ButtonStyle.Danger)
-    .setDisabled(disabled);
+    .setDisabled(setDisabled);
 
   const newMap = new ButtonBuilder()
     .setCustomId("newmap")
     .setLabel("Roll Map")
     .setStyle(ButtonStyle.Primary)
-    .setDisabled(disabled);
+    .setDisabled(setDisabled);
 
-  return new ActionRowBuilder().addComponents(join, leave, newMap);
+  const rollTeam = new ButtonBuilder()
+    .setCustomId("rollTeam")
+    .setLabel("Roll Team")
+    .setStyle(ButtonStyle.Primary)
+    .setDisabled(setDisabled);
+
+  const team1Win = new ButtonBuilder()
+    .setCustomId("team1Win")
+    .setLabel("Team 1 Win")
+    .setStyle(ButtonStyle.Success)
+    .setDisabled(setDisabled);
+
+  const team2Win = new ButtonBuilder()
+    .setCustomId("team2Win")
+    .setLabel("Team 2 Win")
+    .setStyle(ButtonStyle.Success)
+    .setDisabled(setDisabled);
+
+  const noWin = new ButtonBuilder()
+    .setCustomId("noWin")
+    .setLabel("No Win/Draw")
+    .setStyle(ButtonStyle.Primary)
+    .setDisabled(setDisabled);
+
+  const row1 = new ActionRowBuilder().addComponents(
+    join,
+    leave,
+    newMap,
+    rollTeam
+  );
+  const row2 = new ActionRowBuilder().addComponents(team1Win, team2Win, noWin);
+
+  return [row1, row2];
+}
+
+function winner(team1, team2, winningTeam) {
+  const winners = winningTeam === 1 ? team1 : team2;
+  const losers = winningTeam === 1 ? team2 : team1;
+
+  winners.forEach((member) => {
+    const player = formTeamData.players.find((p) => p.id === member.id);
+    if (player) player.points += 10;
+  });
+
+  losers.forEach((member) => {
+    const player = formTeamData.players.find((p) => p.id === member.id);
+    if (player) player.points -= 10;
+  });
+
+  fs.writeFileSync(
+    path.join(__dirname, "../../data/formTeamData.json"),
+    JSON.stringify(formTeamData, null, 2)
+  );
 }
 
 module.exports = {
@@ -92,11 +201,12 @@ module.exports = {
         randomMapName,
         randomMapUrl
       );
-      const row = createTeamButtons();
+
+      const [row1, row2] = createTeamButtons();
 
       const message = await interaction.reply({
         embeds: [formedTeam],
-        components: [row],
+        components: [row1, row2],
         fetchReply: true,
       });
 
@@ -116,7 +226,8 @@ module.exports = {
   },
   teamDataMap,
   getMap,
-  shuffleTeam,
+  formTeam,
   updateTeamEmbed,
   createTeamButtons,
+  winner,
 };

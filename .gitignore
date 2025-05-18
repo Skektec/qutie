@@ -10,10 +10,17 @@ node_modules
 // Data
 
 deletedQuotes.json
-mutedUsers.json
-launch.json
-config.json
-quotes.json
-birthdays.json
 links.json
 general.db
+teamElo.json
+
+// Configs
+
+config.json
+mutedUsers.json
+launch.json
+
+// Old
+
+quotes.json
+birthdays.json

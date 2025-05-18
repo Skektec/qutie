@@ -1,16 +1,11 @@
-const {
-  EmbedBuilder,
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-} = require("discord.js");
 const maps = require("../data/wtMaps.json");
-const error = require("../functions/error");
+const { MessageFlags } = require("discord.js");
 const {
   teamDataMap,
   getMap,
-  shuffleTeam,
+  formTeam,
   updateTeamEmbed,
+  winner,
   createTeamButtons,
 } = require("../commands/misc/formTeam");
 
@@ -24,19 +19,9 @@ module.exports = {
 
       const teamData = teamDataMap.get(fetchedMessage.id);
 
-      if (!teamData) {
-        console.error("No team data found for message ID:", fetchedMessage.id);
-        console.error(
-          "Current Team Data Map keys:",
-          Array.from(teamDataMap.keys())
-        );
-        return;
-      }
-
       const { team1, team2, randomMapName, randomMapUrl } = teamData;
 
       const userId = buttonInteraction.user.id;
-      const username = buttonInteraction.user.username;
 
       try {
         await buttonInteraction.deferUpdate();
@@ -59,21 +44,59 @@ module.exports = {
         await fetchedMessage.edit({ embeds: [updatedTeam] });
       }
 
+      if (buttonInteraction.customId === "team1Win") {
+        const updatedTeam = updateTeamEmbed(
+          team1,
+          team2,
+          randomMapName,
+          randomMapUrl,
+          1
+        );
+        const [row1, row2] = createTeamButtons(true);
+        await fetchedMessage.edit({
+          embeds: [updatedTeam],
+          components: [row1, row2],
+        });
+
+        const winningTeam = 1;
+        winner(team1, team2, winningTeam);
+      }
+
+      if (buttonInteraction.customId === "team2Win") {
+        const updatedTeam = updateTeamEmbed(
+          team1,
+          team2,
+          randomMapName,
+          randomMapUrl,
+          2
+        );
+        const [row1, row2] = createTeamButtons(true);
+        await fetchedMessage.edit({
+          embeds: [updatedTeam],
+          components: [row1, row2],
+        });
+
+        const winningTeam = 2;
+        winner(team1, team2, winningTeam);
+      }
+
+      if (buttonInteraction.customId === "noWin") {
+        const updatedTeam = updateTeamEmbed(
+          team1,
+          team2,
+          randomMapName,
+          randomMapUrl,
+          0
+        );
+        const [row1, row2] = createTeamButtons(true);
+        await fetchedMessage.edit({
+          embeds: [updatedTeam],
+          components: [row1, row2],
+        });
+      }
+
       if (buttonInteraction.customId === "join") {
-        if (
-          team1.some((member) => member.id === userId) ||
-          team2.some((member) => member.id === userId)
-        ) {
-          return;
-        }
-
-        if (team1.length <= team2.length) {
-          team1.push({ id: userId, username });
-        } else {
-          team2.push({ id: userId, username });
-        }
-
-        shuffleTeam(team1, team2);
+        formTeam(team1, team2, userId);
 
         const updatedTeam = updateTeamEmbed(
           team1,
@@ -99,12 +122,24 @@ module.exports = {
         );
         await fetchedMessage.edit({ embeds: [updatedTeam] });
       }
+
+      if (buttonInteraction.customId === "rollTeam") {
+        formTeam(team1, team2, team1[0]?.id || team2[0]?.id);
+
+        const updatedTeam = updateTeamEmbed(
+          team1,
+          team2,
+          randomMapName,
+          randomMapUrl
+        );
+        await fetchedMessage.edit({ embeds: [updatedTeam] });
+      }
     } catch (error) {
       console.error("Unhandled error in button interaction:", error);
       try {
         await buttonInteraction.reply({
           content: "An error occurred while processing your interaction.",
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       } catch (replyError) {
         console.error("Error sending error reply:", replyError);

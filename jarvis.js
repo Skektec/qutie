@@ -10,7 +10,6 @@ module.exports = {
   execute: async (message) => {
     try {
       const commandSen = message.content.replace(/^jarvis\s*/i, "");
-      // console.log('Sending to mistral: ' + message.content);
       const chatResponse = await client.chat.complete({
         model: "mistral-small-latest",
         messages: [
@@ -26,7 +25,6 @@ module.exports = {
       });
 
       const content = chatResponse.choices[0].message.content;
-      // console.log(content);
 
       // for (let i = 0; i < content.length; i += 2000) {
       // 	await message.channel.send(content.slice(i, i + 2000));

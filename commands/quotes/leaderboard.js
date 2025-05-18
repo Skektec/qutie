@@ -7,7 +7,7 @@ const db = new Database(dbPath);
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("leaderboard")
+    .setName("quoteboard")
     .setDescription("Creates a leaderboard of all quotes in the server."),
   async execute(interaction) {
     await interaction.deferReply();
@@ -36,7 +36,7 @@ module.exports = {
       .setColor(0x0099ff)
       .setTitle("Quote Leaderboard")
       .setDescription(leaderboardText || "No quotes yet.")
-      .setFooter({ text: "This is just so guh." });
+      .setFooter({ text: "Damn, touch grass." });
 
     interaction.editReply({ embeds: [leaderboardEmbed] });
   },
