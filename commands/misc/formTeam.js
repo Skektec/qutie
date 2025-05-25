@@ -26,6 +26,7 @@ function formTeam(team1, team2, userId) {
   let allIds = [...team1, ...team2].map((m) => m.id);
   allIds = allIds.filter((id, idx, arr) => arr.indexOf(id) === idx);
 
+  // Adds new users to db
   if (userId && !allIds.includes(userId)) {
     allIds.push(userId);
 
@@ -63,9 +64,13 @@ function formTeam(team1, team2, userId) {
       }
     }
 
-    const sum1 = t1.reduce((acc, p) => acc + p.points, 0);
-    const sum2 = t2.reduce((acc, p) => acc + p.points, 0);
-    const score = Math.pow(sum1 - sum2, 2);
+    const avg1 = t1.length
+      ? t1.reduce((acc, p) => acc + p.points, 0) / t1.length
+      : 0;
+    const avg2 = t2.length
+      ? t2.reduce((acc, p) => acc + p.points, 0) / t2.length
+      : 0;
+    const score = Math.pow(avg1 - avg2, 2);
 
     if (score < bestScore) {
       bestScore = score;

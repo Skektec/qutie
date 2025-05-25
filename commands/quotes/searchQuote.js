@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, MessageFlags } = require("discord.js");
 const { EmbedBuilder } = require("discord.js");
 const stringSimilarity = require("string-similarity");
 const path = require("path");
@@ -7,18 +7,33 @@ const dbPath = path.resolve(__dirname, "../../data/general.db");
 const db = new Database(dbPath);
 const error = require("../../functions/error");
 
-// TODO: Apparently bugged??
-
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("searchquote")
     .setDescription("Search for specific keywords in quotes.")
     .addStringOption((option) =>
       option.setName("keywords").setDescription("Keywords").setRequired(true)
+    )
+    .addStringOption((option) =>
+      option.setName("from").setDescription("From").setRequired(false)
+    )
+    .addStringOption((option) =>
+      option.setName("to").setDescription("To").setRequired(false)
     ),
 
   async execute(interaction) {
     const search = interaction.options.getString("keywords");
+    const from = interaction.options.getString("from");
+    const to = interaction.options.getString("to");
+
+    if (from > to)
+      interaction.reply({
+        content: "Invalid Range",
+        Flags: MessageFlags.Ephemeral,
+      });
+
+    if (!from) from = 0;
+    if (!to) to = 20;
 
     try {
       const server = interaction.guildId;
@@ -36,7 +51,7 @@ module.exports = {
       });
 
       const matchesArray = [];
-      matches.forEach((match) => {
+      matches.slice(from, to).forEach((match) => {
         matchesArray.push(match);
       });
 
@@ -58,6 +73,11 @@ module.exports = {
       interaction.reply({ embeds: [foundMatches] });
     } catch (err) {
       error.log("Error searching for quotes:", err);
+      interaction.reply({
+        content:
+          "Search failed, try reducing the range if you are setting it high.",
+        Flags: MessageFlags.Ephemeral,
+      });
     }
   },
 };
