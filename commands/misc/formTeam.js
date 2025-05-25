@@ -172,12 +172,12 @@ function winner(team1, team2, winningTeam) {
 
   winners.forEach((member) => {
     const player = formTeamData.players.find((p) => p.id === member.id);
-    if (player) player.points += 10;
+    if (player) player.points += 23;
   });
 
   losers.forEach((member) => {
     const player = formTeamData.players.find((p) => p.id === member.id);
-    if (player) player.points -= 10;
+    if (player) player.points -= 12;
   });
 
   fs.writeFileSync(
