@@ -13,7 +13,7 @@ module.exports = {
         "https://fixupx.com$2"
       );
 
-      if (cleaned == message.content) {
+      if (cleaned === message.content) {
         return;
       } else {
         await message.suppressEmbeds(true);

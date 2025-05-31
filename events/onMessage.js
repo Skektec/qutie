@@ -72,11 +72,11 @@ module.exports = {
 
     if (message.content.match(/x.com|reddit.com/i)) {
       const cleanLink = await clean.execute(message);
-
-      message.reply({
-        content: cleanLink,
-        allowedMentions: { repliedUser: false },
-      });
+      if (cleanLink)
+        message.reply({
+          content: cleanLink,
+          allowedMentions: { repliedUser: false },
+        });
     }
 
     if (
