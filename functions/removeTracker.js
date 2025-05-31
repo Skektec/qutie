@@ -6,13 +6,13 @@ module.exports = {
       await message.suppressEmbeds(true);
 
       cleaned = cleaned.replace(
-        /(https?:\/\/(?:www\.)?reddit\.com\/[\w\/.-]+)(?:\?[^\/\s]*)?/gi,
-        "https://rxddit.com$1"
+        /(https?:\/\/(?:www\.)?reddit\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
+        "https://rxddit.com$2"
       );
 
       cleaned = cleaned.replace(
-        /(https?:\/\/(?:www\.)?x\.com\/[\w\/.-]+)(?:\?[^\/\s]*)?/gi,
-        "https://fixupx.com$1"
+        /(https?:\/\/(?:www\.)?x\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
+        "https://fixupx.com$2"
       );
 
       return cleaned;
