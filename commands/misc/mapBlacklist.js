@@ -18,21 +18,28 @@ module.exports = {
     const focusedOption = interaction.options.getFocused(true);
 
     if (focusedOption.name === "map") {
-      const maps = JSON.parse(
-        fs.readFileSync(require.resolve("../../data/wtMaps.json"), "utf8")
-      );
-      const blacklistData = JSON.parse(
-        fs.readFileSync(require.resolve("../../data/mapBlacklist.json"), "utf8")
-      );
-      const excludeList = blacklistData[serverId] || [];
+      try {
+        const maps = JSON.parse(
+          fs.readFileSync(require.resolve("../../data/wtMaps.json"), "utf8")
+        );
+        const blacklistData = JSON.parse(
+          fs.readFileSync(
+            require.resolve("../../data/mapBlacklist.json"),
+            "utf8"
+          )
+        );
+        const excludeList = blacklistData[serverId] || [];
 
-      const choices = Object.keys(maps).filter(
-        (mapName) => !excludeList.includes(mapName)
-      );
+        const choices = Object.keys(maps).filter(
+          (mapName) => !excludeList.includes(mapName)
+        );
 
-      await interaction.respond(
-        choices.map((choice) => ({ name: choice, value: choice }))
-      );
+        await interaction.respond(
+          choices.map((choice) => ({ name: choice, value: choice }))
+        );
+      } catch (err) {
+        error.log("Error in blacklist autocomplete: " + err);
+      }
     }
   },
 
