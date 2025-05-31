@@ -8,6 +8,7 @@ const {
 const maps = require("../../data/wtMaps.json");
 const error = require("../../functions/error");
 const formTeamData = require("../../data/formTeamData.json");
+const mapBlacklist = require("../../data/mapBlacklist.json");
 const fs = require("fs");
 const path = require("path");
 const { stringify } = require("querystring");
@@ -94,17 +95,27 @@ function updateTeamEmbed(
   return new EmbedBuilder()
     .setColor(0x0ff08b)
     .setTitle("Team Tank Battles")
-    .setDescription("Team Composition and Map")
+    .setDescription(
+      winner === 1
+        ? "Team 1 win"
+        : winner === 2
+        ? "Team 2 win"
+        : winner === 0
+        ? "No Winner/Draw"
+        : "Match in progress"
+    )
     .addFields(
       {
         name: winner === 1 ? "Team 1  👑" : "Team 1",
         value:
           team1.map((member) => `<@${member.id}>`).join("\n") || "No members",
+        inline: true,
       },
       {
         name: winner === 2 ? "Team 2  👑" : "Team 2",
         value:
           team2.map((member) => `<@${member.id}>`).join("\n") || "No members",
+        inline: true,
       }
     )
     .addFields({ name: "Map is: ", value: randomMapName })
@@ -214,11 +225,11 @@ module.exports = {
 
       const [row1, row2] = createTeamButtons();
 
-      const message = await interaction.reply({
+      await interaction.reply({
         embeds: [formedTeam],
         components: [row1, row2],
-        fetchReply: true,
       });
+      const message = await interaction.fetchReply();
 
       const messageId = message.id;
 
