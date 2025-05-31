@@ -198,7 +198,12 @@ module.exports = {
       const team1 = [];
       const team2 = [];
 
-      const { randomMapName, randomMapUrl } = getMap(maps);
+      serverId = interaction.guild.id;
+      const blacklist = mapBlacklist[serverId] || [];
+
+      do {
+        ({ randomMapName, randomMapUrl } = getMap(maps));
+      } while (blacklist.includes(randomMapName));
 
       const formedTeam = updateTeamEmbed(
         team1,
