@@ -2,30 +2,20 @@ module.exports = {
   execute: async (message) => {
     let cleaned = message.content;
 
-    if (
-      message.content.match(/https:\/\/x.com|https:\/\/reddit.com/i) ||
-      message.content.match(/\?t=|\?utm_source/i)
-    ) {
-      message.suppressEmbeds(true);
+    if (message.content.includes("http")) {
+      await message.suppressEmbeds(true);
 
       cleaned = cleaned.replace(
-        /(https?:\/\/(?:www\.)?(?:reddit\.com|rxddit\.com)\/[^?\s]+)(?:\?[^\s]*)?/gi,
-        "$1"
+        /(https?:\/\/(?:www\.)?reddit\.com\/[\w\/.-]+)(?:\?[^\/\s]*)?/gi,
+        "https://rxddit.com$1"
       );
 
       cleaned = cleaned.replace(
-        /(https?:\/\/(?:www\.)?(?:x\.com|fixupx\.com)\/[^\s?]+)\?t=[^\s&]+[^\s]*/gi,
-        "$1"
+        /(https?:\/\/(?:www\.)?x\.com\/[\w\/.-]+)(?:\?[^\/\s]*)?/gi,
+        "https://fixupx.com$1"
       );
 
-      cleaned = cleaned.replace(
-        /https?:\/\/(?:www\.)?x\.com/gi,
-        "https://fixupx.com"
-      );
-      cleaned = cleaned.replace(
-        /https?:\/\/(?:www\.)?reddit\.com/gi,
-        "https://rxddit.com"
-      );
+      return cleaned;
     }
 
     return cleaned;
