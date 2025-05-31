@@ -3,8 +3,6 @@ module.exports = {
     let cleaned = message.content;
 
     if (message.content.includes("http")) {
-      await message.suppressEmbeds(true);
-
       cleaned = cleaned.replace(
         /(https?:\/\/(?:www\.)?reddit\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
         "https://rxddit.com$2"
@@ -18,6 +16,7 @@ module.exports = {
       if (cleaned == message.content) {
         return;
       } else {
+        await message.suppressEmbeds(true);
         return cleaned;
       }
     }
