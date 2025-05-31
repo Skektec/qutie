@@ -1,12 +1,12 @@
 const { Events, MessageFlags, EmbedBuilder } = require("discord.js");
 const { botAdimn } = require("../data/config.json");
 const { nvmGif, neverKysVideo } = require("../data/pubconfig.json");
-const maps = require("../data/wtMaps.json");
 // const mutedUsers = require('../data/mutedUsers.json');
 const fetchquote = require("../functions/fetchquote");
 const jarvis = require("../jarvis");
 const support = require("../functions/support");
 const sendEmoji = require("../functions/sendEmoji");
+const clean = require("../functions/removeTracker");
 const fs = require("fs");
 // const repostDetection = require('../functions/repostDetection');
 const { exec } = require("child_process");
@@ -25,7 +25,6 @@ module.exports = {
     // While technically I could have a event handler on each functions page, this allows for each function to be easily managed.
 
     // Just messing around with a mute function that deletes messages, not implemented.
-
     // if (Array.isArray(mutedUsers) && mutedUsers.includes(message.author.id)) {
     // 	message.reply({
     // 		content: 'You are muted.',
@@ -67,6 +66,16 @@ module.exports = {
     if (message.content.match(/kms|kill myself|killing myself/i)) {
       message.reply({
         content: neverKysVideo,
+        allowedMentions: { repliedUser: false },
+      });
+    }
+
+    if (message.content.match(/x.com|reddit.com/i)) {
+      const cleanLink = await clean.execute(message);
+
+      message.suppressEmbeds(true);
+      message.reply({
+        content: cleanLink,
         allowedMentions: { repliedUser: false },
       });
     }

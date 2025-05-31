@@ -7,6 +7,8 @@ const dbPath = path.resolve(__dirname, "../../data/general.db");
 const db = new Database(dbPath);
 const error = require("../../functions/error");
 
+// TODO: Apparently still finicky
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("searchquote")
