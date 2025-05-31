@@ -9,7 +9,7 @@ module.exports = {
       message.suppressEmbeds(true);
 
       cleaned = cleaned.replace(
-        /(https?:\/\/(?:www\.)?(?:reddit\.com|rxddit\.com)\/[^\s?]+)(\?utm[^\s]*)?/gi,
+        /(https?:\/\/(?:www\.)?(?:reddit\.com|rxddit\.com)\/[^?\s]+)(?:\?[^\s]*)?/gi,
         "$1"
       );
 
