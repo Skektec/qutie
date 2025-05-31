@@ -15,9 +15,11 @@ module.exports = {
         "https://fixupx.com$2"
       );
 
-      return cleaned;
+      if (cleaned == message.content) {
+        return;
+      } else {
+        return cleaned;
+      }
     }
-
-    return cleaned;
   },
 };
