@@ -9,12 +9,12 @@ module.exports = {
       message.suppressEmbeds(true);
 
       cleaned = cleaned.replace(
-        /(https?:\/\/(?:www\.)?reddit\.com\/[^\s?]+)(\?utm[^\s]*)?/gi,
+        /(https?:\/\/(?:www\.)?(?:reddit\.com|rxddit\.com)\/[^\s?]+)(\?utm[^\s]*)?/gi,
         "$1"
       );
 
       cleaned = cleaned.replace(
-        /(https?:\/\/(?:www\.)?x\.com\/[^\s?]+)\?t=[^\s&]+[^\s]*/gi,
+        /(https?:\/\/(?:www\.)?(?:x\.com|fixupx\.com)\/[^\s?]+)\?t=[^\s&]+[^\s]*/gi,
         "$1"
       );
 
@@ -26,8 +26,8 @@ module.exports = {
         /https?:\/\/(?:www\.)?reddit\.com/gi,
         "https://rxddit.com"
       );
-
-      return cleaned;
     }
+
+    return cleaned;
   },
 };
