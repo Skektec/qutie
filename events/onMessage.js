@@ -73,7 +73,6 @@ module.exports = {
     if (message.content.match(/x.com|reddit.com/i)) {
       const cleanLink = await clean.execute(message);
 
-      message.suppressEmbeds(true);
       message.reply({
         content: cleanLink,
         allowedMentions: { repliedUser: false },

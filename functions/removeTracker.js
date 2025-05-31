@@ -6,6 +6,8 @@ module.exports = {
       message.content.match(/x.com|reddit.com/i) |
       message.content.match(/\?t=|\?utm_source/i)
     ) {
+      message.suppressEmbeds(true);
+
       cleaned = cleaned.replace(
         /(https?:\/\/(?:www\.)?reddit\.com\/[^\s?]+)(\?utm[^\s]*)?/gi,
         "$1"
