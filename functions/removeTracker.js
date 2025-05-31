@@ -3,7 +3,7 @@ module.exports = {
     let cleaned = message.content;
 
     if (
-      message.content.match(/x.com|reddit.com/i) |
+      message.content.match(/x.com|reddit.com/i) ||
       message.content.match(/\?t=|\?utm_source/i)
     ) {
       message.suppressEmbeds(true);
