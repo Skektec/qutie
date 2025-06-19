@@ -1,11 +1,6 @@
 const { SlashCommandBuilder, MessageFlags } = require("discord.js");
-const sqlite3 = require("sqlite3").verbose();
-const path = require("path");
-const dbPath = path.resolve(__dirname, "../../data/general.db");
-const database = new sqlite3.Database(dbPath);
+const database = require("../../functions/database");
 const error = require("../../functions/error");
-
-// this command is slightly different from the event/addquote, it doesn't require a user.
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -67,69 +62,49 @@ module.exports = {
       };
     }
 
-    database.run(
-      `CREATE TABLE IF NOT EXISTS "${tableName}" (
-        nick TEXT,
-        userId TEXT,
-        channel TEXT,
-        server TEXT,
-        messageId TEXT,
-        text TEXT,
-        time INTEGER,
-		image TEXT
-      )`,
-      (err) => {
-        if (err) error.log(`Error creating table ${tableName}:`, err);
+    try {
+      await database.query(
+        `CREATE TABLE IF NOT EXISTS "${tableName}" (
+          nick TEXT,
+          userId TEXT,
+          channel TEXT,
+          server TEXT,
+          messageId TEXT PRIMARY KEY,
+          text TEXT,
+          time BIGINT,
+          image TEXT
+        )`
+      );
+
+      const { rowCount } = await database.query(
+        `SELECT 1 FROM "${tableName}" WHERE messageId = $1 LIMIT 1`,
+        [messageId]
+      );
+      if (rowCount > 0) {
+        return interaction.reply({
+          content: "This quote already exists.",
+          flags: MessageFlags.Ephemeral,
+        });
       }
-    );
 
-    database.get(
-      `SELECT 1 FROM "${tableName}" WHERE messageId = ? LIMIT 1`,
-      [messageId],
-      (err, row) => {
-        if (err) {
-          error.log(`Error checking for duplicate in ${tableName}:`, err);
-          return;
-        }
+      await database.query(
+        `INSERT INTO "${tableName}" (nick, userId, channel, server, text, messageId, time, image)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        [user.username, user.id, channel, server, text, messageId, time, image]
+      );
 
-        if (row) {
-          return;
-        }
+      let quotedContent = text && image ? `${text} \n ${image}` : text || image;
 
-        const insertQuery = `
-          INSERT INTO "${tableName}" (nick, userId, channel, server, text, messageId, time, image)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        `;
-        database.run(
-          insertQuery,
-          [
-            user.username,
-            user.id,
-            channel,
-            server,
-            text,
-            messageId,
-            time,
-            image,
-          ],
-          function (err) {
-            if (err) {
-              error.log(`Error inserting into ${tableName}: ${err.message}`);
-            } else {
-              if (text && image) {
-                quotedContent = `${text} \n ${image}`;
-              } else {
-                quotedContent = text || image;
-              }
-
-              interaction.reply({
-                content: `New quote added by ${interaction.user} as #${this.lastID}\n"${quotedContent}" - ${user.username}`,
-                allowedMentions: { repliedUser: false },
-              });
-            }
-          }
-        );
-      }
-    );
+      await interaction.reply({
+        content: `New quote added by ${interaction.user}\n"${quotedContent}" - ${user.username}`,
+        allowedMentions: { repliedUser: false },
+      });
+    } catch (err) {
+      error.log(`Error inserting into ${tableName}: ${err.message}`);
+      await interaction.reply({
+        content: "There was an error adding the quote.",
+        flags: MessageFlags.Ephemeral,
+      });
+    }
   },
 };

@@ -1,9 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { EmbedBuilder } = require("discord.js");
-const path = require("path");
-const Database = require("better-sqlite3");
-const dbPath = path.resolve(__dirname, "../../data/general.db");
-const db = new Database(dbPath);
+const database = require("../../functions/database");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -14,7 +11,7 @@ module.exports = {
     const server = interaction.guildId;
     const tableName = `${server}-quotes`;
 
-    const quotes = db.prepare(`SELECT * FROM "${tableName}"`).all();
+    const quotes = database.query(`SELECT * FROM "${tableName}"`);
 
     const counts = {};
 

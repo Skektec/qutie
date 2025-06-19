@@ -1,10 +1,7 @@
 const { SlashCommandBuilder, MessageFlags } = require("discord.js");
 const { EmbedBuilder } = require("discord.js");
 const stringSimilarity = require("string-similarity");
-const path = require("path");
-const Database = require("better-sqlite3");
-const dbPath = path.resolve(__dirname, "../../data/general.db");
-const db = new Database(dbPath);
+const database = require("../../functions/database");
 const error = require("../../functions/error");
 
 // TODO: Apparently still finicky
@@ -24,14 +21,14 @@ module.exports = {
     ),
 
   async execute(interaction) {
-    const search = interaction.options.getString("keywords");
-    const from = interaction.options.getString("from");
-    const to = interaction.options.getString("to");
+    let search = interaction.options.getString("keywords");
+    let from = interaction.options.getString("from");
+    let to = interaction.options.getString("to");
 
     if (from > to)
-      interaction.reply({
+      return interaction.reply({
         content: "Invalid Range",
-        Flags: MessageFlags.Ephemeral,
+        flags: MessageFlags.Ephemeral,
       });
 
     if (!from) from = 0;
@@ -39,10 +36,14 @@ module.exports = {
 
     try {
       const server = interaction.guildId;
+      const tableName = `${server}-quotes`;
 
-      const quotesArray = db
-        .prepare(`SELECT *, rowid FROM "${server}-quotes"`)
-        .all();
+      const { rows: quotesArray } = await database.query(
+        `
+        SELECT *, ROW_NUMBER() OVER (ORDER BY time ASC) AS rownum
+        FROM "${tableName}"
+        `
+      );
 
       const matches = quotesArray.filter((quote) => {
         const similarResult = stringSimilarity.compareTwoStrings(
@@ -59,7 +60,7 @@ module.exports = {
 
       const matchesText = matchesArray
         .map(
-          (match) => `"${match.text}" - <@${match.userId}> as #${match.rowid}`
+          (match) => `"${match.text}" - <@${match.userid}> as #${match.rownum}`
         )
         .join("\n");
 
@@ -78,7 +79,7 @@ module.exports = {
       interaction.reply({
         content:
           "Search failed, try reducing the range if you are setting it high.",
-        Flags: MessageFlags.Ephemeral,
+        flags: MessageFlags.Ephemeral,
       });
     }
   },

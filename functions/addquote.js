@@ -1,14 +1,10 @@
-const { EmbedBuilder } = require("discord.js");
-const sqlite3 = require("sqlite3").verbose();
-const path = require("path");
-const dbPath = path.resolve(__dirname, "../data/general.db");
-const database = new sqlite3.Database(dbPath);
+const database = require("../functions/database");
 const error = require("../functions/error");
 const { getClient } = require("../data/clientInstance");
 
 module.exports = {
   execute: async (reaction) => {
-    client = getClient();
+    const client = getClient();
     const botHasReacted = await reaction.users
       .fetch()
       .then((users) => users.has(client.user.id));
@@ -27,68 +23,70 @@ module.exports = {
     const tableName = `${server}-quotes`;
     const image = reaction.message.attachments.first()?.url;
 
-    database.run(
-      `CREATE TABLE IF NOT EXISTS "${tableName}" (
-        nick TEXT,
-        userId TEXT,
-        channel TEXT,
-        server TEXT,
-        text TEXT,
-        messageId TEXT UNIQUE,
-        time INTEGER,
-		image TEXT
-      )`,
-      (err) => {
-        if (err) error.log(`Error creating table ${tableName}:`, err);
+    try {
+      await database.query(
+        `CREATE TABLE IF NOT EXISTS "${tableName}" (
+          nick TEXT,
+          userId TEXT,
+          channel TEXT,
+          server TEXT,
+          text TEXT,
+          messageId TEXT UNIQUE,
+          time BIGINT,
+          image TEXT
+        )`
+      );
+
+      const { rowCount } = await database.query(
+        `SELECT 1 FROM "${tableName}" WHERE messageId = $1 LIMIT 1`,
+        [messageId]
+      );
+      if (rowCount > 0) {
+        return;
       }
-    );
 
-    database.get(
-      `SELECT 1 FROM "${tableName}" WHERE messageId = ? LIMIT 1`,
-      [messageId],
-      (err, row) => {
-        if (err) {
-          error.log(`Error checking for duplicate in ${tableName}:`, err);
-          return;
-        }
+      const insertQuery = `
+        INSERT INTO "${tableName}" (nick, userId, channel, server, text, messageId, time, image)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      `;
+      await database.query(insertQuery, [
+        nick,
+        userId,
+        channel,
+        server,
+        text,
+        messageId,
+        time,
+        image,
+      ]);
 
-        if (row) {
-          return;
-        }
+      const { rows } = await database.query(
+        `
+        SELECT rownum FROM (
+          SELECT messageId, ROW_NUMBER() OVER (ORDER BY time ASC) AS rownum
+          FROM "${tableName}"
+        ) sub
+        WHERE messageId = $1
+        `,
+        [messageId]
+      );
+      const rownum = rows[0]?.rownum;
 
-        const insertQuery = `
-          INSERT INTO "${tableName}" (nick, userId, channel, server, text, messageId, time, image)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        `;
+      await reaction.message.react("💬");
 
-        database.run(
-          insertQuery,
-          [nick, userId, channel, server, text, messageId, time, image],
-          function (err) {
-            try {
-              reaction.message.react("💬");
-
-              if (text && image) {
-                quotedContent = `${text} \n ${image}`;
-              } else {
-                quotedContent = text || image;
-              }
-
-              reaction.message.reply({
-                content: `New quote added by <@${reaction.users.cache.firstKey()}> as #${
-                  this.lastID
-                }\n"${quotedContent}" - <@${userId}>`,
-                allowedMentions: { repliedUser: false },
-              });
-            } catch (err) {
-              error.log(`Error replying to user: ${err}`);
-            }
-            if (err) {
-              error.log(`Error adding quote: ${err}`);
-            }
-          }
-        );
+      let quotedContent;
+      if (text && image) {
+        quotedContent = `${text} \n ${image}`;
+      } else {
+        quotedContent = text || image;
       }
-    );
+
+      await reaction.message.reply({
+        content: `New quote added by <@${reaction.users.cache.firstKey()}> as #${rownum}\n"${quotedContent}" - <@${userId}>`,
+        allowedMentions: { repliedUser: false },
+      });
+    } catch (err) {
+      error.log(`Error adding quote: ${err}`);
+    }
   },
 };

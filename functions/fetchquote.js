@@ -1,6 +1,5 @@
-const sqlite3 = require("sqlite3").verbose();
 const { EmbedBuilder } = require("discord.js");
-const database = new sqlite3.Database("./data/general.db");
+const database = require("../functions/database");
 const error = require("../functions/error");
 
 module.exports = {
@@ -33,9 +32,9 @@ module.exports = {
 
       const quoteEmbed = new EmbedBuilder()
         .setColor(0x0099ff)
-        .setTitle(`Quote #${quote.row_num}`)
+        .setTitle(`Quote #${quote.rownum}`)
         .setDescription(
-          `${quote.text} \n - <@${quote.userId}> [(Jump)](https://discordapp.com/channels/${serverId}/${quote.channel}/${quote.messageId})`
+          `${quote.text} \n - <@${quote.userid}> [(Jump)](https://discordapp.com/channels/${serverId}/${quote.channel}/${quote.messageid})`
         )
         .setImage(image || quote.image)
         .setFooter({ text: `${formattedDate}` });
@@ -43,89 +42,76 @@ module.exports = {
       message.channel.send({ embeds: [quoteEmbed] });
     };
 
-    database.get(
-      `SELECT name FROM sqlite_master WHERE type='table' AND name=?`,
-      [tableName],
-      (err, row) => {
-        if (err) {
-          error.log(`Error checking table ${tableName}:`, err);
-          message.channel.send("An error occurred while fetching quotes.");
-          return;
-        }
-        if (!row) {
-          message.channel.send("No quotes are available for this server.");
-          return;
-        }
-
-        let query;
-        let params = [];
-        let useAll = false;
-
-        if (!isNaN(entryNumber)) {
-          query = `
-            SELECT *, rowid as row_num 
-            FROM "${tableName}" WHERE rowid = ?
-          `;
-          params.push(entryNumber);
-        } else if (args[0] && args[0].startsWith("<@")) {
-          const userId = args[0].replace(/[<@!>]/g, "");
-          query = `
-            SELECT *, rowid as row_num 
-            FROM "${tableName}" WHERE userId = ?
-          `;
-          params.push(userId);
-          useAll = true;
-        } else if (nick) {
-          query = `
-            SELECT *, rowid as row_num 
-            FROM "${tableName}" WHERE nick = ?
-          `;
-          params.push(nick);
-          useAll = true;
-        } else {
-          query = `
-            SELECT *, rowid as row_num 
-            FROM "${tableName}" ORDER BY RANDOM() LIMIT 1
-          `;
-        }
-
-        if (useAll) {
-          database.all(query, params, (err, rows) => {
-            if (err) {
-              error.log(`Error querying ${tableName}:`, err);
-              message.channel.send(
-                "An error occurred while retrieving quotes."
-              );
-              return;
-            }
-
-            if (!rows || rows.length === 0) {
-              message.channel.send("No matching quotes found.");
-              return;
-            }
-
-            const quote = rows[Math.floor(Math.random() * rows.length)];
-            sendQuoteEmbed(quote);
-          });
-        } else {
-          database.get(query, params, (err, row) => {
-            if (err) {
-              error.log(`Error querying ${tableName}:`, err);
-              message.channel.send(
-                "An error occurred while retrieving quotes."
-              );
-              return;
-            }
-
-            if (!row) {
-              message.channel.send("No matching quote found.");
-              return;
-            }
-
-            sendQuoteEmbed(row);
-          });
-        }
-      }
+    const { rowCount } = await database.query(
+      `SELECT 1 FROM information_schema.tables WHERE table_name = $1`,
+      [tableName]
     );
+    if (!rowCount) {
+      message.channel.send("No quotes are available for this server.");
+      return;
+    }
+
+    let query;
+    let params = [];
+    let useAll = false;
+
+    if (!isNaN(entryNumber)) {
+      query = `
+        SELECT * FROM (
+          SELECT *, ROW_NUMBER() OVER (ORDER BY time ASC) AS rownum
+          FROM "${tableName}"
+        ) sub
+        WHERE rownum = $1
+      `;
+      params.push(entryNumber);
+    } else if (args[0] && args[0].startsWith("<@")) {
+      const userId = args[0].replace(/[<@!>]/g, "");
+      query = `
+        SELECT *, ROW_NUMBER() OVER (ORDER BY time ASC) AS rownum
+        FROM "${tableName}"
+        WHERE userid = $1
+      `;
+      params.push(userId);
+      useAll = true;
+    } else if (nick) {
+      query = `
+        SELECT *, ROW_NUMBER() OVER (ORDER BY time ASC) AS rownum
+        FROM "${tableName}"
+        WHERE nick = $1
+      `;
+      params.push(nick);
+      useAll = true;
+    } else {
+      // Random quote
+      query = `
+        SELECT * FROM (
+          SELECT *, ROW_NUMBER() OVER (ORDER BY time ASC) AS rownum
+          FROM "${tableName}"
+        ) sub
+        ORDER BY RANDOM() LIMIT 1
+      `;
+    }
+
+    try {
+      if (useAll) {
+        const { rows } = await database.query(query, params);
+        if (!rows.length) {
+          message.channel.send("No matching quotes found.");
+          return;
+        }
+        const quote = rows[Math.floor(Math.random() * rows.length)];
+        sendQuoteEmbed(quote);
+      } else {
+        const { rows } = await database.query(query, params);
+        if (!rows.length) {
+          message.channel.send("No matching quote found.");
+          return;
+        }
+        sendQuoteEmbed(rows[0]);
+      }
+    } catch (err) {
+      error.log(`Error querying ${tableName}:`, err);
+      message.channel.send("An error occurred while retrieving quotes.");
+    }
   },
 };

@@ -1,11 +1,8 @@
 const { SlashCommandBuilder } = require("discord.js");
 const error = require("../../functions/error");
 const path = require("path");
-const Database = require("better-sqlite3");
 const fs = require("fs");
-
-const dbPath = path.resolve(__dirname, "../../data/general.db");
-const database = new Database(dbPath);
+const database = require("../../functions/database");
 const deletedQuotesPath = path.resolve(
   __dirname,
   "../../data/deletedQuotes.json"
@@ -28,20 +25,17 @@ module.exports = {
 
     if (focusedOption.name === "id") {
       try {
-        const row = database
-          .prepare(
-            `SELECT rowid FROM "${interaction.guild.id}-quotes" ORDER BY rowid DESC LIMIT 1`
-          )
-          .get();
-
-        if (!row) {
+        const { rows } = await database.query(
+          `SELECT COUNT(*)::int AS count FROM "${interaction.guild.id}-quotes"`
+        );
+        const count = rows[0]?.count || 0;
+        if (!count) {
           return await interaction.respond([
             { name: "No row found", value: "0" },
           ]);
         }
-
         await interaction.respond([
-          { name: String(row.rowid), value: String(row.rowid) },
+          { name: String(count), value: String(count) },
         ]);
       } catch (err) {
         error.log("Delete Autocomplete error: " + err.message);
@@ -50,16 +44,24 @@ module.exports = {
   },
 
   async execute(interaction) {
-    const id = interaction.options.getString("id");
+    const rownum = parseInt(interaction.options.getString("id"));
+    const tableName = `${interaction.guild.id}-quotes`;
 
     try {
-      const selectStmt = database.prepare(
-        `SELECT * FROM "${interaction.guild.id}-quotes" WHERE rowid = ?`
+      const { rows } = await database.query(
+        `
+        SELECT * FROM (
+          SELECT *, ROW_NUMBER() OVER (ORDER BY time ASC) AS rownum
+          FROM "${tableName}"
+        ) sub
+        WHERE rownum = $1
+        `,
+        [rownum]
       );
-      const quote = selectStmt.get(id);
+      const quote = rows[0];
 
       if (!quote) {
-        return await interaction.reply(`No quote found with ID: #${id}`);
+        return await interaction.reply(`No quote found with ID: #${rownum}`);
       }
 
       let deletedQuotes = [];
@@ -73,7 +75,11 @@ module.exports = {
         deletedQuotes = [];
       }
 
-      deletedQuotes.push({ id, guildId: interaction.guild.id, ...quote });
+      deletedQuotes.push({
+        id: rownum,
+        guildId: interaction.guild.id,
+        ...quote,
+      });
 
       try {
         fs.writeFileSync(
@@ -84,12 +90,11 @@ module.exports = {
         error.log("Error saving deletedQuotes.json: " + err.message);
       }
 
-      const deleteStmt = database.prepare(
-        `DELETE FROM "${interaction.guild.id}-quotes" WHERE rowid = ?`
-      );
-      deleteStmt.run(id);
+      await database.query(`DELETE FROM "${tableName}" WHERE messageId = $1`, [
+        quote.messageid,
+      ]);
 
-      await interaction.reply(`Deleted quote: #${id} - "${quote.text}"`);
+      await interaction.reply(`Deleted quote: #${rownum} - "${quote.text}"`);
     } catch (err) {
       error.log("Delete Func Error: " + err.message);
       await interaction.reply({

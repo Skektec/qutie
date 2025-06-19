@@ -10,8 +10,7 @@ const {
 const { discordToken } = require("./data/config.json");
 const error = require("./functions/error");
 const { setClient } = require("./data/clientInstance");
-const sqlite3 = require("sqlite3").verbose();
-const db = new sqlite3.Database("./data/general.db");
+const database = require("./functions/database");
 
 const client = new Client({
   intents: [
@@ -72,7 +71,7 @@ cron.schedule("0 13 * * *", async () => {
     const currentMonth = today.toLocaleString("en-US", { month: "long" });
     const currentDate = `${currentDay}-${currentMonth}`;
 
-    db.all(
+    database.query(
       "SELECT id, nick, channel FROM birthdays WHERE SUBSTR(date, 1, LENGTH(date) - 5) = ?",
       [currentDate],
       async (err, rows) => {
