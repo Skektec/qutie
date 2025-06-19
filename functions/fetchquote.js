@@ -73,6 +73,27 @@ module.exports = {
       `;
       params.push(userId);
       useAll = true;
+    } else if (args[0] && args[0].toLowerCase() === "latest") {
+      let count = 0;
+      try {
+        const { rows } = await database.query(
+          `SELECT COUNT(*)::int AS count FROM "${tableName}"`
+        );
+        count = rows[0]?.count || 0;
+      } catch (err) {
+        count = 0;
+        error.log("Error fetching latest quote:", err);
+      }
+
+      query = `
+        SELECT * FROM (
+          SELECT *, ROW_NUMBER() OVER (ORDER BY time ASC) AS rownum
+          FROM "${tableName}"
+        ) sub
+        WHERE rownum = $1
+      `;
+      params.push(count);
+      useAll = true;
     } else if (nick) {
       query = `
         SELECT *, ROW_NUMBER() OVER (ORDER BY time ASC) AS rownum
