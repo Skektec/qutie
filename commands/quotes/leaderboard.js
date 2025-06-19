@@ -11,12 +11,14 @@ module.exports = {
     const server = interaction.guildId;
     const tableName = `${server}-quotes`;
 
-    const quotes = database.query(`SELECT * FROM "${tableName}"`);
+    const { rows: quotes } = await database.query(
+      `SELECT * FROM "${tableName}"`
+    );
 
     const counts = {};
 
     quotes.forEach((item) => {
-      const userId = item.userId;
+      const userId = item.userid;
       counts[userId] = (counts[userId] || 0) + 1;
     });
 
