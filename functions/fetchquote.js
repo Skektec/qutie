@@ -39,7 +39,12 @@ module.exports = {
         .setImage(image || quote.image)
         .setFooter({ text: `${formattedDate}` });
 
-      message.channel.send({ embeds: [quoteEmbed] });
+      if (quote.image && quote.image.match(/\.mp4/i)) {
+        quoteMessage = `${quote.text} \n ${quote.image} \n - <@${quote.userid}> [(Jump)](https://discordapp.com/channels/${serverId}/${quote.channel}/${quote.messageid})`;
+      } else {
+        quoteMessage = { embeds: [quoteEmbed] };
+      }
+      message.channel.send(quoteMessage);
     };
 
     const { rowCount } = await database.query(

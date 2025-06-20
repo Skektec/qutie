@@ -1,5 +1,9 @@
 module.exports = {
   execute: async (message) => {
+    function delay(time) {
+      return new Promise((resolve) => setTimeout(resolve, time));
+    }
+
     let cleaned = message.content;
 
     if (message.content.includes("http")) {
@@ -16,6 +20,7 @@ module.exports = {
       if (cleaned === message.content) {
         return;
       } else {
+        delay(500);
         await message.suppressEmbeds(true);
         return cleaned;
       }
