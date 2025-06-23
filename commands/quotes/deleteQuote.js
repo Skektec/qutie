@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
-const error = require("../../functions/error");
+const notify = require("../../functions/notify");
 const path = require("path");
 const fs = require("fs");
 const database = require("../../functions/database");
@@ -38,7 +38,7 @@ module.exports = {
           { name: String(count), value: String(count) },
         ]);
       } catch (err) {
-        error.log("Delete Autocomplete error: " + err.message);
+        notify.error("Delete Autocomplete error: ", err, "5x10041");
       }
     }
   },
@@ -71,7 +71,7 @@ module.exports = {
           deletedQuotes = fileData ? JSON.parse(fileData) : [];
         }
       } catch (err) {
-        error.log("Error reading deletedQuotes.json: " + err.message);
+        notify.error("Error reading deletedQuotes.json.", err, "6x10074");
         deletedQuotes = [];
       }
 
@@ -87,7 +87,7 @@ module.exports = {
           JSON.stringify(deletedQuotes, null, 2)
         );
       } catch (err) {
-        error.log("Error saving deletedQuotes.json: " + err.message);
+        notify.error("Error saving deletedQuotes.json.", err, "6x10090");
       }
 
       await database.query(`DELETE FROM "${tableName}" WHERE messageId = $1`, [
@@ -96,7 +96,7 @@ module.exports = {
 
       await interaction.reply(`Deleted quote: #${rownum} - "${quote.text}"`);
     } catch (err) {
-      error.log("Delete Func Error: " + err.message);
+      notify.error("Delete Func Error.", err, "-1x10099");
       await interaction.reply({
         content: "An error occurred while deleting the quote.",
         allowedMentions: { repliedUser: false },

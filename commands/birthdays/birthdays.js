@@ -1,10 +1,10 @@
-const { SlashCommandBuilder, MessageFlags } = require("discord.js");
-const { EmbedBuilder } = require("discord.js");
-const path = require("path");
-const Database = require("better-sqlite3");
-const dbPath = path.resolve(__dirname, "../../data/general.db");
-const db = new Database(dbPath);
-const error = require("../../functions/error");
+const {
+  SlashCommandBuilder,
+  MessageFlags,
+  EmbedBuilder,
+} = require("discord.js");
+const database = require("../../functions/database");
+const notify = require("../../functions/notify");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -19,9 +19,10 @@ module.exports = {
       const currentMonth = today.getMonth() + 1;
       const currentDay = today.getDate();
 
-      const outputBirthdays = db
-        .prepare("SELECT * FROM birthdays WHERE server = ?")
-        .all(server);
+      const { rows: outputBirthdays } = await database.query(
+        "SELECT * FROM birthdays WHERE server = $1",
+        [server]
+      );
 
       const sortedDates = outputBirthdays
         .map((b) => {
@@ -58,7 +59,7 @@ module.exports = {
 
           return {
             ...b,
-            dateNum: parseInt(b.dateNum),
+            dateNum: parseInt(b.datenum),
             currentAge,
             birthMonth,
             birthDay,
@@ -80,9 +81,11 @@ module.exports = {
         sortedDates.length > 0
           ? sortedDates
               .map((b) => {
+                const displayDate = b.date.replace(/-/g, " ");
+
                 const user =
                   b.id && b.id !== "0" ? `<@${b.id}>` : b.nick || "unknown";
-                return `${user} - \`${b.date}\` (${b.currentAge})`;
+                return `${user} - ${displayDate} (${b.currentAge})`;
               })
               .join("\n")
           : "No birthdays found.";
@@ -94,7 +97,7 @@ module.exports = {
 
       await interaction.reply({ embeds: [birthdayEmbed] });
     } catch (err) {
-      error.log("Database error:", err);
+      notify.error("Database error", err, "1x02100");
       await interaction.reply({
         content: `Error: ${err.message} (Occured in birthday code)`,
         flags: MessageFlags.Ephemeral,

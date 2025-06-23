@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, MessageFlags } = require("discord.js");
 const database = require("../../functions/database");
-const error = require("../../functions/error");
+const notify = require("../../functions/notify");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -100,7 +100,7 @@ module.exports = {
         allowedMentions: { repliedUser: false },
       });
     } catch (err) {
-      error.log(`Error inserting into ${tableName}: ${err.message}`);
+      notify.error(`Error inserting into ${tableName}.`, err, "1x09103");
       await interaction.reply({
         content: "There was an error adding the quote.",
         flags: MessageFlags.Ephemeral,

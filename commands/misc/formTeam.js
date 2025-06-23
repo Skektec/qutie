@@ -6,7 +6,7 @@ const {
   ActionRowBuilder,
 } = require("discord.js");
 const maps = require("../../data/wtMaps.json");
-const error = require("../../functions/error");
+const notify = require("../../functions/notify");
 const formTeamData = require("../../data/formTeamData.json");
 const mapBlacklist = require("../../data/mapBlacklist.json");
 const fs = require("fs");
@@ -242,7 +242,7 @@ module.exports = {
 
       return message;
     } catch (err) {
-      error.log("Error forming team: " + err);
+      notify.error("Error forming team", err, "-1x03245");
     }
   },
   teamDataMap,

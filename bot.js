@@ -8,7 +8,7 @@ const {
   Partials,
 } = require("discord.js");
 const { discordToken } = require("./data/config.json");
-const error = require("./functions/error");
+const notify = require("./functions/notify");
 const { setClient } = require("./data/clientInstance");
 const database = require("./functions/database");
 
@@ -76,7 +76,7 @@ cron.schedule("0 13 * * *", async () => {
       [currentDate],
       async (err, rows) => {
         if (err) {
-          error.log("Error querying the database:", err);
+          notify.error("Error querying the database:", err, "1x36079");
           return;
         }
 
@@ -98,9 +98,10 @@ cron.schedule("0 13 * * *", async () => {
             channel.send(`🎉 Happy Birthday ${birthdayUser}! 🎉`);
             return;
           } catch (channelError) {
-            error.log(
+            notify.error(
               `Error fetching channel ${row.channel} or id ${row.id} or nick ${row.nick}:`,
-              channelError
+              channelError,
+              "4x36104"
             );
             return;
           }
@@ -108,7 +109,7 @@ cron.schedule("0 13 * * *", async () => {
       }
     );
   } catch (err) {
-    error.log("Error displaying birthday:", err);
+    notify.error("Error displaying birthday:", err, "2x36112");
   }
 });
 

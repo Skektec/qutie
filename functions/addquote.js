@@ -1,5 +1,5 @@
 const database = require("../functions/database");
-const error = require("../functions/error");
+const notify = require("./notify");
 const { getClient } = require("../data/clientInstance");
 
 module.exports = {
@@ -86,7 +86,7 @@ module.exports = {
         allowedMentions: { repliedUser: false },
       });
     } catch (err) {
-      error.log(`Error adding quote: ${err}`);
+      notify.error(`Error adding quote: ${err}`);
     }
   },
 };

@@ -1,9 +1,6 @@
 const { SlashCommandBuilder, MessageFlags } = require("discord.js");
-const path = require("path");
-const Database = require("better-sqlite3");
-const dbPath = path.resolve(__dirname, "../../data/general.db");
-const db = new Database(dbPath);
-const error = require("../../functions/error");
+const database = require("../../functions/database");
+const notify = require("../../functions/notify");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -66,7 +63,7 @@ module.exports = {
 
     if (isNaN(day) || day < 1 || day > 31 || day % 1 !== 0) {
       return interaction.reply({
-        content: "Please enter a valid day (1–31).",
+        content: `Please enter a valid day (1-31).`,
         flags: MessageFlags.Ephemeral,
       });
     }
@@ -100,7 +97,7 @@ module.exports = {
       year > new Date().getFullYear()
     ) {
       return interaction.reply({
-        content: `Please enter a valid year (e.g., 1990-${Date().getFullYear()}).`,
+        content: `Please enter a valid year (e.g., 1990-${new Date().getFullYear()}).`,
         flags: MessageFlags.Ephemeral,
       });
     }
@@ -129,34 +126,32 @@ module.exports = {
       return monthToNumber[month] || null;
     }
 
-    if (day.length === 1) {
-      correctedDay = "0" + day;
-    } else {
-      correctedDay = day;
-    }
-
+    const correctedDay = day.length === 1 ? "0" + day : day;
     const dateNum = `${getMonthNumber(month)}${correctedDay}${year}`;
 
     try {
-      db.prepare(
+      await database.query(
         `CREATE TABLE IF NOT EXISTS birthdays (
           id TEXT PRIMARY KEY,
           nick TEXT,
           date TEXT,
           channel TEXT,
           server TEXT,
-		  dateNum INTEGER 
+          dateNum INTEGER
         )`
-      ).run();
+      );
 
-      const existing = db
-        .prepare("SELECT * FROM birthdays WHERE id = ?")
-        .get(user.id);
+      const { rows: existingRows } = await database.query(
+        "SELECT * FROM birthdays WHERE id = $1",
+        [user.id]
+      );
+      const existing = existingRows[0];
 
       if (existing) {
-        db.prepare(
-          "UPDATE birthdays SET nick = ?, date = ?, channel = ?, server = ?, dateNum = ? WHERE id = ?"
-        ).run(user.username, date, channelId, serverId, dateNum, user.id);
+        await database.query(
+          "UPDATE birthdays SET nick = $1, date = $2, channel = $3, server = $4, dateNum = $5 WHERE id = $6",
+          [user.username, date, channelId, serverId, dateNum, user.id]
+        );
 
         console.log(`Updated ${user.username}'s birthday.`);
         await interaction.reply({
@@ -164,9 +159,10 @@ module.exports = {
           flags: MessageFlags.Ephemeral,
         });
       } else {
-        db.prepare(
-          "INSERT INTO birthdays (id, nick, date, channel, server, dateNum) VALUES (?, ?, ?, ?, ?, ?)"
-        ).run(user.id, user.username, date, channelId, serverId, dateNum);
+        await database.query(
+          "INSERT INTO birthdays (id, nick, date, channel, server, dateNum) VALUES ($1, $2, $3, $4, $5, $6)",
+          [user.id, user.username, date, channelId, serverId, dateNum]
+        );
 
         console.log(`Added ${user.username}'s birthday.`);
         await interaction.reply({
@@ -174,7 +170,7 @@ module.exports = {
         });
       }
     } catch (err) {
-      error.log(`Error: , ${err}, (This occured in addBirthday.js)`);
+      notify.error("Error in addBirthday.js)", err, "-1x01178");
       return interaction.reply({
         content:
           "An error occurred while saving your birthday. Please try again later.",

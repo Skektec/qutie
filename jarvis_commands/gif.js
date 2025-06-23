@@ -1,5 +1,5 @@
 const { tenorToken } = require("../data/config.json");
-const error = require("../functions/error");
+const notify = require("../functions/notify");
 
 module.exports = {
   execute: async (match, message) => {
@@ -23,7 +23,7 @@ module.exports = {
         message.channel.send("No GIFs found for your search term.");
       }
     } catch (error) {
-      error.log("Error fetching GIF:", error);
+      notify.error("Error fetching GIF:", error);
       message.reply("An error occurred while fetching the GIF.");
     }
   },

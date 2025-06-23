@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
-const fetchquote = require("../.././functions/fetchquote");
+const fetchquote = require("../../functions/fetchquote");
 
 const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 

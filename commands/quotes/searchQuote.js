@@ -2,7 +2,7 @@ const { SlashCommandBuilder, MessageFlags } = require("discord.js");
 const { EmbedBuilder } = require("discord.js");
 const stringSimilarity = require("string-similarity");
 const database = require("../../functions/database");
-const error = require("../../functions/error");
+const notify = require("../../functions/notify");
 
 // TODO: Apparently still finicky
 
@@ -75,7 +75,7 @@ module.exports = {
 
       interaction.reply({ embeds: [foundMatches] });
     } catch (err) {
-      error.log("Error searching for quotes:", err);
+      notify.error("Error searching for quotes.", err, "1x13078");
       interaction.reply({
         content:
           "Search failed, try reducing the range if you are setting it high.",

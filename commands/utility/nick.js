@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, MessageFlags } = require("discord.js");
-const error = require("../../functions/error");
+const notify = require("../../functions/notify");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -38,7 +38,7 @@ module.exports = {
         });
       }
     } catch (error) {
-      error.log("Nickname change error: " + error);
+      notify.error("Nickname change error.", error, "2x15041");
       interaction.reply({
         content: "Something went wrong, developer notified.",
         flags: MessageFlags.Ephemeral,

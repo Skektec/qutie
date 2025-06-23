@@ -1,6 +1,6 @@
 const { EmbedBuilder } = require("discord.js");
 const database = require("../functions/database");
-const error = require("../functions/error");
+const notify = require("../functions/notify");
 
 module.exports = {
   execute: async (message, args) => {
@@ -87,7 +87,7 @@ module.exports = {
         count = rows[0]?.count || 0;
       } catch (err) {
         count = 0;
-        error.log("Error fetching latest quote:", err);
+        notify.error("Error fetching latest quote:", err);
       }
 
       query = `
@@ -136,7 +136,7 @@ module.exports = {
         sendQuoteEmbed(rows[0]);
       }
     } catch (err) {
-      error.log(`Error querying ${tableName}:`, err);
+      notify.error(`Error querying ${tableName}:`, err);
       message.channel.send("An error occurred while retrieving quotes.");
     }
   },

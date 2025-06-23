@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, AllowedMentionsTypes } = require("discord.js");
-const error = require("../../functions/error");
+const notify = require("../../functions/notify");
 const mapblacklist = require("../../data/mapBlacklist.json");
 const fs = require("fs");
 
@@ -52,7 +52,7 @@ module.exports = {
           choices.map((choice) => ({ name: choice, value: choice }))
         );
       } catch (err) {
-        error.log("Error in blacklist autocomplete: " + err);
+        notify.error("Error in blacklist autocomplete", err, "5x04055");
       }
     }
   },
@@ -81,7 +81,7 @@ module.exports = {
         allowedMentions: { repliedUser: false },
       });
     } catch (err) {
-      error.log("Error blacklisting map: " + err);
+      notify.error("Error blacklisting map", err, "-1x04084");
     }
   },
 };

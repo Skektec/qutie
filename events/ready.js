@@ -1,6 +1,7 @@
 const { Events, ActivityType } = require("discord.js");
-const error = require("../functions/error");
+const notify = require("../functions/notify");
 const { setPlayer } = require("../data/clientInstance");
+const { botAdimn } = require("../data/config.json");
 
 module.exports = {
   name: Events.ClientReady,
@@ -17,11 +18,14 @@ module.exports = {
 
     console.log("Player ready");
 
-    const sendNotif = async () => {
-      let serverCount = client.guilds.cache.size;
-      let message = `<@${botAdimn}>! I am online in ${serverCount} servers!`;
-      // The only error log without extra information
-      error.log(message);
+    sendNotif = () => {
+      try {
+        let serverCount = client.guilds.cache.size;
+        let message = `<@${botAdimn}>! I am online in ${serverCount} servers!`;
+        notify.log(message);
+      } catch (err) {
+        notify.error("Online notif failed.", err, "");
+      }
     };
 
     client.user.setPresence({
@@ -34,6 +38,6 @@ module.exports = {
     });
 
     console.log(`Ready! Logged in as ${client.user.tag}`);
-    // sendNotif();
+    sendNotif();
   },
 };

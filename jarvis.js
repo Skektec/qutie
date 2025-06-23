@@ -2,7 +2,7 @@ const { Mistral } = require("@mistralai/mistralai");
 const config = require("./data/config.json");
 const pubconfig = require("./data/pubconfig.json");
 const gif = require("./jarvis_commands/gif");
-const error = require("./functions/error");
+const notify = require("./functions/notify");
 
 const client = new Mistral({ apiKey: config.mistralToken });
 
@@ -36,7 +36,7 @@ module.exports = {
         gif.execute(match, message);
       }
     } catch (err) {
-      error.log(`Error:, ${err}, (This occured in jarvis.js)`);
+      notify.error("Error in jarvis.js", err, "-1x40039");
     }
   },
 };
