@@ -14,7 +14,9 @@ module.exports = {
     .addStringOption((option) =>
       option
         .setName("nick")
-        .setDescription("What you want to change their nickname to.")
+        .setDescription(
+          "What you want to change their nickname to. (Limit 32 characters)"
+        )
         .setRequired(true)
     ),
   async execute(interaction) {
