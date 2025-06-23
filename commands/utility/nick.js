@@ -25,17 +25,24 @@ module.exports = {
     const member = await guild.members.fetch(user.id);
 
     try {
-      if (member.manageable) {
+      if (member.manageable && nick.length <= 32) {
         member.setNickname(nick);
         interaction.reply({
           content: `Nickname changed.`,
           flags: MessageFlags.Ephemeral,
         });
+      } else if (nick.length > 32) {
+        interaction.reply({
+          content: `Nickname is too long. (Limit 32 characters)`,
+          flags: MessageFlags.Ephemeral,
+        });
+        return;
       } else {
         interaction.reply({
           content: `I don't have the permissions for that.`,
           flags: MessageFlags.Ephemeral,
         });
+        return;
       }
     } catch (error) {
       notify.error("Nickname change error.", error, "2x15041");
