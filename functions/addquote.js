@@ -81,6 +81,9 @@ module.exports = {
         quotedContent = text || image;
       }
 
+      if (quotedContent.length > 1900)
+        quotedContent = quotedContent.substring(0, 1900) + "...";
+
       await reaction.message.reply({
         content: `New quote added by <@${reaction.users.cache.firstKey()}> as #${rownum}\n"${quotedContent}" - <@${userId}>`,
         allowedMentions: { repliedUser: false },
