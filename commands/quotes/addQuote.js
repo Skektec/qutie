@@ -95,6 +95,9 @@ module.exports = {
 
       let quotedContent = text && image ? `${text} \n ${image}` : text || image;
 
+      if (quotedContent.length > 1900)
+        quotedContent = quotedContent.substring(0, 1900) + "...";
+
       await interaction.reply({
         content: `New quote added by ${interaction.user}\n"${quotedContent}" - ${user.username}`,
         allowedMentions: { repliedUser: false },
