@@ -2,6 +2,8 @@ const { SlashCommandBuilder, MessageFlags } = require("discord.js");
 const database = require("../../functions/database");
 const notify = require("../../functions/notify");
 
+// TODO: Add quote convo
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("addquote")

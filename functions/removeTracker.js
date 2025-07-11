@@ -20,7 +20,7 @@ module.exports = {
       if (cleaned === message.content) {
         return;
       } else {
-        delay(500);
+        delay(1000);
         await message.suppressEmbeds(true);
         return cleaned;
       }
