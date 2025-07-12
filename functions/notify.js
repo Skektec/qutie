@@ -5,22 +5,42 @@ const { getClient } = require("../data/clientInstance");
 
 module.exports = {
   error: async (message, err, errCode) => {
-    const client = getClient();
-    const user = await client.users.fetch(botAdimn);
+    try {
+      const client = getClient();
+      const user = await client.users.fetch(botAdimn);
 
-    if (err.length > 2000) err = err.substring(0, 1990) + "...";
+      let errorMessage = 'No error message provided';
+      if (err) {
+        if (typeof err === 'string') {
+          errorMessage = err;
+        } else if (err.message) {
+          errorMessage = err.message;
+          if (err.stack) {
+            errorMessage += `\n\nStack trace:\n${err.stack}`;
+          }
+        } else {
+          errorMessage = JSON.stringify(err, Object.getOwnPropertyNames(err));
+        }
+      }
 
-    const errorEmbed = new EmbedBuilder()
-      .setColor(0xff0000)
-      .setTitle("An Error Occurred")
-      .addFields([
-        { name: "Message", value: message || "No message provided" },
-        { name: "Error", value: err || "No error message provided" },
-        { name: "Error Code", value: errCode || "No error code provided" },
-      ])
-      .setTimestamp();
+      if (errorMessage.length > 1000) {
+        errorMessage = errorMessage.substring(0, 990) + '...';
+      }
 
-    user.send({ embeds: [errorEmbed] });
+      const errorEmbed = new EmbedBuilder()
+        .setColor(0xff0000)
+        .setTitle("An Error Occurred")
+        .addFields(
+          { name: "Message", value: String(message || "No message provided").substring(0, 1024) },
+          { name: "Error", value: errorMessage.substring(0, 1024) },
+          { name: "Error Code", value: String(errCode || "No error code provided").substring(0, 1024) }
+        )
+        .setTimestamp();
+
+      await user.send({ embeds: [errorEmbed] });
+    } catch (error) {
+      console.error('Error in notify.error:', error);
+    }
   },
   log: async (message) => {
     const client = getClient();

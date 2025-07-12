@@ -1,17 +1,12 @@
-const {
-	SlashCommandBuilder,
-	EmbedBuilder,
-	ButtonBuilder,
-	ButtonStyle,
-	ActionRowBuilder
-} = require('discord.js');
+const { SlashCommandBuilder } = require('discord.js');
+const teamGames = require('../../data/teamGames.json');
 const maps = require('../../data/wtMaps.json');
 const notify = require('../../functions/notify');
 const formTeamData = require('../../data/formTeamData.json');
 const mapBlacklist = require('../../data/mapBlacklist.json');
+
 const fs = require('fs');
 const path = require('path');
-const { stringify } = require('querystring');
 
 const teamDataMap = new Map();
 
@@ -23,28 +18,39 @@ function getMap(maps) {
 }
 
 // math yucky
-function formTeam(team1, team2, userId) {
+function formTeam(team1, team2, userId, gameName) {
+	if (!formTeamData[gameName]) {
+		formTeamData[gameName] = [];
+	}
+
+	if (!formTeamData.players) {
+		formTeamData.players = [];
+	}
+
 	let allIds = [...team1, ...team2].map((m) => m.id);
 	allIds = allIds.filter((id, idx, arr) => arr.indexOf(id) === idx);
 
-	// Adds new users to db
 	if (userId && !allIds.includes(userId)) {
 		allIds.push(userId);
 
+		if (!formTeamData[gameName].some((player) => player.id === userId)) {
+			formTeamData[gameName].push({ id: userId, points: 1000 });
+			saveFormTeamData();
+		}
+
 		if (!formTeamData.players.some((player) => player.id === userId)) {
 			formTeamData.players.push({ id: userId, points: 1000 });
-			fs.writeFileSync(
-				path.join(__dirname, '../../data/formTeamData.json'),
-				JSON.stringify(formTeamData, null, 2)
-			);
+			saveFormTeamData();
 		}
 	}
 
 	const allPlayers = allIds.map((id) => {
-		const player = formTeamData.players.find((p) => p.id === id);
+		const gamePlayer = formTeamData[gameName]?.find((p) => p.id === id);
+		const globalPlayer = formTeamData.players?.find((p) => p.id === id);
+
 		return {
 			id,
-			points: player?.points || 1000
+			points: gamePlayer?.points ?? 1000
 		};
 	});
 
@@ -81,99 +87,42 @@ function formTeam(team1, team2, userId) {
 	team2.push(...bestSplit.team2);
 }
 
-function updateTeamEmbed(team1, team2, randomMapName, randomMapUrl, winner = null) {
-	return new EmbedBuilder()
-		.setColor(0x0ff08b)
-		.setTitle('Team Battles')
-		.setDescription(
-			winner === 1
-				? 'Team 1 win'
-				: winner === 2
-				? 'Team 2 win'
-				: winner === 0
-				? 'No Winner/Draw'
-				: 'Match in progress'
-		)
-		.addFields(
-			{
-				name: winner === 1 ? 'Team 1  👑' : 'Team 1',
-				value: team1.map((member) => `<@${member.id}>`).join('\n') || 'No members',
-				inline: true
-			},
-			{
-				name: winner === 2 ? 'Team 2  👑' : 'Team 2',
-				value: team2.map((member) => `<@${member.id}>`).join('\n') || 'No members',
-				inline: true
-			}
-		)
-		.addFields({ name: 'Map is: ', value: randomMapName })
-		.setImage(randomMapUrl)
-		.setTimestamp();
-}
-
-function createTeamButtons(setDisabled = false) {
-	const join = new ButtonBuilder()
-		.setCustomId('join')
-		.setLabel('Join a Team')
-		.setStyle(ButtonStyle.Primary)
-		.setDisabled(setDisabled);
-
-	const leave = new ButtonBuilder()
-		.setCustomId('leave')
-		.setLabel('Leave a Team')
-		.setStyle(ButtonStyle.Danger)
-		.setDisabled(setDisabled);
-
-	const newMap = new ButtonBuilder()
-		.setCustomId('newmap')
-		.setLabel('Roll Map')
-		.setStyle(ButtonStyle.Primary)
-		.setDisabled(setDisabled);
-
-	const rollTeam = new ButtonBuilder()
-		.setCustomId('rollTeam')
-		.setLabel('Roll Team')
-		.setStyle(ButtonStyle.Primary)
-		.setDisabled(setDisabled);
-
-	const team1Win = new ButtonBuilder()
-		.setCustomId('team1Win')
-		.setLabel('Team 1 Win')
-		.setStyle(ButtonStyle.Success)
-		.setDisabled(setDisabled);
-
-	const team2Win = new ButtonBuilder()
-		.setCustomId('team2Win')
-		.setLabel('Team 2 Win')
-		.setStyle(ButtonStyle.Success)
-		.setDisabled(setDisabled);
-
-	const noWin = new ButtonBuilder()
-		.setCustomId('noWin')
-		.setLabel('No Win/Draw')
-		.setStyle(ButtonStyle.Primary)
-		.setDisabled(setDisabled);
-
-	const row1 = new ActionRowBuilder().addComponents(join, leave, newMap, rollTeam);
-	const row2 = new ActionRowBuilder().addComponents(team1Win, team2Win, noWin);
-
-	return [row1, row2];
-}
-
-function winner(team1, team2, winningTeam) {
+function winner(team1, team2, winningTeam, gameName) {
 	const winners = winningTeam === 1 ? team1 : team2;
 	const losers = winningTeam === 1 ? team2 : team1;
 
+	if (!formTeamData[gameName]) {
+		formTeamData[gameName] = [];
+	}
+
 	winners.forEach((member) => {
-		const player = formTeamData.players.find((p) => p.id === member.id);
-		if (player) player.points += 23;
+		let player = formTeamData[gameName].find((p) => p.id === member.id);
+		if (!player) {
+			player = { id: member.id, points: 1023 };
+			formTeamData[gameName].push(player);
+		} else {
+			player.points += 23;
+		}
 	});
 
 	losers.forEach((member) => {
-		const player = formTeamData.players.find((p) => p.id === member.id);
-		if (player) player.points -= 12;
+		let player = formTeamData[gameName].find((p) => p.id === member.id);
+		if (!player) {
+			player = { id: member.id, points: 988 };
+			formTeamData[gameName].push(player);
+		} else {
+			player.points = Math.max(0, player.points - 12);
+		}
 	});
 
+	saveFormTeamData();
+}
+
+function saveFormTeamData() {
+	const dir = path.dirname(path.join(__dirname, '../../data/formTeamData.json'));
+	if (!fs.existsSync(dir)) {
+		fs.mkdirSync(dir, { recursive: true });
+	}
 	fs.writeFileSync(
 		path.join(__dirname, '../../data/formTeamData.json'),
 		JSON.stringify(formTeamData, null, 2)
@@ -183,48 +132,90 @@ function winner(team1, team2, winningTeam) {
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('formteam')
-		.setDescription('Forms a PvP team and get a random map for Team battles in War Thunder.'),
+		.setDescription('Forms a PvP team and get a random map for Team battles in War Thunder.')
+		.addStringOption((option) =>
+			option
+				.setName('game')
+				.setDescription('What game do we need a team for.')
+				.setRequired(true)
+				.setAutocomplete(true)
+		),
+
+	async autocomplete(interaction) {
+		const focusedOption = interaction.options.getFocused(true);
+
+		if (focusedOption.name === 'game') {
+			const searchQuery = focusedOption.value.toLowerCase();
+
+			const choices = Object.keys(teamGames)
+				.filter((gameName) => gameName.toLowerCase().includes(searchQuery))
+				.sort((a, b) => {
+					const aStartsWith = a.toLowerCase().startsWith(searchQuery);
+					const bStartsWith = b.toLowerCase().startsWith(searchQuery);
+					if (aStartsWith && !bStartsWith) return -1;
+					if (!aStartsWith && bStartsWith) return 1;
+					return a.localeCompare(b);
+				})
+				.slice(0, 25);
+
+			await interaction.respond(choices.map((choice) => ({ name: choice, value: choice })));
+		}
+	},
 
 	async execute(interaction) {
 		try {
+			const gameName = interaction.options.getString('game');
+			const gameModuleName = teamGames[gameName] || gameName.replace(/\s+/g, '').toLowerCase();
+			const game = require(`../../games/${gameModuleName}.js`);
+
+			if (
+				typeof game.updateTeamEmbed !== 'function' ||
+				typeof game.createTeamButtons !== 'function'
+			) {
+				throw new Error(`Game module "${gameName}" is missing required exports.`);
+			}
+
 			const team1 = [];
 			const team2 = [];
 
-			serverId = interaction.guild.id;
+			const serverId = interaction.guild.id;
 			const blacklist = mapBlacklist[serverId] || [];
 
+			let randomMapName, randomMapUrl;
 			do {
 				({ randomMapName, randomMapUrl } = getMap(maps));
 			} while (blacklist.includes(randomMapName));
 
-			const formedTeam = updateTeamEmbed(team1, team2, randomMapName, randomMapUrl);
-
-			const [row1, row2] = createTeamButtons();
+			const formedTeam = game.updateTeamEmbed(team1, team2, randomMapName, randomMapUrl);
+			const [row1, row2] = game.createTeamButtons();
 
 			await interaction.reply({
 				embeds: [formedTeam],
 				components: [row1, row2]
 			});
-			const message = await interaction.fetchReply();
 
+			const message = await interaction.fetchReply();
 			const messageId = message.id;
 
 			teamDataMap.set(messageId, {
 				team1,
 				team2,
 				randomMapName,
-				randomMapUrl
+				randomMapUrl,
+				gameName: gameModuleName
 			});
 
 			return message;
 		} catch (err) {
 			notify.error('Error forming team', err, '-1x03245');
+			await interaction.reply({
+				content: `❌ Failed to form team for game: ${interaction.options.getString('game')}`
+			});
 		}
 	},
+
 	teamDataMap,
 	getMap,
 	formTeam,
-	updateTeamEmbed,
-	createTeamButtons,
 	winner
 };
