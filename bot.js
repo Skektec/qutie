@@ -62,11 +62,13 @@ cron.schedule('0 13 * * *', async () => {
 
 		database.query(
 			`SELECT * FROM birthdays WHERE date LIKE '%${currentDate}%'`,
-			async (err, rows) => {
+			async (err, result) => {
 				if (err) {
 					notify.error('Error querying the database:', err, '1x36079');
 					return;
 				}
+
+				const rows = result.rows;
 
 				if (rows.length === 0) {
 					return;
