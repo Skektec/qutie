@@ -1,6 +1,6 @@
 const { Mistral } = require('@mistralai/mistralai');
 const config = require('./data/config.json');
-const pubconfig = require('./data/pubconfig.json');
+const pubconfig = require('./data/pubconfig.js');
 const gif = require('./jarvis_commands/gif');
 const notify = require('./functions/notify');
 

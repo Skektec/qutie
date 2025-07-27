@@ -1,6 +1,6 @@
 const { Events, MessageFlags, EmbedBuilder } = require('discord.js');
 const { botAdimn } = require('../data/config.json');
-const { nvmGif, neverKysVideo } = require('../data/pubconfig.json');
+const { nvmGif, neverKysVideo } = require('../data/pubconfig.js');
 // const mutedUsers = require('../data/mutedUsers.json');
 const fetchquote = require('../functions/fetchquote');
 const jarvis = require('../jarvis');
