@@ -8,16 +8,15 @@ const support = require('../functions/support');
 const sendEmoji = require('../functions/sendEmoji');
 const clean = require('../functions/removeTracker');
 const fs = require('fs');
-const database = require('../functions/database');
 
 // const repostDetection = require('../functions/repostDetection');
 const { exec } = require('child_process');
 
 const words = ['uwu', 'owo', 'blahaj'];
 
-function delay(time) {
-	return new Promise((resolve) => setTimeout(resolve, time));
-}
+// function delay(time) {
+// 	return new Promise((resolve) => setTimeout(resolve, time));
+// }
 
 const prevMessages = [];
 
@@ -43,7 +42,7 @@ module.exports = {
 
 		if (prevMessages.length > 3) prevMessages.shift();
 
-		if (message.content.startsWith('jarvis')) jarvis.execute(message);
+		if (message.content.startsWith('grok')) jarvis.execute(message);
 
 		if (words.includes(message.content)) sendEmoji.execute(message);
 
@@ -51,7 +50,9 @@ module.exports = {
 
 		if (
 			prevMessages.length === 3 &&
-			prevMessages.every((msg) => msg === prevMessages[0] && !message.content.startsWith('.q'))
+			prevMessages.every(
+				(msg) => msg === prevMessages[0] && !message.content.startsWith('.q' || 'runTest')
+			)
 		) {
 			message.channel.send(prevMessages[2]);
 		}
@@ -149,7 +150,7 @@ module.exports = {
 		}
 
 		if (message.content.startsWith('runTest')) {
-			message.channel.send({
+			message.reply({
 				content: 'No test to execute.',
 				flags: MessageFlags.Ephemeral
 			});

@@ -46,7 +46,6 @@ function formTeam(team1, team2, userId, gameName) {
 
 	const allPlayers = allIds.map((id) => {
 		const gamePlayer = formTeamData[gameName]?.find((p) => p.id === id);
-		const globalPlayer = formTeamData.players?.find((p) => p.id === id);
 
 		return {
 			id,
