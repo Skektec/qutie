@@ -13,6 +13,11 @@ module.exports = {
 			);
 
 			cleaned = cleaned.replace(
+				/(https?:\/\/(?:www\.)?instagram\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
+				'https://ddinstagram.com$2'
+			);
+
+			cleaned = cleaned.replace(
 				/(https?:\/\/(?:www\.)?x\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
 				'https://fixupx.com$2'
 			);
