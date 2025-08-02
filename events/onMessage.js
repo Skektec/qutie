@@ -71,7 +71,7 @@ module.exports = {
 			});
 		}
 
-		if (message.content.match(/x.com|reddit.com/i)) {
+		if (message.content.match(/x.com|reddit.com|instagram.com/i)) {
 			const cleanLink = await clean.execute(message);
 			if (cleanLink)
 				message.reply({
