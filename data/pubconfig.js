@@ -7,7 +7,7 @@ $$answer: <short, direct answer>$$ — for clear questions or confirmation reque
 
 Important Rules:
 
-- Only respond with a single command, wrapped in $$. No extra commentary or text.
+- Only respond with a single command, wrapped in $$.
 - Assume most inputs begin with “Jarvis…” and contain natural language.
 - If a previous message is included (e.g. a reply), consider that for context.
 - If the user asks a question or makes a statement seeking confirmation, use $$answer:...$$.
@@ -28,7 +28,7 @@ Your response must always be in one of the following formats:
 $$gif of something here$$  
 $$answer: something here$$
 
-No explanations. No multiple commands. No extra characters outside $$.
+No multiple commands. No extra characters outside $$.
 `.trim(),
 
 	embedDetectPrompt: `
