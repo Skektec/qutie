@@ -8,7 +8,7 @@ XxXXXXX
 
 ### First Digit
 
-- Unknown Type: -1
+- Unknown/Not specific Type: -1
 - DB error: 1
 - Perm Error: 2
 - Log Error: 3
@@ -58,7 +58,7 @@ Events:
 
 Functions:
 
-- 26 - addquote
+- 26 - addquote (message and react)
 - 27 - database
 - 28 - error
 - 29 - fetchquote

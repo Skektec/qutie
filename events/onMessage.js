@@ -6,6 +6,7 @@ const fetchquote = require('../functions/fetchquote');
 const jarvis = require('../jarvis');
 const support = require('../functions/support');
 const sendEmoji = require('../functions/sendEmoji');
+const messageAddQuote = require('../functions/messageAddQuote.js');
 const clean = require('../functions/removeTracker');
 const fs = require('fs');
 
@@ -23,8 +24,6 @@ const prevMessages = [];
 module.exports = {
 	name: Events.MessageCreate,
 	execute: async (message) => {
-		// While technically I could have a event handler on each functions page, this allows for each function to be easily managed.
-
 		// Just messing around with a mute function that deletes messages, not implemented.
 		// if (Array.isArray(mutedUsers) && mutedUsers.includes(message.author.id)) {
 		// 	message.reply({
@@ -81,15 +80,16 @@ module.exports = {
 		}
 
 		if (message.content.startsWith('.answer') && message.author.id === botAdimn) {
-			const args = message.content.slice(7).trim().split(/ +/);
-
-			support.answer(message, args);
+			support.answer(message, message.content.slice(7).trim().split(/ +/));
 		}
 
-		if (message.content.startsWith('.q')) {
-			const args = message.content.slice(2).trim().split(/ +/);
+		if (message.content.toLowerCase().match(/^ok garmin,? video speichern/)) {
+			const messageReply = await message.channel.messages.fetch(message.reference.messageId);
+			messageAddQuote.execute(messageReply, message.author);
+		}
 
-			fetchquote.execute(message, args);
+		if (message.content.toLowerCase().startsWith('.q')) {
+			fetchquote.execute(message, message.content.slice(2).trim().split(/ +/));
 		}
 
 		if (message.content.startsWith('!p')) {
