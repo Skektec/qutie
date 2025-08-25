@@ -1,5 +1,5 @@
 import { DiscordSDK } from '@discord/embedded-app-sdk';
-import { config } from '../../data/config.json';
+import { clientId } from '../../data/config.json';
 
 import rocketLogo from '/rocket.png';
 import './style.css';
@@ -7,7 +7,7 @@ import './style.css';
 // Will eventually store the authenticated user's access_token
 let auth;
 
-const discordSdk = new DiscordSDK(config.clientId);
+const discordSdk = new DiscordSDK(clientId);
 
 setupDiscordSdk().then(() => {
 	console.log('Discord SDK is authenticated');
@@ -24,7 +24,7 @@ async function setupDiscordSdk() {
 
 	// Authorize with Discord Client
 	const { code } = await discordSdk.commands.authorize({
-		client_id: config.clientId,
+		client_id: clientId,
 		response_type: 'code',
 		state: '',
 		prompt: 'none',
