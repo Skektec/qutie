@@ -1,5 +1,6 @@
 {
 	"dependencies": {
+		"@discord/embedded-app-sdk": "^2.2.0",
 		"@mistralai/mistralai": "^1.5.0",
 		"axios": "^1.7.8",
 		"better-sqlite3": "^11.8.1",
