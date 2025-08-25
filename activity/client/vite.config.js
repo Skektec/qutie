@@ -12,9 +12,6 @@ export default defineConfig({
 				ws: true
 			}
 		},
-		hmr: {
-			clientPort: 443
-		},
 		host: '0.0.0.0',
 		allowedHosts: ['localhost', 'fluxus.ddns.net']
 	}
