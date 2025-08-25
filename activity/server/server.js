@@ -1,6 +1,6 @@
 import express from 'express';
 import fetch from 'node-fetch';
-import config from '../../data/config.json' with { type: 'json' };
+import config from '../../data/config.json' assert { type: 'json' };
 
 const app = express();
 const port = 3001;
