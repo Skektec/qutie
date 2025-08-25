@@ -2,8 +2,8 @@ import fs from 'fs';
 import https from 'https';
 import express from 'express';
 import fetch from 'node-fetch';
+import config from '../../data/config.json' assert { type: 'json' };
 
-const config = require('../../data/config.json');
 const app = express();
 const port = 443; // Discord requires HTTPS on 443
 
