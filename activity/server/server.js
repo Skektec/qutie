@@ -1,9 +1,7 @@
 import express from 'express';
-import dotenv from 'dotenv';
 import fetch from 'node-fetch';
 import config from '../../data/config.json' with { type: 'json' };
 
-dotenv.config({ path: '../.env' });
 
 const app = express();
 const port = 3001;
@@ -34,5 +32,5 @@ app.post('/api/token', async (req, res) => {
 });
 
 app.listen(port, () => {
-	console.log(`Server listening at http://localhost:${port}`);
+	console.log(`Server listening at http://0.0.0.0:${port}`);
 });
