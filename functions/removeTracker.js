@@ -14,7 +14,7 @@ module.exports = {
 
 			cleaned = cleaned.replace(
 				/(https?:\/\/(?:www\.)?instagram\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
-				'https://ddinstagram.com$2'
+				'https://uuinstagram.com$2'
 			);
 
 			cleaned = cleaned.replace(
