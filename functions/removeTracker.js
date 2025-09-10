@@ -7,20 +7,20 @@ module.exports = {
 		let cleaned = message.content;
 
 		if (message.content.includes('http')) {
-			cleaned = `#- ${cleaned.replace(
+			cleaned = cleaned.replace(
 				/(https?:\/\/(?:www\.)?reddit\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
 				'https://rxddit.com$2'
-			)}`;
+			);
 
-			cleaned = `#- ${cleaned.replace(
+			cleaned = cleaned.replace(
 				/(https?:\/\/(?:www\.)?instagram\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
 				'https://uuinstagram.com$2'
-			)}`;
+			);
 
-			cleaned = `#- ${cleaned.replace(
+			cleaned = cleaned.replace(
 				/(https?:\/\/(?:www\.)?x\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
 				'https://fixupx.com$2'
-			)}`;
+			);
 
 			if (cleaned === message.content) {
 				return;
@@ -29,9 +29,9 @@ module.exports = {
 					await message.suppressEmbeds(true);
 					delay(1000);
 					await message.suppressEmbeds(true);
-					return cleaned;
+					return `-# ${cleaned}`;
 				} catch {
-					return cleaned;
+					return `-# ${cleaned}`;
 				}
 			}
 		} else {
