@@ -1,13 +1,12 @@
 import { tenorToken } from '../data/config.json';
 import * as notify from '../functions/notify';
+import fetch from 'node-fetch';
 
 module.exports = {
 	execute: async (match, message) => {
 		const searchTerm = match[1];
 
 		try {
-			const fetch = (await import('node-fetch')).default;
-
 			const response = await fetch(
 				`https://tenor.googleapis.com/v2/search?q=${encodeURIComponent(
 					searchTerm

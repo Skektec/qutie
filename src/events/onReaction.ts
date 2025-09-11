@@ -8,7 +8,7 @@ module.exports = {
 		try {
 			if (reaction.partial) await reaction.fetch();
 			if (reaction.message.partial) await reaction.message.fetch();
-			if (reaction.message.author.bot) return;
+			if (reaction.message.author.id == 1311288678517178409) return;
 
 			if (reaction.emoji.name == '💬') {
 				reactAddQuote.execute(reaction);
