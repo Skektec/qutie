@@ -1,4 +1,4 @@
-const { tenorToken } = require('../data/config.json');
+import { tenorToken } from '../data/config.json';
 import * as notify from '../functions/notify';
 
 module.exports = {
