@@ -2,8 +2,8 @@
 	"compilerOptions": {
 		"outDir": "./dist",
 		"allowJs": true,
-		"module": "esnext",
-		"target": "es2022",
+		"module": "commonjs",
+		"target": "es2017",
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
