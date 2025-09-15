@@ -9,6 +9,9 @@
 		"preview": "vite preview"
 	},
 	"devDependencies": {
-		"vite": "^5.4.19"
+		"vite": "^7.1.5"
+	},
+	"dependencies": {
+		"@discord/embedded-app-sdk": "^2.4.0"
 	}
 }
