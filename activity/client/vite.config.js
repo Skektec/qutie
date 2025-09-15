@@ -13,6 +13,10 @@ export default defineConfig({
 			}
 		},
 		host: '0.0.0.0',
-		allowedHosts: ['localhost', 'fluxus.ddns.net']
+		allowedHosts: [
+			'localhost',
+			'fluxus.ddns.net',
+			'https://vernon-not-unto-aging.trycloudflare.com/'
+		]
 	}
 });
