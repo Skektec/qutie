@@ -79,11 +79,8 @@ module.exports = {
 					allowedMentions: { repliedUser: false }
 				});
 			delay(2000);
-			try {
-				message.suppressEmbeds(true);
-			} catch (err) {
-				notify.log('Failed to embed', err, '7x23085');
-			}
+			await message.suppressEmbeds(true);
+			return;
 		}
 
 		if (message.content.startsWith('.answer') && message.author.id === botAdimn) {
