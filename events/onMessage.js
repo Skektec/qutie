@@ -71,7 +71,11 @@ module.exports = {
 			});
 		}
 
-		if (message.content.match(/https:\/\/x.com|https:\/\/reddit.com|https:\/\/instagram.com/i)) {
+		if (
+			message.content.match(
+				/https:\/\/x.com|https:\/\/reddit.com|https:\/\/www.reddit.com|https:\/\/instagram.com/i
+			)
+		) {
 			const cleanLink = await clean.execute(message);
 			if (cleanLink)
 				message.reply({
