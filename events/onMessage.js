@@ -3,6 +3,7 @@ const { botAdimn } = require('../data/config.json');
 const { nvmGif, neverKysVideo } = require('../data/pubconfig.js');
 // const mutedUsers = require('../data/mutedUsers.json');
 const fetchquote = require('../functions/fetchquote');
+const notify = require('../functions/notify');
 const jarvis = require('../jarvis');
 const support = require('../functions/support');
 const sendEmoji = require('../functions/sendEmoji');
@@ -15,9 +16,9 @@ const { exec } = require('child_process');
 
 const words = ['uwu', 'owo', 'blahaj'];
 
-// function delay(time) {
-// 	return new Promise((resolve) => setTimeout(resolve, time));
-// }
+function delay(time) {
+	return new Promise((resolve) => setTimeout(resolve, time));
+}
 
 const prevMessages = [];
 
@@ -77,6 +78,9 @@ module.exports = {
 					content: cleanLink,
 					allowedMentions: { repliedUser: false }
 				});
+			delay(2000);
+			await message.suppressEmbeds(true);
+			return;
 		}
 
 		if (message.content.startsWith('.answer') && message.author.id === botAdimn) {

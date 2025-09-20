@@ -15,6 +15,7 @@ XxXXXXX
 - Fetching Channel Error: 4
 - Autocomplete Error: 5
 - File Read Error: 6
+- Send Message Error: 7
 
 x
 
