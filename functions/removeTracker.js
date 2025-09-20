@@ -27,8 +27,7 @@ module.exports = {
 			} else {
 				try {
 					await message.suppressEmbeds(true);
-					delay(1000);
-					await message.suppressEmbeds(true);
+					delay(600);
 					return `-# ${cleaned}`;
 				} catch {
 					return `-# ${cleaned}`;
