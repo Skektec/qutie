@@ -1,8 +1,8 @@
+import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
-// https://vitejs.dev/config/
 export default defineConfig({
-	envDir: '../',
+	plugins: [sveltekit()],
 	server: {
 		proxy: {
 			'/api': {
@@ -13,6 +13,6 @@ export default defineConfig({
 			}
 		},
 		host: '0.0.0.0',
-		allowedHosts: ['localhost', 'fluxus.ddns.net', 'thickness-batch-mission-wage.trycloudflare.com']
+		allowedHosts: ['localhost', 'fluxus.ddns.net']
 	}
 });

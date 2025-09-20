@@ -1,0 +1,42 @@
+<!doctype html>
+<body
+	lang="en"
+	style="
+		width: 100%;
+		background-color: black;
+		background-image: url(/superEarth.webp);
+		background-repeat: no-repeat;
+		background-position: center center;
+		background-size: contain;
+	"
+>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		%sveltekit.head%
+		<link
+			href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			body {
+				border-top: 2px solid aliceblue;
+				border-bottom: 2px solid aliceblue;
+				height: 98%;
+				width: 99%;
+				box-sizing: border-box;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			html {
+				height: 98%;
+				width: 99%;
+				box-sizing: border-box;
+			}
+		</style>
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents">%sveltekit.body%</div>
+	</body>
+</body>
