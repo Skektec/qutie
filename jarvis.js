@@ -30,7 +30,14 @@ module.exports = {
 				? await message.channel.messages.fetch(message.reference.messageId)
 				: null;
 
-			const commandSen = `User Input: ${messageIn}, Message they replied to: ${messageReply?.content}, replied messages embed description: ${messageReply?.embeds[0]?.description}. Last 10 chat messages as context: ${serverContext[serverId]}`;
+			const commandSen = `User Input: ${messageIn}, Message they replied to: ${
+				messageReply?.content
+			}, replied messages embed description: ${
+				messageReply?.embeds[0]?.description
+			}. Last 15 chat messages as context: ${serverContext[serverId]
+				.map((msg) => `${msg.role}: ${msg.content}`)
+				.join('\n')}`;
+			console.log('Command sentence', commandSen);
 			const chatResponse = await aiClient.chat.complete({
 				model: 'mistral-medium-latest',
 				messages: [
