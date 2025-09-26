@@ -4,21 +4,21 @@ const notify = require('./functions/notify');
 const { mistralToken } = require('../data/config.json');
 const client = new Mistral({ apiKey: mistralToken });
 
+// not used as its unreliable
+
 const serverHistories = {};
 
 module.exports = {
 	execute: async (message) => {
-		if (!message.guild) return;
 		const guildId = message.guild.id;
 
 		if (!serverHistories[guildId]) {
 			serverHistories[guildId] = [];
 		}
 
-		const embed = message.embeds[0]?.data?.description || '';
-		if (!embed) return;
-
 		if (!message.embeds[0]?.data?.description) return;
+
+		const embed = message.embeds[0]?.data?.description;
 
 		let aiOutput;
 

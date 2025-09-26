@@ -36,13 +36,13 @@ module.exports = {
 		// 	return;
 		// }
 
+		jarvis.execute(message);
+
 		if (message.author.bot) return;
 
 		prevMessages.push(message.content);
 
 		if (prevMessages.length > 3) prevMessages.shift();
-
-		if (message.content.startsWith('grok')) jarvis.execute(message);
 
 		if (words.includes(message.content)) sendEmoji.execute(message);
 
@@ -71,7 +71,11 @@ module.exports = {
 			});
 		}
 
-		if (message.content.match(/x.com|reddit.com|instagram.com/i)) {
+		if (
+			message.content.match(
+				/https:\/\/x.com|https:\/\/reddit.com|https:\/\/www.reddit.com|https:\/\/instagram.com/i
+			)
+		) {
 			const cleanLink = await clean.execute(message);
 			if (cleanLink)
 				message.reply({
