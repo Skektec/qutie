@@ -32,7 +32,7 @@ module.exports = {
 
 			const commandSen = `User Input: ${messageIn}, Message they replied to: ${messageReply?.content}, replied messages embed description: ${messageReply?.embeds[0]?.description}. Last 10 chat messages as context: ${serverContext[serverId]}`;
 			const chatResponse = await aiClient.chat.complete({
-				model: 'mistral-small-latest',
+				model: 'mistral-medium-latest',
 				messages: [
 					{
 						role: 'system',
