@@ -36,13 +36,13 @@ module.exports = {
 		// 	return;
 		// }
 
+		jarvis.execute(message);
+
 		if (message.author.bot) return;
 
 		prevMessages.push(message.content);
 
 		if (prevMessages.length > 3) prevMessages.shift();
-
-		if (message.content.startsWith('grok')) jarvis.execute(message);
 
 		if (words.includes(message.content)) sendEmoji.execute(message);
 

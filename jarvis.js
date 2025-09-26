@@ -22,13 +22,15 @@ module.exports = {
 			serverContext[serverId].shift();
 		}
 
+		if (!message.content.startsWith('grok')) return;
+
 		try {
-			const messageIn = message.content.replace(/^grok\s*/i, 'jarvis');
+			const messageIn = message.content.replace(/^grok\s*/i, 'jarvis ');
 			const messageReply = message.reference?.messageId
 				? await message.channel.messages.fetch(message.reference.messageId)
 				: null;
 
-			const commandSen = `User Input: ${messageIn}, Message they replied to: ${messageReply.content}, replied messages embed description: ${messageReply.embeds[0]?.description}. Last 10 chat messages as context: ${context}`;
+			const commandSen = `User Input: ${messageIn}, Message they replied to: ${messageReply?.content}, replied messages embed description: ${messageReply?.embeds[0]?.description}. Last 10 chat messages as context: ${serverContext[serverId]}`;
 			const chatResponse = await aiClient.chat.complete({
 				model: 'mistral-small-latest',
 				messages: [
@@ -39,8 +41,7 @@ module.exports = {
 					{
 						role: 'user',
 						content: commandSen
-					},
-					...serverContext[serverId]
+					}
 				]
 			});
 
@@ -56,7 +57,7 @@ module.exports = {
 				message.reply(truth?.[1]);
 			}
 		} catch (err) {
-			notify.error('Error in jarvis.js', err, '-1x40039');
+			notify.error('Error in jarvis.js', err, '-1x40059');
 		}
 	}
 };
