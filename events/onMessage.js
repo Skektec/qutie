@@ -159,7 +159,7 @@ module.exports = {
 
 		if (message.content.startsWith('runTest')) {
 			message.reply({
-				content: 'No test to execute.',
+				content: `No test to execute.`,
 				flags: MessageFlags.Ephemeral
 			});
 		}

@@ -43,7 +43,7 @@ module.exports = {
 				const quoteMessage = `${quote.text}\n${quote.image}\n- <@${quote.userid}> [(Jump)](https://discordapp.com/channels/${serverId}/${quote.channel}/${quote.messageid})`;
 				message.channel.send(quoteMessage);
 			} else {
-				message.channel.send({ embeds: [quoteEmbed] });
+				message.channel.send({ embeds: [quoteEmbed], allowedMentions: { User: false } });
 			}
 		};
 
