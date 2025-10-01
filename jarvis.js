@@ -37,6 +37,8 @@ module.exports = {
 				: null;
 
 			let imageUrl = '';
+			let imageDesc = '';
+			let imageResponse = '';
 
 			if (message.attachments.size >= 1) {
 				imageUrl = await [...message.attachments.entries()][0][1].attachment;
@@ -47,7 +49,7 @@ module.exports = {
 			}
 
 			if (imageUrl != '') {
-				const imageResponse = await aiClient.chat.completions.create({
+				imageResponse = await aiClient.chat.completions.create({
 					model: 'grok-4-fast-non-reasoning',
 					messages: [
 						{
@@ -68,10 +70,10 @@ module.exports = {
 						}
 					]
 				});
-
-				let imageDesc = 'N/A';
-				imageDesc = imageResponse.choices[0].message.content;
 			}
+
+			if (imageResponse) imageDesc = imageResponse.choices[0].message.content;
+			else imageDesc = 'N/A';
 
 			const commandSen = `User Input: ${message.content}, Message they replied to: ${
 				messageReply?.content
