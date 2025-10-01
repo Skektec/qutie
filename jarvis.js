@@ -69,6 +69,7 @@ module.exports = {
 					]
 				});
 
+				let imageDesc = 'N/A';
 				imageDesc = imageResponse.choices[0].message.content;
 			}
 
