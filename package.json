@@ -1,6 +1,5 @@
 {
 	"dependencies": {
-		"@mistralai/mistralai": "^1.5.0",
 		"axios": "^1.7.8",
 		"better-sqlite3": "^11.8.1",
 		"discord-player": "^7.1.0",
@@ -10,6 +9,7 @@
 		"mysql2": "^3.11.5",
 		"node-cron": "^3.0.3",
 		"node-fetch": "^3.3.2",
+		"openai": "^6.0.0",
 		"pg": "^8.16.1",
 		"sqlite3": "^5.1.7",
 		"string-similarity": "^4.0.4"

@@ -50,9 +50,7 @@ module.exports = {
 
 		if (
 			prevMessages.length === 3 &&
-			prevMessages.every(
-				(msg) => msg === prevMessages[0] && !message.content.startsWith('.q' || 'runTest')
-			)
+			prevMessages.every((msg) => msg === prevMessages[0] && !message.content.startsWith('.q'))
 		) {
 			message.channel.send(prevMessages[2]);
 		}

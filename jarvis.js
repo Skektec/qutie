@@ -1,11 +1,15 @@
-const { Mistral } = require('@mistralai/mistralai');
+const OpenAI = require('openai');
 const config = require('./data/config.json');
 const pubconfig = require('./data/pubconfig.js');
 const gif = require('./jarvis_commands/gif');
 const notify = require('./functions/notify');
 // const { Context } = require('discord-player');
 
-const aiClient = new Mistral({ apiKey: config.mistralToken });
+const aiClient = new OpenAI({
+	apiKey: config.aiKey,
+	baseURL: 'https://api.x.ai/v1',
+	timeout: 360000
+});
 
 const serverContext = {};
 
@@ -17,7 +21,10 @@ module.exports = {
 			serverContext[serverId] = [];
 		}
 
-		serverContext[serverId].push({ role: 'user', content: message.content });
+		serverContext[serverId].push({
+			role: 'user',
+			content: `${message.author.username}: ${message.content}`
+		});
 		if (serverContext[serverId].length > 15) {
 			serverContext[serverId].shift();
 		}
@@ -25,21 +32,56 @@ module.exports = {
 		if (!message.content.startsWith('grok')) return;
 
 		try {
-			const messageIn = message.content.replace(/^grok\s*/i, 'jarvis ');
 			const messageReply = message.reference?.messageId
 				? await message.channel.messages.fetch(message.reference.messageId)
 				: null;
 
-			const commandSen = `User Input: ${messageIn}, Message they replied to: ${
+			let imageUrl = '';
+
+			if (message.attachments.size >= 1) {
+				imageUrl = await [...message.attachments.entries()][0][1].attachment;
+			}
+
+			if (messageReply?.attachments.size >= 1) {
+				imageUrl = await [...messageReply.attachments.entries()][0][1].attachment;
+			}
+
+			if (imageUrl != '') {
+				const imageResponse = await aiClient.chat.completions.create({
+					model: 'grok-4-fast-non-reasoning',
+					messages: [
+						{
+							role: 'user',
+							content: [
+								{
+									type: 'image_url',
+									image_url: {
+										url: imageUrl,
+										detail: 'medium'
+									}
+								},
+								{
+									type: 'text',
+									text: 'Describe this image accurately and briefly for a LLM'
+								}
+							]
+						}
+					]
+				});
+
+				imageDesc = imageResponse.choices[0].message.content;
+			}
+
+			const commandSen = `User Input: ${message.content}, Message they replied to: ${
 				messageReply?.content
-			}, replied messages embed description: ${
+			},\n Image description (if applicable): ${imageDesc}, \n replied messages embed description: ${
 				messageReply?.embeds[0]?.description
-			}. Last 15 chat messages as context: ${serverContext[serverId]
+			}.
+			Last 15 chat messages as context: ${serverContext[serverId]
 				.map((msg) => `${msg.role}: ${msg.content}`)
 				.join('\n')}`;
-			console.log('Command sentence', commandSen);
-			const chatResponse = await aiClient.chat.complete({
-				model: 'mistral-medium-latest',
+			const chatResponse = await aiClient.chat.completions.create({
+				model: 'grok-4-fast-non-reasoning',
 				messages: [
 					{
 						role: 'system',
@@ -56,15 +98,16 @@ module.exports = {
 
 			const gifCommand = content.match(/\$\$gif of (.*?)\$\$/);
 			const truth = content.match(/\$\$answer:\s*(.*?)\s*\$\$/);
+			const truth2 = content.match(/\$\$answer:\s*(.*?)/);
 
 			if (gifCommand) {
 				gif.execute(gifCommand, message);
 			}
 			if (truth) {
 				message.reply(truth?.[1]);
-			}
+			} else if (truth2) message.reply(truth2?.[1]);
 		} catch (err) {
-			notify.error('Error in jarvis.js', err, '-1x40059');
+			notify.error('Error in jarvis.js', err, '-1x40113');
 		}
 	}
 };
