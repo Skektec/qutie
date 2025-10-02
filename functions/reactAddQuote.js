@@ -31,7 +31,7 @@ module.exports = {
 			await database.query(
 				`CREATE TABLE IF NOT EXISTS "${tableName}" (
           nick TEXT,
-          userId TEXT,
+          userId TEXT,	
           channel TEXT,
           server TEXT,
           text TEXT,
