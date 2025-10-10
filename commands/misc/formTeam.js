@@ -161,6 +161,8 @@ module.exports = {
 		}
 	},
 
+	//TODO: Add lock team/map button
+
 	async execute(interaction) {
 		try {
 			const gameName = interaction.options.getString('game');
