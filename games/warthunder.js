@@ -1,6 +1,6 @@
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 
- module.exports = {
+module.exports = {
 	updateTeamEmbed(team1, team2, randomMapName, randomMapUrl, winner = null) {
 		return new EmbedBuilder()
 			.setColor(0x0ff08b)

@@ -1,6 +1,6 @@
 const maps = require('../data/wtMaps.json');
 const { MessageFlags } = require('discord.js');
-const { teamDataMap, getMap, formTeam, winner } = require('../commands/misc/formTeam');
+const { teamDataMap, getMap, formTeam, winner } = require('../commands/games/formTeam');
 
 const gameFiles = {
 	warthunder: require('../games/warthunder'),

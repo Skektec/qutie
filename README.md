@@ -27,8 +27,8 @@ Commands:
 
 - 01 - birthdays/addbirthday
 - 02 - birthdays/birthdays
-- 03 - misc/formteam
-- 04 - misc/mapBlacklist
+- 03 - games/formteam
+- 04 - games/mapBlacklist
 - 05 - music/add
 - 06 - music/play
 - 07 - python_commands/echo

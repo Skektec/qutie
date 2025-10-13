@@ -1,13 +1,36 @@
 //This is to log error messages directly to my DMs
 const { EmbedBuilder } = require('discord.js');
+const { Client, GatewayIntentBits, Partials } = require('discord.js');
 const { botAdimn } = require('../data/config.json');
-const { getClient } = require('../data/clientInstance');
+const { getClient, setClient } = require('../data/clientInstance');
+const { discordToken } = require('../data/config.json');
 
 module.exports = {
 	error: async (message, err, errCode) => {
 		try {
-			const client = getClient();
-			const user = await client.users.fetch(botAdimn);
+			try {
+				client = getClient();
+				user = await client.users.fetch(botAdimn);
+			} catch {
+				client = new Client({
+					intents: [
+						GatewayIntentBits.Guilds,
+						GatewayIntentBits.GuildMessages,
+						GatewayIntentBits.GuildMembers,
+						GatewayIntentBits.GuildMessageReactions,
+						GatewayIntentBits.MessageContent,
+						GatewayIntentBits.GuildVoiceStates
+					],
+					partials: [Partials.Message, Partials.Channel, Partials.Reaction]
+				});
+
+				setClient(client);
+				client = getClient();
+
+				client.login(discordToken);
+
+				user = await client.users.fetch(botAdimn);
+			}
 
 			let errorMessage = 'No error message provided';
 			if (err) {
@@ -46,7 +69,6 @@ module.exports = {
 		}
 	},
 	log: async (message) => {
-		const client = getClient();
 		const user = await client.users.fetch(botAdimn);
 
 		user.send(message);

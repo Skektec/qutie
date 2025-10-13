@@ -9,7 +9,6 @@ module.exports = {
 		try {
 			botHasReacted = await reaction.users.fetch().then((users) => users.has(client.user.id));
 		} catch {
-			console.log(`Couldn't check if bot had reacted.`);
 			botHasReacted = null;
 		}
 

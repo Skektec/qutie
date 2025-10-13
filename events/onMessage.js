@@ -10,6 +10,7 @@ const sendEmoji = require('../functions/sendEmoji');
 const messageAddQuote = require('../functions/messageAddQuote.js');
 const clean = require('../functions/removeTracker');
 const fs = require('fs');
+const fetchpage = require('../functions/warThunder/fetchPage.js');
 
 // const repostDetection = require('../functions/repostDetection');
 const { exec } = require('child_process');
@@ -123,7 +124,6 @@ module.exports = {
 						}
 
 						const response = stdout.trim();
-						console.log(`Running command: python "${commandFilePath}" with no arguments`);
 
 						if (response === '') {
 							message.reply('No response from the command.');
@@ -143,7 +143,6 @@ module.exports = {
 						}
 
 						const response = stdout.trim();
-						console.log(`Running command: python "${commandFilePath}" "${extraArguments}"`);
 
 						if (response === '') {
 							message.reply('No response from the command.');
@@ -156,10 +155,11 @@ module.exports = {
 		}
 
 		if (message.content.startsWith('runTest')) {
-			message.reply({
-				content: `No test to execute.`,
-				flags: MessageFlags.Ephemeral
-			});
+			// message.reply({
+			// 	content: `No test to execute.`,
+			// 	flags: MessageFlags.Ephemeral
+			// });
+			fetchpage.findLinks();
 		}
 
 		// unreliable
