@@ -73,7 +73,7 @@ module.exports = {
 				}
 			}
 		} catch (error) {
-			notify.error('Error fetching or parsing the page:', 'no error code', error);
+			notify.error('Error fetching or parsing the page:', error, 'no error code');
 		}
 	}
 };

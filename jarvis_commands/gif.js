@@ -23,7 +23,7 @@ module.exports = {
 				message.channel.send(`No GIFs found for your search term; "${searchTerm}"`);
 			}
 		} catch (error) {
-			notify.error('Error fetching GIF:', error);
+			notify.error('Error fetching GIF:', error, '0x000000');
 			message.reply('An error occurred while fetching the GIF.');
 		}
 	}

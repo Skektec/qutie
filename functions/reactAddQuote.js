@@ -91,7 +91,7 @@ module.exports = {
 				allowedMentions: { repliedUser: false }
 			});
 		} catch (err) {
-			notify.error(`Error adding quote: ${err}`);
+			notify.error(`Error adding quote`, err, '0x000000');
 		}
 	}
 };

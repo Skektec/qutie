@@ -18,7 +18,7 @@ module.exports = {
 
 		fs.readFile(mutedUsersPath, 'utf8', (err, data) => {
 			if (err) {
-				notify.error(`Error reading file: ${err}`);
+				notify.error('Error reading file', err, '0x000000');
 				return interaction.reply({
 					content: 'Failed to read muted users.',
 					flags: MessageFlags.Ephemeral
@@ -31,7 +31,7 @@ module.exports = {
 				try {
 					mutedUsers = JSON.parse(data);
 				} catch (parseErr) {
-					notify.error(`Error parsing JSON: ${parseErr}`);
+					notify.error('Error parsing JSON', parseErr, '0x000000');
 					return;
 				}
 			}
@@ -47,13 +47,13 @@ module.exports = {
 
 			fs.writeFile(mutedUsersPath, JSON.stringify(mutedUsers, null, 4), 'utf8', (writeErr) => {
 				if (writeErr) {
-					notify.error(`Error unmuting user: ${writeErr}`);
+					notify.error('Error unmuting user', writeErr, '0x000000');
 					interaction.reply({
 						content: 'Failed to unmute the user.',
 						flags: MessageFlags.Ephemeral
 					});
 				} else {
-					notify.error(`Unmuted ${user.username}`);
+					notify.error('Unmuted', user.username, '0x000000');
 					interaction.reply({
 						content: `Unmuted ${user.username}.`,
 						flags: MessageFlags.Ephemeral

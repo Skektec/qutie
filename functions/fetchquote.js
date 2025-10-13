@@ -87,7 +87,7 @@ module.exports = {
 				count = rows[0]?.count || 0;
 			} catch (err) {
 				count = 0;
-				notify.error('Error fetching latest quote:', err);
+				notify.error('Error fetching latest quote:', err, '0x000000');
 			}
 
 			query = `
@@ -128,7 +128,7 @@ module.exports = {
 			const quote = useAll ? rows[Math.floor(Math.random() * rows.length)] : rows[0];
 			sendQuoteEmbed(quote);
 		} catch (err) {
-			notify.error(`Error querying ${tableName}:`, err);
+			notify.error(`Error querying ${tableName}:`, err, '0x000000');
 			message.channel.send('An error occurred while retrieving quotes.');
 		}
 	}

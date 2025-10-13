@@ -57,7 +57,7 @@ module.exports = {
 				getChannel();
 			});
 		} catch (error) {
-			notify.error('An error occurred:', 'no error code', error);
+			notify.error('An error occurred:', error, 'no error code');
 		}
 	}
 };

@@ -40,7 +40,7 @@ module.exports = {
 
 			history.push({ role: 'assistant', content: aiOutput });
 		} catch (err) {
-			notify.error('Repost Detection Error: ' + err);
+			notify.error('Repost Detection Error', err, '0x000000');
 			return;
 		}
 

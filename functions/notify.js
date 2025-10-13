@@ -64,8 +64,8 @@ module.exports = {
 				.setTimestamp();
 
 			await user.send({ embeds: [errorEmbed] });
-		} catch (error) {
-			console.error('Error in notify.error:', error);
+		} catch (err) {
+			console.error('Error in notify.error:', err, '0x000000');
 		}
 	},
 	log: async (message) => {
