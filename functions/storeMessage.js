@@ -4,7 +4,7 @@ module.exports = {
 	save: async (message) => {
 		const queryText = `
             INSERT INTO "MessageStore" (nick, userId, channel, server, text, messageId, time)
-            VALUES ($1, $2, $3, $4, $5, $6, $7 / 1000.0)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
         `;
 
 		const values = [
