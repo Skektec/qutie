@@ -31,8 +31,16 @@ module.exports = {
 				});
 
 			const esportEmbed = new EmbedBuilder()
-				.setColor(0x0099ff)
-				.setTitle($('.content__title').text().trim())
+				.setColor(0xff0000)
+				.setTitle(`[Esport] ${$('.content__title').text().trim()}`)
+				.setAuthor({
+					name: 'War Thunder News',
+					iconURL:
+						'https://static-cdn.jtvnw.net/jtv_user_pictures/b86366d8-5b92-4d28-b840-c2fd10f07716-profile_image-70x70.png',
+					url: 'https://fluxus.ddns.net'
+				})
+				.setURL(`https://warthunder.com/en/news/${articleNumber}`)
+				.setDescription($('.g-grid .g-col.g-col--100 > p').first().text().trim())
 				.addFields(
 					{
 						name: $('h3:contains("Weekend 1")').text(),
@@ -45,7 +53,8 @@ module.exports = {
 						inline: true
 					}
 				)
-				.setImage($('img[class=e-video__media]').attr('src'));
+				.setImage($('img[class=e-video__media]').attr('src'))
+				.setFooter({ text: `Link: https://warthunder.com/en/news/${articleNumber}` });
 
 			client = getClient();
 

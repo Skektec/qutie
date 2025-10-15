@@ -144,6 +144,7 @@ module.exports = {
 			// 	content: `No test to execute.`,
 			// 	flags: MessageFlags.Ephemeral
 			// });'
+			fetchpage.findLinks();
 		}
 
 		// unreliable
