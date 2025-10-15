@@ -25,11 +25,19 @@ module.exports = {
 		}
 
 		const queryText = `
-            INSERT INTO "MessageStore" (nick, userId, channel, server, text, messageId, time)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            INSERT INTO "MessageStore" (nick, userId, channel, server, text, messageId, time, reply)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         `;
 
 		const EncryptedMessage = encrypt(message.content);
+
+		if (message.reference.messageId) {
+			reply = `${message.channel.messages.fetch(message.reference.messageId)} - ${
+				reply.author.username
+			}`;
+		} else {
+			reply = 'null';
+		}
 
 		const values = [
 			message.author.username,
@@ -38,7 +46,8 @@ module.exports = {
 			message.guild.id,
 			EncryptedMessage,
 			message.id,
-			message.createdTimestamp
+			message.createdTimestamp,
+			reply.content
 		];
 
 		try {
