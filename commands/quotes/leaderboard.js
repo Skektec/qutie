@@ -1,11 +1,11 @@
-const { SlashCommandBuilder } = require("discord.js");
-const { EmbedBuilder } = require("discord.js");
-const database = require("../../functions/database");
+const { SlashCommandBuilder } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
+const database = require('../../functions/database');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("quoteboard")
-    .setDescription("Creates a leaderboard of all quotes in the server."),
+    .setName('quoteboard')
+    .setDescription('Creates a leaderboard of all quotes in the server.'),
   async execute(interaction) {
     await interaction.deferReply();
     const server = interaction.guildId;
@@ -29,13 +29,13 @@ module.exports = {
         ([userId, count], index) =>
           `${index + 1}. **<@${userId}>** - ${count} quotes`
       )
-      .join("\n");
+      .join('\n');
 
     const leaderboardEmbed = new EmbedBuilder()
       .setColor(0x0099ff)
-      .setTitle("Quote Leaderboard")
-      .setDescription(leaderboardText || "No quotes yet.")
-      .setFooter({ text: "Damn, touch grass." });
+      .setTitle('Quote Leaderboard')
+      .setDescription(leaderboardText || 'No quotes yet.')
+      .setFooter({ text: 'Damn, touch grass.' });
 
     interaction.editReply({ embeds: [leaderboardEmbed] });
   },

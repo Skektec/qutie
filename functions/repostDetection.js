@@ -9,43 +9,43 @@ const client = new Mistral({ apiKey: mistralToken });
 const serverHistories = {};
 
 module.exports = {
-	execute: async (message) => {
-		const guildId = message.guild.id;
+  execute: async (message) => {
+    const guildId = message.guild.id;
 
-		if (!serverHistories[guildId]) {
-			serverHistories[guildId] = [];
-		}
+    if (!serverHistories[guildId]) {
+      serverHistories[guildId] = [];
+    }
 
-		if (!message.embeds[0]?.data?.description) return;
+    if (!message.embeds[0]?.data?.description) return;
 
-		const embed = message.embeds[0]?.data?.description;
+    const embed = message.embeds[0]?.data?.description;
 
-		let aiOutput;
+    let aiOutput;
 
-		try {
-			const history = serverHistories[guildId];
+    try {
+      const history = serverHistories[guildId];
 
-			history.push({ role: 'user', content: embed });
+      history.push({ role: 'user', content: embed });
 
-			if (history.length > 15) {
-				history.shift();
-			}
+      if (history.length > 15) {
+        history.shift();
+      }
 
-			const chatResponse = await client.chat.complete({
-				model: 'mistral-small-latest',
-				messages: [{ role: 'system', content: prompt }, ...history]
-			});
+      const chatResponse = await client.chat.complete({
+        model: 'mistral-small-latest',
+        messages: [{ role: 'system', content: prompt }, ...history]
+      });
 
-			aiOutput = chatResponse.choices[0]?.message?.content;
+      aiOutput = chatResponse.choices[0]?.message?.content;
 
-			history.push({ role: 'assistant', content: aiOutput });
-		} catch (err) {
-			notify.error('Repost Detection Error', err, '0x000000');
-			return;
-		}
+      history.push({ role: 'assistant', content: aiOutput });
+    } catch (err) {
+      notify.error('Repost Detection Error', err, '0x000000');
+      return;
+    }
 
-		if (embed && aiOutput.includes('$$repost$$')) {
-			message.reply('Errmm Repost ♻️♻️♻️');
-		}
-	}
+    if (embed && aiOutput.includes('$$repost$$')) {
+      message.reply('Errmm Repost ♻️♻️♻️');
+    }
+  }
 };

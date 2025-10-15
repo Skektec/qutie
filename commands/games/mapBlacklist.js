@@ -1,78 +1,64 @@
-const { SlashCommandBuilder, AllowedMentionsTypes } = require("discord.js");
-const notify = require("../../functions/notify");
-const mapblacklist = require("../../data/mapBlacklist.json");
-const fs = require("fs");
+const { SlashCommandBuilder, AllowedMentionsTypes } = require('discord.js');
+const notify = require('../../functions/notify');
+const mapblacklist = require('../../data/mapBlacklist.json');
+const fileSystem = require('../../functions/fileSystem');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("blacklistmap")
-    .setDescription("Blacklist a War Thunder map from team battles command.")
+    .setName('blacklistmap')
+    .setDescription('Blacklist a War Thunder map from team battles command.')
     .addStringOption((option) =>
       option
-        .setName("map")
-        .setDescription("Select the map to blacklist.")
+        .setName('map')
+        .setDescription('Select the map to blacklist.')
         .setRequired(true)
         .setAutocomplete(true)
     ),
 
+  const autocomplete = require('../../functions/autocomplete');
+
+// ... (rest of the file)
+
   async autocomplete(interaction) {
     const serverId = interaction.guild.id;
-    const focusedOption = interaction.options.getFocused(true);
-
-    if (focusedOption.name === "map") {
-      try {
-        const maps = JSON.parse(
-          fs.readFileSync(require.resolve("../../data/wtMaps.json"), "utf8")
-        );
-        const blacklistData = JSON.parse(
-          fs.readFileSync(
-            require.resolve("../../data/mapBlacklist.json"),
-            "utf8"
-          )
-        );
-        const excludeList = blacklistData[serverId] || [];
-        const searchQuery = focusedOption.value.toLowerCase();
-
-        const choices = Object.keys(maps)
-          .filter(
-            (mapName) =>
-              !excludeList.includes(mapName) &&
-              mapName.toLowerCase().includes(searchQuery)
-          )
-          .sort((a, b) => {
-            const aStartsWith = a.toLowerCase().startsWith(searchQuery);
-            const bStartsWith = b.toLowerCase().startsWith(searchQuery);
-            if (aStartsWith && !bStartsWith) return -1;
-            if (!aStartsWith && bStartsWith) return 1;
-            return a.localeCompare(b);
-          })
-          .slice(0, 25);
-
-        await interaction.respond(
-          choices.map((choice) => ({ name: choice, value: choice }))
-        );
-      } catch (err) {
-        notify.error("Error in blacklist autocomplete", err, "5x04055");
-      }
+    if (interaction.options.getFocused(true).name === 'map') {
+      const maps = JSON.parse(
+        fileSystem.readFile(require.resolve('../../data/wtMaps.json'))
+      );
+      const blacklistData = JSON.parse(
+        fileSystem.readFile(require.resolve('../../data/mapBlacklist.json'))
+      );
+      const excludeList = blacklistData[serverId] || [];
+      const choices = Object.keys(maps).filter(
+        (mapName) => !excludeList.includes(mapName)
+      );
+      await autocomplete.createGameAutocomplete(interaction, choices);
     }
   },
 
   async execute(interaction) {
     const serverId = interaction.guild.id;
-    map = interaction.options.getString("map");
+    map = interaction.options.getString('map');
 
     try {
-      const blacklistData = JSON.parse(
-        fs.readFileSync(require.resolve("../../data/mapBlacklist.json"), "utf8")
+      const blacklistDataJSON = fileSystem.readFile(
+        require.resolve('../../data/mapBlacklist.json')
       );
+      if (!blacklistDataJSON) {
+        return interaction.reply({
+          content: 'Error reading blacklist file.',
+          flags: MessageFlags.Ephemeral,
+        });
+      }
+      const blacklistData = JSON.parse(blacklistDataJSON);
       if (!blacklistData[serverId]) {
         blacklistData[serverId] = [];
       }
       if (!blacklistData[serverId].includes(map)) {
         blacklistData[serverId].push(map);
       }
-      fs.writeFileSync(
-        require.resolve("../../data/mapBlacklist.json"),
+      fileSystem.writeFile(
+        require.resolve('../../data/mapBlacklist.json'),
         JSON.stringify(blacklistData, null, 2)
       );
 
@@ -81,7 +67,7 @@ module.exports = {
         allowedMentions: { repliedUser: false },
       });
     } catch (err) {
-      notify.error("Error blacklisting map", err, "-1x04084");
+      notify.error('Error blacklisting map', err, '-1x04084');
     }
   },
 };

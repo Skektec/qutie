@@ -1,5 +1,5 @@
-const { Player } = require("discord-player");
-const { DefaultExtractors } = require("@discord-player/extractor");
+const { Player } = require('discord-player');
+const { DefaultExtractors } = require('@discord-player/extractor');
 
 let client = null;
 let player = null;
@@ -19,7 +19,7 @@ const clientInstance = {
 
   initializePlayer: async () => {
     if (!client) {
-      console.error("Client not initialized");
+      console.error('Client not initialized');
       return null;
     }
 
@@ -33,7 +33,7 @@ const clientInstance = {
 
       return newPlayer;
     } catch (error) {
-      console.error("Error initializing player:", error);
+      console.error('Error initializing player:', error);
       return null;
     }
   },
