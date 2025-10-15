@@ -1,5 +1,6 @@
 {
 	"dependencies": {
+		"@google/generative-ai": "^0.24.1",
 		"axios": "^1.7.8",
 		"better-sqlite3": "^11.8.1",
 		"cheerio": "^1.1.2",

@@ -1,15 +1,7 @@
-const OpenAI = require('openai');
-const config = require('./data/config.json');
+const ai = require('./functions/ai');
 const pubconfig = require('./data/pubconfig.js');
 const gif = require('./jarvis_commands/gif');
 const notify = require('./functions/notify');
-// const { Context } = require('discord-player');
-
-const aiClient = new OpenAI({
-  apiKey: config.aiKey,
-  baseURL: 'https://api.x.ai/v1',
-  timeout: 360000
-});
 
 const serverContext = {};
 
@@ -38,7 +30,6 @@ module.exports = {
 
       let imageUrl = '';
       let imageDesc = '';
-      let imageResponse = '';
 
       if (message.attachments.size >= 1) {
         imageUrl = await [...message.attachments.entries()][0][1].attachment;
@@ -49,31 +40,8 @@ module.exports = {
       }
 
       if (imageUrl != '') {
-        imageResponse = await aiClient.chat.completions.create({
-          model: 'grok-4-fast-non-reasoning',
-          messages: [
-            {
-              role: 'user',
-              content: [
-                {
-                  type: 'image_url',
-                  image_url: {
-                    url: imageUrl,
-                    detail: 'medium'
-                  }
-                },
-                {
-                  type: 'text',
-                  text: 'Describe this image accurately and briefly for a LLM'
-                }
-              ]
-            }
-          ]
-        });
+        imageDesc = await ai.describeImage(imageUrl);
       }
-
-      if (imageResponse) imageDesc = imageResponse.choices[0].message.content;
-      else imageDesc = 'N/A';
 
       const commandSen = `User Input: ${message.content}, Message they replied to: ${
         messageReply?.content
@@ -83,21 +51,9 @@ module.exports = {
 			Last 15 chat messages as context: ${serverContext[serverId]
     .map((msg) => `${msg.role}: ${msg.content}`)
     .join('\n')}`;
-      const chatResponse = await aiClient.chat.completions.create({
-        model: 'grok-4-fast-non-reasoning',
-        messages: [
-          {
-            role: 'system',
-            content: pubconfig.prompt
-          },
-          {
-            role: 'user',
-            content: commandSen
-          }
-        ]
-      });
 
-      const content = chatResponse.choices[0].message.content;
+      const context = [{ role: 'system', content: pubconfig.prompt }, ...serverContext[serverId]];
+      const content = await ai.chat(commandSen, context);
 
       const gifCommand = content.match(/\$\$gif of (.*?)\$\$/);
       const truth = content.match(/\$\$answer:\s*(.*?)\s*\$\$/);

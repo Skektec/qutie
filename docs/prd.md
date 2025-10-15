@@ -57,6 +57,7 @@ The primary target audience for Qutie Bot is Discord server administrators and m
 *   **Platform:** Node.js
 *   **Libraries:**
     *   `discord.js`: For interacting with the Discord API.
+    *   `@google/generative-ai`: For interacting with the Google Gemini Pro API.
     *   `discord-player`: For music playback.
     *   `pg`: For PostgreSQL database interaction.
     *   `string-similarity`: For the quote search functionality.
