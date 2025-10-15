@@ -11,6 +11,7 @@ const messageAddQuote = require('../functions/messageAddQuote.js');
 const clean = require('../functions/removeTracker');
 const fs = require('fs');
 const fetchpage = require('../functions/warThunder/fetchPage.js');
+const storeMessage = require('../functions/storeMessage.js');
 
 // const repostDetection = require('../functions/repostDetection');
 const { exec } = require('child_process');
@@ -26,18 +27,8 @@ const prevMessages = [];
 module.exports = {
 	name: Events.MessageCreate,
 	execute: async (message) => {
-		// Just messing around with a mute function that deletes messages, not implemented.
-		// if (Array.isArray(mutedUsers) && mutedUsers.includes(message.author.id)) {
-		// 	message.reply({
-		// 		content: 'You are muted.',
-		// 		flags: MessageFlags.Ephemeral,
-		// 	});
-		//
-		// 	message.delete();
-		// 	return;
-		// }
-
 		jarvis.execute(message);
+		storeMessage.save(message);
 
 		if (message.author.bot) return;
 
@@ -55,13 +46,6 @@ module.exports = {
 		) {
 			message.channel.send(prevMessages[2]);
 		}
-
-		// if (message.content === "nvm") {
-		//   message.reply({
-		//     content: nvmGif,
-		//     allowedMentions: { repliedUser: false },
-		//   });
-		// }
 
 		if (message.content.match(/kms|kill myself|killing myself/i)) {
 			message.reply({
@@ -165,6 +149,24 @@ module.exports = {
 
 		// if (message.embeds.length > 0) {
 		// 	repostDetection.execute(message);
+		// }
+
+		// Just messing around with a mute function that deletes messages, not implemented.
+		// if (Array.isArray(mutedUsers) && mutedUsers.includes(message.author.id)) {
+		// 	message.reply({
+		// 		content: 'You are muted.',
+		// 		flags: MessageFlags.Ephemeral,
+		// 	});
+		//
+		// 	message.delete();
+		// 	return;
+		// }
+
+		// if (message.content === "nvm") {
+		//   message.reply({
+		//     content: nvmGif,
+		//     allowedMentions: { repliedUser: false },
+		//   });
 		// }
 	}
 };
