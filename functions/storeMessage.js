@@ -3,7 +3,7 @@ const crypto = require('crypto');
 require('dotenv').config();
 
 const algorithm = 'aes-256-gcm';
-const keyHex = process.env.STORING - STRING;
+const keyHex = process.env.STORINGSTRING;
 
 module.exports = {
 	save: async (message) => {
