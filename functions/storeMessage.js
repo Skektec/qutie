@@ -11,7 +11,7 @@ module.exports = {
 			message.author.username,
 			message.author.id,
 			message.channel.id,
-			message.guild,
+			message.guild.id,
 			message.content,
 			message.id,
 			message.createdTimestamp
