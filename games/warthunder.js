@@ -1,7 +1,11 @@
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
+const { avg1, avg2 } = require('../commands/games/formTeam');
 
 module.exports = {
 	updateTeamEmbed(team1, team2, randomMapName, randomMapUrl, winner = null) {
+		const totalPoints1 = team1.reduce((sum, member) => sum + (member.points ?? 0), 0);
+		const totalPoints2 = team2.reduce((sum, member) => sum + (member.points ?? 0), 0);
+
 		return new EmbedBuilder()
 			.setColor(0x0ff08b)
 			.setTitle('Team Tank Battles')
@@ -16,12 +20,12 @@ module.exports = {
 			)
 			.addFields(
 				{
-					name: winner === 1 ? 'Team 1  👑' : 'Team 1',
+					name: winner === 1 ? 'Team 1  👑' : `Team 1 = ${totalPoints1}`,
 					value: team1.map((member) => `<@${member.id}>`).join('\n') || 'No members',
 					inline: true
 				},
 				{
-					name: winner === 2 ? 'Team 2  👑' : 'Team 2',
+					name: winner === 2 ? 'Team 2  👑' : `Team 2 = ${totalPoints2}`,
 					value: team2.map((member) => `<@${member.id}>`).join('\n') || 'No members',
 					inline: true
 				}
