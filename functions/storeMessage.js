@@ -39,6 +39,8 @@ module.exports = {
 			reply = 'null';
 		}
 
+		const EncryptedReply = encrypt(reply.content);
+
 		const values = [
 			message.author.username,
 			message.author.id,
@@ -47,7 +49,7 @@ module.exports = {
 			EncryptedMessage,
 			message.id,
 			message.createdTimestamp,
-			reply.content
+			EncryptedReply
 		];
 
 		try {
