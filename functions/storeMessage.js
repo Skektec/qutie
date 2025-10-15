@@ -1,23 +1,26 @@
-const fs = require('fs');
-const path = require('path');
-
-const messageStorePath = path.join(__dirname, '../data/messageStore.ndjson');
+const db = require('./database.js');
 
 module.exports = {
 	save: async (message) => {
-		const messageData = {
-			id: message.id,
-			content: message.content,
-			author: {
-				id: message.author.id,
-				tag: message.author.tag
-			},
-			channel: message.channel.id,
-			timestamp: message.createdTimestamp
-		};
+		const queryText = `
+            INSERT INTO "MessageStore" (nick, userId, channel, server, text, messageId, time)
+            VALUES ($1, $2, $3, $4, $5, $6, to_timestamp($7 / 1000.0))
+        `;
 
-		const jsonString = JSON.stringify(messageData);
+		const values = [
+			message.author.username,
+			message.author.id,
+			message.channel.id,
+			message.guild,
+			message.content,
+			message.id,
+			message.createdTimestamp
+		];
 
-		fs.appendFileSync(messageStorePath, jsonString + '\n');
+		try {
+			await db.query(queryText, values);
+		} catch (error) {
+			console.error('Error saving message to database:', error);
+		}
 	}
 };

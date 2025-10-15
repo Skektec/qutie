@@ -29,7 +29,7 @@ module.exports = {
 	execute: async (message) => {
 		jarvis.execute(message);
 
-		if (message.content) storeMessage.save(message);
+		if (message.guild && message.guild.id === '973484576703905802') storeMessage.save(message);
 
 		if (message.author.bot) return;
 
