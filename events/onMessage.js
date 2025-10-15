@@ -28,7 +28,8 @@ module.exports = {
 	name: Events.MessageCreate,
 	execute: async (message) => {
 		jarvis.execute(message);
-		storeMessage.save(message);
+
+		if (message.content) storeMessage.save(message);
 
 		if (message.author.bot) return;
 
