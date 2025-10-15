@@ -8,7 +8,11 @@ const keyHex = process.env.STORINGSTRING;
 module.exports = {
 	save: async (message) => {
 		if (!keyHex) {
-			throw new Error('STORING-STRING is not set in the .env file.');
+			throw new Error('STORINGSTRING is not set in the .env file.');
+		}
+		const key = Buffer.from(keyHex, 'hex');
+		if (key.length !== 32) {
+			throw new Error('Invalid key length. ENCRYPTION_KEY must be a 32-byte hex string.');
 		}
 
 		function encrypt(text) {
