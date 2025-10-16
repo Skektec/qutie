@@ -13,11 +13,14 @@ async function deploymentNotice() {
 		const user = await client.users.fetch(botAdimn);
 		await user.send('Deployed new code successfully.');
 		client.destroy();
-		process.exit(0);
 	} catch (err) {
 		console.log(err);
-		process.exit(1);
 	}
 }
 
-deploymentNotice();
+try {
+	deploymentNotice();
+	process.exit(0);
+} catch {
+	process.exit(1);
+}
