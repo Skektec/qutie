@@ -8,9 +8,15 @@ const client = new Client({
 
 async function deploymentNotice() {
 	client.login(discordToken);
-	const user = await client.users.fetch(botAdimn);
-	await user.send('Deployed new code successfully.');
-	process.exit(0);
+
+	try {
+		const user = await client.users.fetch(botAdimn);
+		await user.send('Deployed new code successfully.');
+		client.destroy();
+		process.exit(0);
+	} catch {
+		process.exit(1);
+	}
 }
 
 deploymentNotice();
