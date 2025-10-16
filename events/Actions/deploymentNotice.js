@@ -11,9 +11,9 @@ async function deploymentNotice() {
 	client.once('ready', async () => {
 		const user = await client.users.fetch(botAdimn);
 		await user.send('Deployed new code successfully.');
+		client.destroy();
+		process.exit(0);
 	});
-	client.destroy();
-	process.exit(0);
 }
 
 deploymentNotice();
