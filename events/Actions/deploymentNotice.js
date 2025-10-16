@@ -13,3 +13,4 @@ async function deploymentNotice() {
 }
 
 deploymentNotice();
+process.exit(0);
