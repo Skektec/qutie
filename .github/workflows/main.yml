@@ -17,7 +17,11 @@ jobs:
           ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
       - name: Deploy commands
         run: |
+              echo "Navigating"
               cd ~/qutie/
+              echo "Pulling"
               git pull git@github.com:Skektec/qutie.git
+              echo "Restarting"
               sudo systemctl restart quoteBot.service
+              echo "Notifing"
               node ~/qutie/events/actions/deploymentNotice.js
