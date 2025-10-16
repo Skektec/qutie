@@ -17,5 +17,7 @@ jobs:
           ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
       - name: Deploy commands
         run: |
-              cp -r . ~/qutie/
+              cd ~/qutie/
+              git pull
+              systemctl restart qutieBot.service
               node ~/qutie/events/actions/deploymentNotice.js
