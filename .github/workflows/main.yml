@@ -18,6 +18,6 @@ jobs:
       - name: Deploy commands
         run: |
               cd ~/qutie/
-              git pull
+              git pull git@github.com:Skektec/qutie.git
               systemctl restart qutieBot.service
               node ~/qutie/events/actions/deploymentNotice.js
