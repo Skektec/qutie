@@ -39,7 +39,7 @@ module.exports = {
 
 		if ((message.channel = 1200118011806367825)) return;
 
-		// if (message.guild && message.guild.id === '973484576703905802') storeMessage.save(message);
+		if (message.guild && message.guild.id === '973484576703905802') storeMessage.save(message);
 
 		if (message.author.bot) return;
 
