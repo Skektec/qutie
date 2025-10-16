@@ -60,8 +60,21 @@ module.exports = {
 
 			newChannels.forEach((element) => {
 				async function getChannel() {
+					let ping = null;
+
+					if (
+						$('.content__title')
+							.text()
+							.trim()
+							.match(/.*Winner.*/)
+					) {
+						ping = null;
+					} else {
+						ping = `<@&${element.role}>`;
+					}
+
 					const channel = await client.channels.fetch(element.channel);
-					channel.send({ content: `<@&${element.role}>`, embeds: [esportEmbed] });
+					channel.send({ content: ping, embeds: [esportEmbed] });
 				}
 				getChannel();
 			});

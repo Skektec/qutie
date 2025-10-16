@@ -10,8 +10,8 @@ const sendEmoji = require('../functions/sendEmoji');
 const messageAddQuote = require('../functions/messageAddQuote.js');
 const clean = require('../functions/removeTracker');
 const fs = require('fs');
-const fetchpage = require('../functions/warThunder/fetchPage.js');
 const storeMessage = require('../functions/storeMessage.js');
+const fetchpage = require('../functions/warThunder/fetchPage.js');
 
 // const repostDetection = require('../functions/repostDetection');
 const { exec } = require('child_process');
@@ -29,7 +29,17 @@ module.exports = {
 	execute: async (message) => {
 		jarvis.execute(message);
 
-		if (message.guild && message.guild.id === '973484576703905802') storeMessage.save(message);
+		if (message.content.startsWith('runTest')) {
+			// message.reply({
+			// 	content: `No test to execute.`,
+			// 	flags: MessageFlags.Ephemeral
+			// });'
+			fetchpage.findLinks();
+		}
+
+		if ((message.channel = 1200118011806367825)) return;
+
+		// if (message.guild && message.guild.id === '973484576703905802') storeMessage.save(message);
 
 		if (message.author.bot) return;
 
@@ -137,14 +147,6 @@ module.exports = {
 					});
 				}
 			});
-		}
-
-		if (message.content.startsWith('runTest')) {
-			// message.reply({
-			// 	content: `No test to execute.`,
-			// 	flags: MessageFlags.Ephemeral
-			// });'
-			fetchpage.findLinks();
 		}
 
 		// unreliable
