@@ -19,3 +19,4 @@ jobs:
               sudo systemctl restart quoteBot.service
               echo "Notifing"
               node ~/qutie/events/actions/deploymentNotice.js
+              echo "Done all"
