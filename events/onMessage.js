@@ -34,7 +34,6 @@ module.exports = {
 			// 	content: `No test to execute.`,
 			// 	flags: MessageFlags.Ephemeral
 			// });'
-			fetchpage.findLinks();
 		}
 
 		if ((message.channel = 1200118011806367825)) return;
