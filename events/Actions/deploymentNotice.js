@@ -20,7 +20,9 @@ async function deploymentNotice() {
 
 try {
 	deploymentNotice();
+	console.log('Exiting with 0');
 	process.exit(0);
 } catch {
+	console.log('Exiting with 1');
 	process.exit(1);
 }
