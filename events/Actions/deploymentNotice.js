@@ -8,21 +8,8 @@ const client = new Client({
 
 async function deploymentNotice() {
 	client.login(discordToken);
-
-	try {
-		const user = await client.users.fetch(botAdimn);
-		await user.send('Deployed new code successfully.');
-		client.destroy();
-	} catch (err) {
-		console.log(err);
-	}
+	const user = await client.users.fetch(botAdimn);
+	await user.send('Deployed new code successfully.');
 }
 
-try {
-	deploymentNotice();
-	console.log('Exiting with 0');
-	process.exit(0);
-} catch {
-	console.log('Exiting with 1');
-	process.exit(1);
-}
+deploymentNotice();
