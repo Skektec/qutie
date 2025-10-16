@@ -7,13 +7,26 @@ const client = new Client({
 });
 
 async function deploymentNotice() {
-	client.login(discordToken);
 	client.once('ready', async () => {
-		const user = await client.users.fetch(botAdimn);
-		await user.send('Deployed new code successfully.');
-		client.destroy();
-		process.exit(0);
+		try {
+			const user = await client.users.fetch(botAdimn);
+			await user.send('Deployed new code successfully.');
+
+			client.destroy();
+			process.exit(0);
+		} catch (err) {
+			console.error('ERROR during message send/fetch:', err);
+			client.destroy();
+			process.exit(1);
+		}
 	});
+
+	try {
+		await client.login(discordToken);
+	} catch (loginError) {
+		console.error('FATAL ERROR: Discord login failed:', loginError);
+		process.exit(1);
+	}
 }
 
 deploymentNotice();
