@@ -10,7 +10,7 @@ async function deploymentNotice() {
 	client.login(discordToken);
 	const user = await client.users.fetch(botAdimn);
 	await user.send('Deployed new code successfully.');
-	process.exit(1);
+	process.exit(0);
 }
 
 deploymentNotice();
