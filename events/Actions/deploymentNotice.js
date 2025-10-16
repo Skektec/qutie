@@ -14,7 +14,8 @@ async function deploymentNotice() {
 		await user.send('Deployed new code successfully.');
 		client.destroy();
 		process.exit(0);
-	} catch {
+	} catch (err) {
+		console.log(err);
 		process.exit(1);
 	}
 }
