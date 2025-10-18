@@ -10,6 +10,8 @@ const fs = require('fs');
 const path = require('path');
 
 const teamDataMap = new Map();
+const playerRecordArray = [];
+const addedIds = [];
 
 function getMap(maps) {
 	const mapNames = Object.keys(maps);
@@ -18,58 +20,93 @@ function getMap(maps) {
 	return { randomMapName, randomMapUrl };
 }
 
-function calculateTeams(param, callback) {
-	exec(`python ./math.py ${param}`, (error, stdout, stderr) => {
-		if (error) {
-			console.error('Python error:', error);
-			return callback(null);
-		}
-		if (stderr) {
-			console.error('Python stderr:', stderr);
-		}
-		callback(stdout.trim());
+function calculateTeamsPy(param1, param2) {
+	return new Promise((resolve, reject) => {
+		exec(`python ./commands/games/math.py ${param1} ${param2}`, (error, stdout, stderr) => {
+			if (error) {
+				console.error('Python error:', error);
+				return callback(null);
+			}
+			if (stderr) {
+				console.error('Python stderr:', stderr);
+			}
+			resolve(stdout.trim());
+		});
 	});
 }
 
-function formTeam(team1, team2, userId, gameName) {
-	formTeamData[gameName] = [];
+async function formTeam(team1, team2, userId, gameName) {
+	const data = JSON.parse(
+		fs.readFileSync(path.join(__dirname, '../../data/formTeamData.json'), 'utf-8')
+	);
 
-	if (!formTeamData[gameName].includes(userId)) {
-		if (!formTeamData[gameName].some((player) => player.id === userId)) {
-			formTeamData[gameName].push({ id: userId, points: 1000 });
-			saveFormTeamData();
-		}
+	if (!data[gameName]) {
+		data[gameName] = [];
 	}
 
-	let players = [];
+	const playerExists = data[gameName].some((player) => player.id === userId);
 
-	players.push(userId);
+	if (!playerExists) {
+		data[gameName].push({ id: userId, points: 1000 });
+		saveFormTeamData();
+	}
 
-	players.forEach((userId) => {
-		formTeamData[gameName];
-	});
+	const playerRecord = data[gameName].find((x) => x.id === userId);
 
-	calculateTeams(text, (output) => {
-		// do something with output
-		console.log('Python output:', output);
-	});
+	if (!addedIds.includes(userId)) {
+		addedIds.push(userId);
+		playerRecordArray.push({ [playerRecord.id]: playerRecord.points });
+	}
+
+	if (playerRecordArray.length < 2) {
+		return { team1: userId, team2: [] };
+	}
+
+	let players = Object.assign(
+		{},
+		...playerRecordArray.map((x) => {
+			const idKey = Object.keys(x)[0];
+			return { [idKey]: x[idKey] };
+		})
+	);
+
+	const std = 30;
+	const playerArg = JSON.stringify(players);
+
+	const output = await calculateTeamsPy(playerArg, std);
+
+	const teams = output.slice(2, -2);
+	const splitTeams = teams.split('), (').filter(Boolean);
+
+	if (splitTeams.length >= 2) {
+		const assignIds = (teamString) => {
+			return teamString
+				.split(',')
+				.map((id) => id.replace(/'/g, '').trim())
+				.filter(Boolean);
+		};
+
+		team1 = assignIds(splitTeams[0]);
+		team2 = assignIds(splitTeams[1]);
+
+		console.log('Teams calculated:', team1, '\nTeam 2:', team2);
+	}
+
+	console.log('Team 1:', team1, '\nTeam 2:', team2);
+	return { team1, team2 };
 }
 
 function winner(team1, team2, winningTeam, gameName) {
 	const winners = winningTeam === 1 ? team1 : team2;
 	const losers = winningTeam === 1 ? team2 : team1;
 
-	formTeamData[gameName] = [];
-
 	winners.forEach((member) => {
 		let player = formTeamData[gameName].find((p) => p.id === member.id);
-
 		player.points += 23;
 	});
 
 	losers.forEach((member) => {
 		let player = formTeamData[gameName].find((p) => p.id === member.id);
-
 		player.points = Math.max(0, player.points - 12);
 	});
 

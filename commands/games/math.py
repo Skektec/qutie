@@ -1,17 +1,16 @@
 import numpy as np
-import random
-import time
-import itertools
+import random, time, itertools, ast, sys
+
+# Credit to kAerospace for the team math
 
 # Dict Structure:
 # userid:elo
 type UserIdType = str
 type MemberDict = dict[UserIdType, int]
-type OutputList = tuple[tuple[UserIdType], int]
+type OutputType = tuple[tuple[UserIdType]] | None # Should return a 2-long tuple containing tuples with the team composition
 
-sample = {"a":120,"b":150,"c":160,"d":150}
-
-def generateTeam(members: MemberDict, stdev: float) -> OutputList:
+def generateTeam(members: MemberDict, stdev: float = 1) -> OutputType:
+    if len(members) < 2 or stdev < 0: return None
     eloSum = sum(members.values())
     lowestDifference = 999999999
     # Calculate permutations for one team (other team elo will be diff to eloSum)
@@ -24,7 +23,7 @@ def generateTeam(members: MemberDict, stdev: float) -> OutputList:
     np.random.RandomState(int(time.time()))
     sample = lowestDifference + np.abs(np.random.normal(0, stdev))
     sortedArrangements = list(reversed(sorted(permutations.items(), key = lambda item: item[1]))) # Sort entries by elo difference, descending order
-    validArrangements = []
+    validArrangements: list[list[UserIdType]] = []
     closestValue = 999999999
     for arr in sortedArrangements:
         # First entry below the sampled threshold will be taken as closest match (not really true but whatever idc)
@@ -32,13 +31,15 @@ def generateTeam(members: MemberDict, stdev: float) -> OutputList:
         if elo < sample:
             # All matchups with the same elo should also be considered as valid though, we only exit once we go away from the first match
             if elo < closestValue and not len(validArrangements) == 0: break
-            validArrangements.append(arr)
+            validArrangements.append(arr[0])
             closestValue = elo
-    # Returns team arrangement + team elo pair
+    # Returns team arrangement
     # If we didnt find a match for some reason (this shouldnt happen) we just take the closest possible match
-    if len(validArrangements) == 0: return sortedArrangements[:-1]
-    elif len(validArrangements) == 1: return validArrangements[0]
-    # Should we have more than one team with a valid elo, pick one out of those at random
-    else: return random.choice(validArrangements)
+    teamArrangement = sortedArrangements[-1][0] if len(validArrangements) == 0 else random.choice(validArrangements)
+    otherTeam = tuple(set(members.keys()) - set(teamArrangement))
+    return (teamArrangement, otherTeam)
 
-print(generateTeam(sample, 30))
+members = ast.literal_eval(sys.argv[1])
+stdev   = int(ast.literal_eval(sys.argv[2]))
+
+print(generateTeam(members, stdev))

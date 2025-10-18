@@ -12,9 +12,11 @@ const clean = require('../functions/removeTracker');
 const fs = require('fs');
 const storeMessage = require('../functions/storeMessage.js');
 const fetchpage = require('../functions/warThunder/fetchPage.js');
+const formTeamData = require('../data/formTeamData.json');
 
 // const repostDetection = require('../functions/repostDetection');
 const { exec } = require('child_process');
+const { json } = require('stream/consumers');
 
 const words = ['uwu', 'owo', 'blahaj'];
 
@@ -34,11 +36,12 @@ module.exports = {
 			// 	content: `No test to execute.`,
 			// 	flags: MessageFlags.Ephemeral
 			// });'
+			message.reply(`Data: ${JSON.stringify(formTeamData.warthunder)}`);
 		}
 
-		if ((message.channel = 1200118011806367825)) return;
+		if (message.channel == 1200118011806367825) return;
 
-		if (message.guild && message.guild.id === '973484576703905802') storeMessage.save(message);
+		// if (message.guild && message.guild.id === '973484576703905802') storeMessage.save(message);
 
 		if (message.author.bot) return;
 

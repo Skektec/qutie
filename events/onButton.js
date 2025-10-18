@@ -96,7 +96,7 @@ module.exports = {
 			}
 
 			if (buttonInteraction.customId === 'join') {
-				formTeam(team1, team2, userId, gameName);
+				await formTeam(team1, team2, userId, gameName);
 
 				const updatedTeam = gameModule.updateTeamEmbed(team1, team2, randomMapName, randomMapUrl);
 				await fetchedMessage.edit({ embeds: [updatedTeam] });
