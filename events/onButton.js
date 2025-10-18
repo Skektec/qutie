@@ -15,6 +15,7 @@ module.exports = {
 		try {
 			if (!buttonInteraction.isButton()) return;
 
+			const fetchedMessage = buttonInteraction.message;
 			const teamData = teamDataMap.get(buttonInteraction.message.id);
 
 			let {
