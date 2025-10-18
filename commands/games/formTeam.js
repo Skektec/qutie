@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
+const { exec } = require('child_process');
 const teamGames = require('../../data/teamGames.json');
 const maps = require('../../data/wtMaps.json');
 const notify = require('../../functions/notify');
@@ -17,101 +18,132 @@ function getMap(maps) {
 	return { randomMapName, randomMapUrl };
 }
 
-// math yucky
-function formTeam(team1, team2, userId, gameName) {
+function calculateTeamsPy(param1, param2) {
+	return new Promise((resolve, reject) => {
+		exec(`python ./commands/games/math.py ${param1} ${param2}`, (error, stdout, stderr) => {
+			if (error) {
+				console.error('Python error:', error);
+				return callback(null);
+			}
+			if (stderr) {
+				console.error('Python stderr:', stderr);
+			}
+			console.log('STDOUT:', stdout);
+			resolve(stdout.trim());
+		});
+	});
+}
+
+async function formTeam(userId, gameName, playerRecordArray) {
 	if (!formTeamData[gameName]) {
 		formTeamData[gameName] = [];
 	}
 
-	if (!formTeamData.players) {
-		formTeamData.players = [];
+	const playerExists = formTeamData[gameName].some((player) => player.id === userId);
+
+	if (!playerExists) {
+		formTeamData[gameName].push({ id: userId, points: 1000 });
+		saveFormTeamData();
 	}
 
-	let allIds = [...team1, ...team2].map((m) => m.id);
-	allIds = allIds.filter((id, idx, arr) => arr.indexOf(id) === idx);
+	const playerRecord = formTeamData[gameName].find((x) => x.id === userId);
 
-	if (userId && !allIds.includes(userId)) {
-		allIds.push(userId);
+	if (!playerRecordArray.some((record) => record.hasOwnProperty(userId))) {
+		playerRecordArray.push({ [playerRecord.id]: playerRecord.points });
+	}
 
-		if (!formTeamData[gameName].some((player) => player.id === userId)) {
-			formTeamData[gameName].push({ id: userId, points: 1000 });
-			saveFormTeamData();
-		}
+	if (playerRecordArray.length < 2) {
+		team1 = [userId];
+		team2 = [];
+	}
 
-		if (!formTeamData.players.some((player) => player.id === userId)) {
-			formTeamData.players.push({ id: userId, points: 1000 });
-			saveFormTeamData();
+	if (playerRecordArray.length >= 2) {
+		let players = Object.assign(
+			{},
+			...playerRecordArray.map((x) => {
+				const idKey = Object.keys(x)[0];
+				return { [idKey]: x[idKey] };
+			})
+		);
+
+		const std = 30;
+		const playerArg = JSON.stringify(players);
+
+		const output = await calculateTeamsPy(playerArg, std);
+
+		const teams = output.slice(2, -2);
+		const splitTeams = teams.split('), (').filter(Boolean);
+
+		if (splitTeams.length >= 2) {
+			const assignIds = (teamString) => {
+				return teamString
+					.split(',')
+					.map((id) => id.replace(/'/g, '').trim())
+					.filter(Boolean);
+			};
+
+			team1 = assignIds(splitTeams[0]);
+			team2 = assignIds(splitTeams[1]);
 		}
 	}
 
-	const allPlayers = allIds.map((id) => {
-		const gamePlayer = formTeamData[gameName]?.find((p) => p.id === id);
+	console.log('Team 1:', team1, '\nTeam 2:', team2);
 
-		return {
-			id,
-			points: gamePlayer?.points ?? 1000
+	return { team1, team2 };
+}
+
+async function rollTeam(playerRecordArray) {
+	team1 = [];
+	team2 = [];
+
+	let players = Object.assign(
+		{},
+		...playerRecordArray.map((x) => {
+			const idKey = Object.keys(x)[0];
+			return { [idKey]: x[idKey] };
+		})
+	);
+
+	const std = 30;
+	const playerArg = JSON.stringify(players);
+
+	const output = await calculateTeamsPy(playerArg, std);
+
+	const teams = output.slice(2, -2);
+	const splitTeams = teams.split('), (').filter(Boolean);
+
+	if (playerRecordArray.length < 2) {
+		team1 = [userId];
+		team2 = [];
+	}
+
+	if (splitTeams.length >= 2) {
+		const assignIds = (teamString) => {
+			return teamString
+				.split(',')
+				.map((id) => id.replace(/'/g, '').trim())
+				.filter(Boolean);
 		};
-	});
 
-	let bestSplit = { team1: [], team2: [] };
-	let bestScore = Infinity;
-	const ITERATIONS = 1000;
-
-	for (let i = 0; i < ITERATIONS; i++) {
-		const shuffled = [...allPlayers].sort(() => Math.random() - 0.5);
-
-		const t1 = [],
-			t2 = [];
-		for (let j = 0; j < shuffled.length; j++) {
-			if (t1.length <= t2.length) {
-				t1.push(shuffled[j]);
-			} else {
-				t2.push(shuffled[j]);
-			}
-		}
-
-		const avg1 = t1.length ? t1.reduce((acc, p) => acc + p.points, 0) / t1.length : 0;
-		const avg2 = t2.length ? t2.reduce((acc, p) => acc + p.points, 0) / t2.length : 0;
-		const score = Math.pow(avg1 - avg2, 2);
-
-		if (score < bestScore) {
-			bestScore = score;
-			bestSplit = { team1: t1, team2: t2 };
-		}
+		team1 = assignIds(splitTeams[0]);
+		team2 = assignIds(splitTeams[1]);
 	}
 
-	team1.length = 0;
-	team2.length = 0;
-	team1.push(...bestSplit.team1);
-	team2.push(...bestSplit.team2);
+	return { team1, team2 };
 }
 
 function winner(team1, team2, winningTeam, gameName) {
 	const winners = winningTeam === 1 ? team1 : team2;
 	const losers = winningTeam === 1 ? team2 : team1;
 
-	if (!formTeamData[gameName]) {
-		formTeamData[gameName] = [];
-	}
-
 	winners.forEach((member) => {
-		let player = formTeamData[gameName].find((p) => p.id === member.id);
-		if (!player) {
-			player = { id: member.id, points: 1023 };
-			formTeamData[gameName].push(player);
-		} else {
-			player.points += 23;
-		}
+		let player = formTeamData[gameName].find((p) => p.id === member);
+		player.points += 23;
 	});
 
 	losers.forEach((member) => {
-		let player = formTeamData[gameName].find((p) => p.id === member.id);
-		if (!player) {
-			player = { id: member.id, points: 988 };
-			formTeamData[gameName].push(player);
-		} else {
-			player.points = Math.max(0, player.points - 12);
-		}
+		let player = formTeamData[gameName].find((p) => p.id === member);
+		player.points = Math.max(0, player.points - 12);
 	});
 
 	saveFormTeamData();
@@ -202,6 +234,7 @@ module.exports = {
 				team1,
 				team2,
 				randomMapName,
+				playerRecordArray: [],
 				randomMapUrl,
 				gameName: gameModuleName
 			});
@@ -218,5 +251,6 @@ module.exports = {
 	teamDataMap,
 	getMap,
 	formTeam,
-	winner
+	winner,
+	rollTeam
 };
