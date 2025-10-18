@@ -59,37 +59,40 @@ async function formTeam(team1, team2, userId, gameName) {
 	}
 
 	if (playerRecordArray.length < 2) {
-		return { team1: userId, team2: [] };
+		team1 = [userId];
+		team2 = [];
 	}
 
-	let players = Object.assign(
-		{},
-		...playerRecordArray.map((x) => {
-			const idKey = Object.keys(x)[0];
-			return { [idKey]: x[idKey] };
-		})
-	);
+	if (playerRecordArray.length >= 2) {
+		let players = Object.assign(
+			{},
+			...playerRecordArray.map((x) => {
+				const idKey = Object.keys(x)[0];
+				return { [idKey]: x[idKey] };
+			})
+		);
 
-	const std = 30;
-	const playerArg = JSON.stringify(players);
+		const std = 30;
+		const playerArg = JSON.stringify(players);
 
-	const output = await calculateTeamsPy(playerArg, std);
+		const output = await calculateTeamsPy(playerArg, std);
 
-	const teams = output.slice(2, -2);
-	const splitTeams = teams.split('), (').filter(Boolean);
+		const teams = output.slice(2, -2);
+		const splitTeams = teams.split('), (').filter(Boolean);
 
-	if (splitTeams.length >= 2) {
-		const assignIds = (teamString) => {
-			return teamString
-				.split(',')
-				.map((id) => id.replace(/'/g, '').trim())
-				.filter(Boolean);
-		};
+		if (splitTeams.length >= 2) {
+			const assignIds = (teamString) => {
+				return teamString
+					.split(',')
+					.map((id) => id.replace(/'/g, '').trim())
+					.filter(Boolean);
+			};
 
-		team1 = assignIds(splitTeams[0]);
-		team2 = assignIds(splitTeams[1]);
+			team1 = assignIds(splitTeams[0]);
+			team2 = assignIds(splitTeams[1]);
 
-		console.log('Teams calculated:', team1, '\nTeam 2:', team2);
+			console.log('Teams calculated:', team1, '\nTeam 2:', team2);
+		}
 	}
 
 	console.log('Team 1:', team1, '\nTeam 2:', team2);
