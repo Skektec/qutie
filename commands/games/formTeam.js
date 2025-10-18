@@ -10,8 +10,6 @@ const fs = require('fs');
 const path = require('path');
 
 const teamDataMap = new Map();
-const playerRecordArray = [];
-const addedIds = [];
 
 function getMap(maps) {
 	const mapNames = Object.keys(maps);
@@ -30,31 +28,27 @@ function calculateTeamsPy(param1, param2) {
 			if (stderr) {
 				console.error('Python stderr:', stderr);
 			}
+			console.log('STDOUT:', stdout);
 			resolve(stdout.trim());
 		});
 	});
 }
 
-async function formTeam(team1, team2, userId, gameName) {
-	const data = JSON.parse(
-		fs.readFileSync(path.join(__dirname, '../../data/formTeamData.json'), 'utf-8')
-	);
-
-	if (!data[gameName]) {
-		data[gameName] = [];
+async function formTeam(userId, gameName, playerRecordArray) {
+	if (!formTeamData[gameName]) {
+		formTeamData[gameName] = [];
 	}
 
-	const playerExists = data[gameName].some((player) => player.id === userId);
+	const playerExists = formTeamData[gameName].some((player) => player.id === userId);
 
 	if (!playerExists) {
-		data[gameName].push({ id: userId, points: 1000 });
+		formTeamData[gameName].push({ id: userId, points: 1000 });
 		saveFormTeamData();
 	}
 
-	const playerRecord = data[gameName].find((x) => x.id === userId);
+	const playerRecord = formTeamData[gameName].find((x) => x.id === userId);
 
-	if (!addedIds.includes(userId)) {
-		addedIds.push(userId);
+	if (!playerRecordArray.some((record) => record.hasOwnProperty(userId))) {
 		playerRecordArray.push({ [playerRecord.id]: playerRecord.points });
 	}
 
@@ -90,12 +84,51 @@ async function formTeam(team1, team2, userId, gameName) {
 
 			team1 = assignIds(splitTeams[0]);
 			team2 = assignIds(splitTeams[1]);
-
-			console.log('Teams calculated:', team1, '\nTeam 2:', team2);
 		}
 	}
 
 	console.log('Team 1:', team1, '\nTeam 2:', team2);
+
+	return { team1, team2 };
+}
+
+async function rollTeam(playerRecordArray) {
+	team1 = [];
+	team2 = [];
+
+	let players = Object.assign(
+		{},
+		...playerRecordArray.map((x) => {
+			const idKey = Object.keys(x)[0];
+			return { [idKey]: x[idKey] };
+		})
+	);
+
+	const std = 30;
+	const playerArg = JSON.stringify(players);
+
+	const output = await calculateTeamsPy(playerArg, std);
+
+	const teams = output.slice(2, -2);
+	const splitTeams = teams.split('), (').filter(Boolean);
+
+	if (playerRecordArray.length < 2) {
+		team1 = [userId];
+		team2 = [];
+	}
+
+	if (splitTeams.length >= 2) {
+		const assignIds = (teamString) => {
+			return teamString
+				.split(',')
+				.map((id) => id.replace(/'/g, '').trim())
+				.filter(Boolean);
+		};
+
+		team1 = assignIds(splitTeams[0]);
+		team2 = assignIds(splitTeams[1]);
+	}
+
 	return { team1, team2 };
 }
 
@@ -104,12 +137,12 @@ function winner(team1, team2, winningTeam, gameName) {
 	const losers = winningTeam === 1 ? team2 : team1;
 
 	winners.forEach((member) => {
-		let player = formTeamData[gameName].find((p) => p.id === member.id);
+		let player = formTeamData[gameName].find((p) => p.id === member);
 		player.points += 23;
 	});
 
 	losers.forEach((member) => {
-		let player = formTeamData[gameName].find((p) => p.id === member.id);
+		let player = formTeamData[gameName].find((p) => p.id === member);
 		player.points = Math.max(0, player.points - 12);
 	});
 
@@ -201,6 +234,7 @@ module.exports = {
 				team1,
 				team2,
 				randomMapName,
+				playerRecordArray: [],
 				randomMapUrl,
 				gameName: gameModuleName
 			});
@@ -217,5 +251,6 @@ module.exports = {
 	teamDataMap,
 	getMap,
 	formTeam,
-	winner
+	winner,
+	rollTeam
 };

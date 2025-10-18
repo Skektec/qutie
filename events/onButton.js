@@ -1,11 +1,13 @@
 const maps = require('../data/wtMaps.json');
 const { MessageFlags } = require('discord.js');
-const { teamDataMap, getMap, formTeam, winner } = require('../commands/games/formTeam');
+const { teamDataMap, getMap, formTeam, winner, rollTeam } = require('../commands/games/formTeam');
 
 const gameFiles = {
 	warthunder: require('../games/warthunder'),
 	nebulous: require('../games/nebulous')
 };
+
+playerRecordArray = [];
 
 module.exports = {
 	name: 'interactionCreate',
@@ -13,11 +15,18 @@ module.exports = {
 		try {
 			if (!buttonInteraction.isButton()) return;
 
-			const fetchedMessage = buttonInteraction.message;
+			const teamData = teamDataMap.get(buttonInteraction.message.id);
 
-			const teamData = teamDataMap.get(fetchedMessage.id);
+			let {
+				team1,
+				team2,
+				playerRecordArray = [],
+				randomMapName,
+				randomMapUrl,
+				gameName = 'warthunder'
+			} = teamData;
 
-			const { team1, team2, randomMapName, randomMapUrl, gameName = 'warthunder' } = teamData;
+			isWinner = 3;
 
 			const gameModule = gameFiles[gameName];
 
@@ -50,6 +59,9 @@ module.exports = {
 
 			if (buttonInteraction.customId === 'team1Win') {
 				winner(team1, team2, 1, gameName);
+
+				isWinner = 1;
+
 				const updatedTeam = gameModule.updateTeamEmbed(
 					team1,
 					team2,
@@ -66,6 +78,9 @@ module.exports = {
 
 			if (buttonInteraction.customId === 'team2Win') {
 				winner(team1, team2, 2, gameName);
+
+				isWinner = 2;
+
 				const updatedTeam = gameModule.updateTeamEmbed(
 					team1,
 					team2,
@@ -81,6 +96,8 @@ module.exports = {
 			}
 
 			if (buttonInteraction.customId === 'noWin') {
+				isWinner = 0;
+
 				const updatedTeam = gameModule.updateTeamEmbed(
 					team1,
 					team2,
@@ -96,28 +113,40 @@ module.exports = {
 			}
 
 			if (buttonInteraction.customId === 'join') {
-				await formTeam(team1, team2, userId, gameName);
+				const { team1, team2 } = await formTeam(userId, gameName, playerRecordArray);
+
+				teamData.team1 = team1;
+				teamData.team2 = team2;
 
 				const updatedTeam = gameModule.updateTeamEmbed(team1, team2, randomMapName, randomMapUrl);
 				await fetchedMessage.edit({ embeds: [updatedTeam] });
 			}
 
 			if (buttonInteraction.customId === 'leave') {
-				const index1 = team1.findIndex((member) => member.id === userId);
+				const index1 = team1.findIndex((member) => member === userId);
 				if (index1 !== -1) team1.splice(index1, 1);
 
-				const index2 = team2.findIndex((member) => member.id === userId);
+				const index2 = team2.findIndex((member) => member === userId);
 				if (index2 !== -1) team2.splice(index2, 1);
+
+				const recordIndex = playerRecordArray.findIndex((record) => record.hasOwnProperty(userId));
+				if (recordIndex !== -1) {
+					playerRecordArray.splice(recordIndex, 1);
+				}
+
+				teamData.playerRecordArray = playerRecordArray;
 
 				const updatedTeam = gameModule.updateTeamEmbed(team1, team2, randomMapName, randomMapUrl);
 				await fetchedMessage.edit({ embeds: [updatedTeam] });
 			}
 
 			if (buttonInteraction.customId === 'rollTeam') {
-				formTeam(team1, team2, team1[0]?.id || team2[0]?.id, gameName);
+				if (winner == 3) {
+					const { team1, team2 } = await rollTeam(playerRecordArray);
 
-				const updatedTeam = gameModule.updateTeamEmbed(team1, team2, randomMapName, randomMapUrl);
-				await fetchedMessage.edit({ embeds: [updatedTeam] });
+					const updatedTeam = gameModule.updateTeamEmbed(team1, team2, randomMapName, randomMapUrl);
+					await fetchedMessage.edit({ embeds: [updatedTeam] });
+				} else return;
 			}
 		} catch (error) {
 			console.error('Unhandled error in button interaction:', error);
