@@ -15,19 +15,18 @@ const serverContext = {};
 
 module.exports = {
 	execute: async (message) => {
-		const serverId = message.guild.id;
 		const channelId = message.channelId;
 
-		if (!serverContext[serverId]) {
-			serverContext[serverId] = [];
+		if (!serverContext[channelId]) {
+			serverContext[channelId] = [];
 		}
 
-		serverContext[serverId].push({
+		serverContext[channelId].push({
 			role: 'user',
 			content: `${message.author.username}: ${message.content}`
 		});
-		if (serverContext[serverId][channelId].length > 15) {
-			serverContext[serverId][channelId].shift();
+		if (serverContext[channelId].length > 15) {
+			serverContext[channelId].shift();
 		}
 
 		if (!message.content.startsWith('grok')) return;
@@ -81,7 +80,7 @@ module.exports = {
 			},\n Image description (if applicable): ${imageDesc}, \n replied messages embed description: ${
 				messageReply?.embeds[0]?.description
 			}.
-			Last 15 chat messages as context: ${serverContext[serverId]
+			Last 15 chat messages as context: ${serverContext[channelId]
 				.map((msg) => `${msg.role}: ${msg.content}`)
 				.join('\n')}`;
 			const chatResponse = await aiClient.chat.completions.create({
