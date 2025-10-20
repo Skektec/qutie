@@ -16,6 +16,7 @@ const serverContext = {};
 module.exports = {
 	execute: async (message) => {
 		const serverId = message.guild.id;
+		const channelId = message.channel.id;
 
 		if (!serverContext[serverId]) {
 			serverContext[serverId] = [];
@@ -25,8 +26,8 @@ module.exports = {
 			role: 'user',
 			content: `${message.author.username}: ${message.content}`
 		});
-		if (serverContext[serverId].length > 15) {
-			serverContext[serverId].shift();
+		if (serverContext[serverId][channelId].length > 15) {
+			serverContext[serverId][channelId].shift();
 		}
 
 		if (!message.content.startsWith('grok')) return;
