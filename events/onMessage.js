@@ -36,6 +36,7 @@ module.exports = {
 			// 	content: `No test to execute.`,
 			// 	flags: MessageFlags.Ephemeral
 			// });'
+			fetchpage.findLinks();
 		}
 
 		if (message.channel == 1200118011806367825) return;
@@ -148,14 +149,6 @@ module.exports = {
 					});
 				}
 			});
-		}
-
-		if (message.content.startsWith('runTest')) {
-			// message.reply({
-			// 	content: `No test to execute.`,
-			// 	flags: MessageFlags.Ephemeral
-			// });'
-			fetchpage.findLinks();
 		}
 
 		// unreliable

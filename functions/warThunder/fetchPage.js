@@ -4,6 +4,7 @@ const warThunderLink = 'https://warthunder.com/en/news';
 const fs = require('node:fs');
 const notify = require('../notify');
 const esport = require('./newsTypes/esport');
+const development = require('./newsTypes/development');
 
 module.exports = {
 	findLinks: async () => {
@@ -40,7 +41,6 @@ module.exports = {
 						.trim()
 						.toLowerCase();
 					if (url != '') {
-						url;
 						articleNumber = url.slice(31, 35);
 						articleType = url.match(/-.*/)[0].slice(1);
 						return { url, articleNumber, articleType };
@@ -72,9 +72,9 @@ module.exports = {
 					esport.newPost(newArticle[0].articleNumber);
 				}
 
-				// if (newArticle[0].articleType.startsWith('development')) {
-				// 	development.newPost(newArticle[0].articleNumber);
-				// }
+				if (newArticle[0].articleType.startsWith('development')) {
+					development.newPost(newArticle[0].articleNumber);
+				}
 			}
 		} catch (error) {
 			notify.error('Error fetching or parsing the page:', error, 'no error code');
