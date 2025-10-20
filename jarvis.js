@@ -16,7 +16,7 @@ const serverContext = {};
 module.exports = {
 	execute: async (message) => {
 		const serverId = message.guild.id;
-		const channelId = message.channel.id;
+		const channelId = message.channel;
 
 		if (!serverContext[serverId]) {
 			serverContext[serverId] = [];
