@@ -10,6 +10,7 @@ module.exports = {
 			const response = await fetch(`https://warthunder.com/en/news/${articleNumber}`);
 			const html = await response.text();
 			const $ = cheerio.load(html);
+			const date = new Date();
 
 			let weekend1 = [];
 			let weekend2 = [];
@@ -34,7 +35,7 @@ module.exports = {
 				.setColor(0xff0000)
 				.setTitle(`[Esport] ${$('.content__title').text().trim()}`)
 				.setAuthor({
-					name: 'War Thunder News',
+					name: 'War Thunder Esport News',
 					iconURL:
 						'https://static-cdn.jtvnw.net/jtv_user_pictures/b86366d8-5b92-4d28-b840-c2fd10f07716-profile_image-70x70.png',
 					url: 'https://fluxus.ddns.net'
@@ -54,7 +55,7 @@ module.exports = {
 					}
 				)
 				.setImage($('img[class=e-video__media]').attr('src'))
-				.setFooter({ text: `Link: https://warthunder.com/en/news/${articleNumber}` });
+				.setFooter({ text: `Link: https://warthunder.com/en/news/${articleNumber} on ${date}` });
 
 			client = getClient();
 
