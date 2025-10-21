@@ -5,6 +5,7 @@ const fs = require('node:fs');
 const notify = require('../notify');
 const esport = require('./newsTypes/esport');
 const development = require('./newsTypes/development');
+const generic = require('./newsTypes/generic');
 
 module.exports = {
 	findLinks: async () => {
@@ -69,17 +70,22 @@ module.exports = {
 				fs.writeFileSync('./data/newsUrls.json', JSON.stringify(updatedUrls));
 
 				if (newArticle[0].articleType.startsWith('esport')) {
-					esport.newPost(newArticle[0].articleNumber);
+					await esport.newPost(newArticle[0].articleNumber);
+					return;
+				} else if (newArticle[0].articleType.startsWith('development')) {
+					await development.newPost(newArticle[0].articleNumber);
+					return;
+				} else if (newArticle[0].articleType.startsWith('shop-development')) {
+					await development.newPost(newArticle[0].articleNumber);
+					return;
+				} else {
+					await generic.newPost(newArticle[0].articleNumber);
+					return;
 				}
 
-				if (newArticle[0].articleType.startsWith('development')) {
-					development.newPost(newArticle[0].articleNumber);
-				}
-
-				if (newArticle[0].articleType.startsWith('shop-development')) {
-					development.newPost(newArticle[0].articleNumber);
-				}
-
+				// if (newArticle[0].articleType.startsWith('shop-development')) {
+				// 	development.newPost(newArticle[0].articleNumber);
+				// }
 				return;
 			}
 		} catch (error) {
