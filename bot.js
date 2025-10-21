@@ -103,7 +103,13 @@ cron.schedule('0 13 * * *', async () => {
 	}
 });
 
-cron.schedule('12 * * * *', async () => {
+cron.schedule('10 * * * *', async () => {
+	fetchpage.findLinks();
+});
+cron.schedule('30 * * * *', async () => {
+	fetchpage.findLinks();
+});
+cron.schedule('50 * * * *', async () => {
 	fetchpage.findLinks();
 });
 

@@ -31,17 +31,21 @@ module.exports = {
 
 		const EncryptedMessage = encrypt(message.content);
 
-		if (message.reference) {
-			reply = await message.channel.messages.fetch(message.reference.messageId);
-			repliedMessage = reply.content;
-		} else {
-			reply = null;
-		}
-
 		try {
-			EncryptedReply = `${encrypt(repliedMessage)} - ${reply.author.username}`;
+			if (message.reference) {
+				reply = await message.channel.messages.fetch(message.reference.messageId);
+				repliedMessage = reply.content;
+			} else {
+				reply = null;
+			}
+
+			try {
+				EncryptedReply = `${encrypt(repliedMessage)} - ${reply.author.username}`;
+			} catch {
+				EncryptedReply = null;
+			}
 		} catch {
-			EncryptedReply = null;
+			return;
 		}
 
 		const values = [

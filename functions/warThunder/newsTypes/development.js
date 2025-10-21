@@ -10,21 +10,49 @@ module.exports = {
 			const response = await fetch(`https://warthunder.com/en/news/${articleNumber}`);
 			const html = await response.text();
 			const $ = cheerio.load(html);
+			const x = new Date();
+
+			// Used single character to stop multiline formatting
+			const z = x.toLocaleString('en-US', { month: 'long' });
+			const dateString = `${z} ${x.getDate()}, ${x.getFullYear()}`;
+
+			let atAGlance = [];
+
+			$('h4')
+				.next('ul')
+				.find('li')
+				.each((index, element) => {
+					item = $(element).text().trim();
+					atAGlance.push(item);
+				});
 
 			const developmentEmbed = new EmbedBuilder()
 				.setColor(0xff0000)
 				.setTitle(`[Development] ${$('.content__title').text().trim()}`)
 				.setAuthor({
 					name: 'War Thunder News',
-					iconURL:
-						'https://static-cdn.jtvnw.net/jtv_user_pictures/b86366d8-5b92-4d28-b840-c2fd10f07716-profile_image-70x70.png',
+					iconURL: 'https://cdn2.steamgriddb.com/logo_thumb/40b28f4fc90cff423e2a75266497539f.png',
 					url: 'https://fluxus.ddns.net'
 				})
 				.setURL(`https://warthunder.com/en/news/${articleNumber}`)
-				.setDescription()
-				.addFields()
-				.setImage($('img[class=e-video__media]').attr('src'))
-				.setFooter({ text: `Link: https://warthunder.com/en/news/${articleNumber}` });
+				.setDescription(
+					`${$('.g-grid .g-col.g-col--100 > p').first().text().trim()} \n\n **${$(
+						'.g-col.g-col--100'
+					)
+						.eq(1)
+						.find('p')
+						.next('h2')
+						.text()}**`
+				)
+				.setFields({
+					name: $('h4').text(),
+					value: atAGlance.map((item) => `- ${item}`).join('\n'),
+					inline: true
+				})
+				.setImage($('.e-figure__img').attr('src'))
+				.setFooter({
+					text: `Link: https://warthunder.com/en/news/${articleNumber} on ${dateString}`
+				});
 
 			client = getClient();
 

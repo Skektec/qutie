@@ -80,9 +80,7 @@ module.exports = {
 			},\n Image description (if applicable): ${imageDesc}, \n replied messages embed description: ${
 				messageReply?.embeds[0]?.description
 			}.
-			Last 15 chat messages as context: ${serverContext[serverId]
-				.map((msg) => `${msg.role}: ${msg.content}`)
-				.join('\n')}`;
+			Last 15 chat messages as context: ${serverContext[serverId].join('\n')}`;
 			const chatResponse = await aiClient.chat.completions.create({
 				model: 'grok-4-fast-non-reasoning',
 				messages: [
