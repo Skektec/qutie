@@ -6,6 +6,7 @@ const notify = require('../notify');
 const esport = require('./newsTypes/esport');
 const development = require('./newsTypes/development');
 const generic = require('./newsTypes/generic');
+const event = require('./newsTypes/event');
 
 module.exports = {
 	findLinks: async () => {
@@ -76,7 +77,7 @@ module.exports = {
 				} else if (newArticle[0].articleType.startsWith('shop-development')) {
 					await development.newPost(newArticle[0].articleNumber);
 				} else if (newArticle[0].articleType.startsWith('event')) {
-					await development.newPost(newArticle[0].articleNumber);
+					await event.newPost(newArticle[0].articleNumber);
 				} else {
 					await generic.newPost(newArticle[0].articleNumber);
 				}
