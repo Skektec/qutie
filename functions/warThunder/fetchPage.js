@@ -71,16 +71,14 @@ module.exports = {
 
 				if (newArticle[0].articleType.startsWith('esport')) {
 					await esport.newPost(newArticle[0].articleNumber);
-					return;
 				} else if (newArticle[0].articleType.startsWith('development')) {
 					await development.newPost(newArticle[0].articleNumber);
-					return;
 				} else if (newArticle[0].articleType.startsWith('shop-development')) {
 					await development.newPost(newArticle[0].articleNumber);
-					return;
+				} else if (newArticle[0].articleType.startsWith('event')) {
+					await development.newPost(newArticle[0].articleNumber);
 				} else {
 					await generic.newPost(newArticle[0].articleNumber);
-					return;
 				}
 
 				// if (newArticle[0].articleType.startsWith('shop-development')) {
