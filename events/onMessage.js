@@ -11,8 +11,8 @@ const messageAddQuote = require('../functions/messageAddQuote.js');
 const clean = require('../functions/removeTracker');
 const fs = require('fs');
 const storeMessage = require('../functions/storeMessage.js');
-const fetchpage = require('../functions/warThunder/fetchPage.js');
-const formTeamData = require('../data/formTeamData.json');
+const fetchNews = require('../functions/warThunder/fetchNews.js');
+const fetchDev = require('../functions/warThunder/fetchDev.js');
 
 // const repostDetection = require('../functions/repostDetection');
 const { exec } = require('child_process');
@@ -29,6 +29,8 @@ const prevMessages = [];
 module.exports = {
 	name: Events.MessageCreate,
 	execute: async (message) => {
+		if (message.channel != 1200118011806367825) return;
+
 		jarvis.execute(message);
 
 		if (message.content.startsWith('runTest')) {
@@ -36,7 +38,7 @@ module.exports = {
 			// 	content: `No test to execute.`,
 			// 	flags: MessageFlags.Ephemeral
 			// });'
-			fetchpage.findLinks();
+			fetchDev.findLinks();
 		}
 
 		if (message.channel == 1200118011806367825) return;
