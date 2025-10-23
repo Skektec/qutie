@@ -18,7 +18,7 @@ module.exports = {
 
 			const developmentEmbed = new EmbedBuilder()
 				.setColor(0xff0000)
-				.setTitle(`[Development] ${$('.content__title').text().trim()}`)
+				.setTitle(`[Generic] ${$('.content__title').text().trim()}`)
 				.setAuthor({
 					name: 'War Thunder News',
 					iconURL: 'https://cdn2.steamgriddb.com/logo_thumb/40b28f4fc90cff423e2a75266497539f.png',

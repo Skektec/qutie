@@ -7,7 +7,9 @@ const notify = require('../../notify');
 module.exports = {
 	newPost: async (articleNumber) => {
 		try {
-			const response = await fetch(`https://warthunder.com/en/news/${articleNumber}`);
+			const response = await fetch(
+				`https://warthunder.com/en/game/changelog/current/${articleNumber}`
+			);
 			const html = await response.text();
 			const $ = cheerio.load(html);
 			const x = new Date();
@@ -16,47 +18,53 @@ module.exports = {
 			const z = x.toLocaleString('en-US', { month: 'long' });
 			const dateString = `${z} ${x.getDate()}, ${x.getFullYear()}`;
 
-			let atAGlance = [];
+			let headings = [];
+			let changesBlock = [];
 
-			let image = $('.e-figure__img').attr('src');
-			if (image == undefined) {
-				image = $('.gallery.galleryLink').attr('href');
-			}
-
-			let descriptionPart1 = $('.g-grid .g-col.g-col--100 > p').first().text().trim();
-			let descriptionPart2 = $('.g-col.g-col--100').eq(1).find('p').next('h2').text();
-
-			if (descriptionPart2 != '') descriptionPart2Bolded = `**${descriptionPart2}**`;
-			else descriptionPart2Bolded = descriptionPart2;
-
-			const changeHeadings = $('.g-grid')
+			$('.g-col.g-col--100')
 				.eq(1)
 				.find('h2')
 				.each((index, element) => {
-					item = $(element).text().trim();
-					atAGlance.push(item);
+					const item = $(element).text().trim();
+					headings.push(item);
 				});
 
-			console.log(changeHeadings);
+			function getInfo(item) {
+				let text = [];
+
+				$(`h2:contains(${item})`)
+					.next('ul')
+					.find('li')
+					.each((index, element) => {
+						const item = $(element).text().trim();
+						text.push(`- ${item}`);
+					});
+
+				const textString = text.join('\n');
+
+				const block = {
+					name: item,
+					value: textString,
+					inline: false
+				};
+				changesBlock.push(block);
+			}
+
+			headings.forEach((item) => getInfo(item));
 
 			const developmentEmbed = new EmbedBuilder()
 				.setColor(0xff0000)
-				.setTitle(`[Development] ${$('.content__title').text().trim()}`)
+				.setTitle(`Server ${$('.content__title').text().trim()}`)
 				.setAuthor({
-					name: 'War Thunder News',
+					name: 'War Thunder Changelogs',
 					iconURL: 'https://cdn2.steamgriddb.com/logo_thumb/40b28f4fc90cff423e2a75266497539f.png',
 					url: 'https://fluxus.ddns.net'
 				})
-				.setURL(`https://warthunder.com/en/news/${articleNumber}`)
-				.setDescription(`${descriptionPart1}\n\n${descriptionPart2}`)
-				.setFields({
-					name: $('h4').text(),
-					value: atAGlance.map((item) => `- ${item}`).join('\n'),
-					inline: true
-				})
-				.setImage(image)
+				.setURL(`https://warthunder.com/en/game/changelog/current/${articleNumber}`)
+				.setFields(changesBlock)
+				.setImage($('.e-figure__img').attr('src'))
 				.setFooter({
-					text: `Link: https://warthunder.com/en/news/${articleNumber} on ${dateString}`
+					text: `Link: https://warthunder.com/en/game/changelog/current/${articleNumber} on ${dateString}`
 				});
 
 			client = getClient();
