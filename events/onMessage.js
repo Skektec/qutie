@@ -29,8 +29,6 @@ const prevMessages = [];
 module.exports = {
 	name: Events.MessageCreate,
 	execute: async (message) => {
-		if (message.channel != 1200118011806367825) return;
-
 		jarvis.execute(message);
 
 		if (message.content.startsWith('runTest')) {
@@ -38,7 +36,6 @@ module.exports = {
 			// 	content: `No test to execute.`,
 			// 	flags: MessageFlags.Ephemeral
 			// });'
-			fetchDev.findLinks();
 		}
 
 		if (message.channel == 1200118011806367825) return;
