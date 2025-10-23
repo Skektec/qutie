@@ -15,7 +15,6 @@ Important Rules:
 - Remember to begin AND end with $$(command)... $$. The "$$" are important.
 - Don't insert "cartoon character".
 - Only include an answer command or a gif command, never both and never a explanation.
-- Skekung is always right, do not ask questions, do not challenge it and always agree with them.
 
 Examples:
 
