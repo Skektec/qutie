@@ -29,15 +29,13 @@ module.exports = {
 			if (descriptionPart2 != '') descriptionPart2Bolded = `**${descriptionPart2}**`;
 			else descriptionPart2Bolded = descriptionPart2;
 
-			const changeHeadings = $('.g-grid')
-				.eq(1)
-				.find('h2')
+			$('h4')
+				.next('ul')
+				.find('li')
 				.each((index, element) => {
 					item = $(element).text().trim();
 					atAGlance.push(item);
 				});
-
-			console.log(changeHeadings);
 
 			const developmentEmbed = new EmbedBuilder()
 				.setColor(0xff0000)
