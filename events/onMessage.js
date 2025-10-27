@@ -1,6 +1,6 @@
-const { Events, MessageFlags, EmbedBuilder, ClientApplication } = require('discord.js');
+const { Events, MessageFlags, ClientApplication } = require('discord.js');
 const { botAdimn } = require('../data/config.json');
-const { nvmGif, neverKysVideo } = require('../data/pubconfig.js');
+const { nvmGif, neverKysVideo, zLink } = require('../data/pubconfig.js');
 // const mutedUsers = require('../data/mutedUsers.json');
 const fetchquote = require('../functions/fetchquote');
 const notify = require('../functions/notify');
@@ -30,6 +30,7 @@ module.exports = {
 	name: Events.MessageCreate,
 	execute: async (message) => {
 		jarvis.execute(message);
+		const lowerCaseMessage = message.content.toLowerCase();
 
 		if (message.content.startsWith('runTest')) {
 			// message.reply({
@@ -65,6 +66,18 @@ module.exports = {
 				allowedMentions: { repliedUser: false }
 			});
 		}
+
+		// if (lowerCaseMessage.match(/zov/)) {
+		// 	if (message.content.match('https://')) return;
+		// 	const zMessage = message.content.replace(/c/g, 'z').replace(/s/g, 'Z');
+		// 	message.channel.send(`${zMessage} 🇷🇺🇷🇺🇷🇺`);
+		// 	message.channel.send('ZZZ');
+		// 	delay(400);
+		// 	message.channel.send('Z🇷🇺Z🇷🇺Z');
+		// 	delay(400);
+		// 	message.channel.send('ZZ');
+		// 	message.channel.send(`${zLink}`);
+		// }
 
 		if (
 			message.content.match(

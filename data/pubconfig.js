@@ -54,5 +54,7 @@ Begin immediately. From now on, respond only with $$repost$$ or not a repost.
 	nvmGif:
 		'https://tenor.com/view/nvm-tell-me-right-now-or-i-explode-tell-me-cat-gif-136357332539613788',
 	neverKysVideo:
-		'https://cdn.discordapp.com/attachments/599671298209218573/1362030981497749584/yKLaIxz.mp4'
+		'https://cdn.discordapp.com/attachments/599671298209218573/1362030981497749584/yKLaIxz.mp4',
+	zLink:
+		'https://media.discordapp.net/attachments/1257252480505352255/1294540842505338931/1-1.gif?ex=6901055c&is=68ffb3dc&hm=b9e802258b0512d84c6b4ebbeb6ea94d19e12ca9196a0abdd364192f46fa92e9&'
 };
