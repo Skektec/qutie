@@ -1,4 +1,4 @@
-const axios = require('axios');
+const got = require('cloudflare-scraper').default;
 const cheerio = require('cheerio');
 const warThunderLink = 'https://warthunder.com/en/game/changelog/';
 const fs = require('node:fs');
@@ -8,9 +8,8 @@ const devblog = require('./development/devblog');
 module.exports = {
 	findLinks: async () => {
 		try {
-			const response = await axios.get(warThunderLink);
-			const html = response.data;
-
+			const response = await got.get(warThunderLink);
+			const html = response.body;
 			const $ = cheerio.load(html);
 
 			const urls = [];

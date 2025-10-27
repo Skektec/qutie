@@ -1,5 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 const cheerio = require('cheerio');
+const got = require('cloudflare-scraper').default;
 const { getClient } = require('../../../data/clientInstance');
 const newChannels = require('../../../data/newsChannels.json');
 const notify = require('../../notify');
@@ -10,7 +11,7 @@ module.exports = {
 			const response = await fetch(
 				`https://warthunder.com/en/game/changelog/current/${articleNumber}`
 			);
-			const html = await response.text();
+			const html = await response.body;
 			const $ = cheerio.load(html);
 			const x = new Date();
 

@@ -1,7 +1,8 @@
 import { load } from 'cheerio';
+import got from 'cloudflare-scraper';
 
-const response = await fetch(`https://warthunder.com/en/game/changelog/current/1796`);
-const html = await response.text();
+const response = await got.get('https://warthunder.com/en/game/changelog/current/1796');
+const html = await response.body;
 const $ = load(html);
 
 try {

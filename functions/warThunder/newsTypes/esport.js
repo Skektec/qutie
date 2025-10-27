@@ -1,4 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
+const got = require('cloudflare-scraper').default;
 const cheerio = require('cheerio');
 const { getClient } = require('../../../data/clientInstance');
 const newChannels = require('../../../data/newsChannels.json');
@@ -7,8 +8,8 @@ const notify = require('../../notify');
 module.exports = {
 	newPost: async (articleNumber) => {
 		try {
-			const response = await fetch(`https://warthunder.com/en/news/${articleNumber}`);
-			const html = await response.text();
+			const response = await got.get(`https://warthunder.com/en/news/${articleNumber}`);
+			const html = await response.body;
 			const $ = cheerio.load(html);
 			const date = new Date();
 

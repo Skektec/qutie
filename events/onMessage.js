@@ -37,6 +37,8 @@ module.exports = {
 			// 	content: `No test to execute.`,
 			// 	flags: MessageFlags.Ephemeral
 			// });'
+			fetchDev.findLinks();
+			fetchNews.findLinks();
 		}
 
 		if (message.channel == 1200118011806367825) return;
