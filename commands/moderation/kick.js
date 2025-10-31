@@ -15,21 +15,27 @@ module.exports = {
 		const user = interaction.options.getUser('user');
 		const reason = interaction.options.getString('reason');
 
+		const huh = interaction;
+
 		try {
-			interaction.guild.members.kick(user);
-			interaction.reply({
-				content: `Kicked ${user.nick}.`,
+			huh.guild.members.kick(user);
+			huh.reply({
+				content: `Kicked ${user.username}.`,
 				flags: MessageFlags.Ephemeral
 			});
 
-			const reasonEmbed = new EmbedBuilder()
-				.setColor(0xffed29)
-				.setTitle(`You where kicked from ${guild.name}`)
-				.setDescription(`**Reason:**\n${reason}`)
-				.setTimestamp();
+			if (reason) {
+				const reasonEmbed = new EmbedBuilder()
+					.setColor(0xffed29)
+					.setTitle(`${user.username} was kicked from ${interaction.guild.name}`)
+					.setDescription(`**Reason:**\n${reason}`)
+					.setTimestamp();
 
-			user.send(reasonEmbed);
-		} catch {
+				interaction.channel.send(reasonEmbed);
+			}
+			return;
+		} catch (err) {
+			console.error(err);
 			interaction.reply({
 				content: 'Failed to kick user. (Likely invalid permissions)',
 				flags: MessageFlags.Ephemeral

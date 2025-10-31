@@ -18,17 +18,20 @@ module.exports = {
 		try {
 			interaction.guild.members.ban(user);
 			interaction.reply({
-				content: `Banned ${user.nick}.`,
+				content: `Banned ${user.username}.`,
 				flags: MessageFlags.Ephemeral
 			});
 
-			const reasonEmbed = new EmbedBuilder()
-				.setColor(0xffed29)
-				.setTitle(`You where banned from ${guild.name}`)
-				.setDescription(`**Reason:**\n${reason}`)
-				.setTimestamp();
+			if (reason) {
+				const reasonEmbed = new EmbedBuilder()
+					.setColor(0xffed29)
+					.setTitle(`${user.username} was banned from ${guild.name}`)
+					.setDescription(`**Reason:**\n${reason}`)
+					.setTimestamp();
 
-			user.send(reasonEmbed);
+				interaction.channel.send(reasonEmbed);
+			}
+			return;
 		} catch {
 			interaction.reply({
 				content: 'Failed to ban user. (Likely invalid permissions)',

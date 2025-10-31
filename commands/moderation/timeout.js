@@ -24,17 +24,20 @@ module.exports = {
 		try {
 			user.timeout(length);
 			interaction.reply({
-				content: `Timed ${user.nick} out for ${length}.`,
+				content: `Timed ${user.username} out for ${length}.`,
 				flags: MessageFlags.Ephemeral
 			});
 
-			const reasonEmbed = new EmbedBuilder()
-				.setColor(0xffed29)
-				.setTitle(`You were timed out from ${guild.name} for ${length} seconds.`)
-				.setDescription(`**Reason:**\n${reason}`)
-				.setTimestamp();
+			if (reason) {
+				const reasonEmbed = new EmbedBuilder()
+					.setColor(0xffed29)
+					.setTitle(`${user.username} was timed out in ${guild.name} for ${length} seconds.`)
+					.setDescription(`**Reason:**\n${reason}`)
+					.setTimestamp();
 
-			user.send(reasonEmbed);
+				interaction.channel.send(reasonEmbed);
+			}
+			return;
 		} catch {
 			interaction.reply({
 				content: 'Failed to timeout user. (Likely invalid permissions)',

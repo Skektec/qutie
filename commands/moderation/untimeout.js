@@ -17,7 +17,7 @@ module.exports = {
 		try {
 			user.timeout(null);
 			interaction.reply({
-				content: `Removed the timeout from ${user}`,
+				content: `Removed the timeout from ${user.username}`,
 				flags: MessageFlags.Ephemeral
 			});
 
@@ -26,7 +26,7 @@ module.exports = {
 				.setTitle(`Your timeout was removed in ${interaction.guild.name}`)
 				.setTimestamp();
 
-			user.send(reasonEmbed);
+			interaction.channel.send(reasonEmbed);
 		} catch {
 			interaction.reply({
 				content: 'Failed to remove the timeout from user. (Likely invalid permissions)',
