@@ -15,11 +15,9 @@ module.exports = {
 		const user = interaction.options.getUser('user');
 		const reason = interaction.options.getString('reason');
 
-		const huh = interaction;
-
 		try {
-			huh.guild.members.kick(user);
-			huh.reply({
+			await interaction.guild.members.kick(user);
+			interaction.reply({
 				content: `Kicked ${user.username}.`,
 				flags: MessageFlags.Ephemeral
 			});
@@ -28,12 +26,11 @@ module.exports = {
 				const reasonEmbed = new EmbedBuilder()
 					.setColor(0xffed29)
 					.setTitle(`${user.username} was kicked from ${interaction.guild.name}`)
-					.setDescription(`**Reason:**\n${reason}`)
+					.setFields({ name: '**Reason**', value: reason })
 					.setTimestamp();
 
 				interaction.channel.send(reasonEmbed);
 			}
-			return;
 		} catch (err) {
 			console.error(err);
 			interaction.reply({

@@ -11,7 +11,7 @@ module.exports = {
 		const user = interaction.options.getUser('user');
 
 		try {
-			interaction.guild.members.unban(user);
+			await interaction.guild.members.unban(user);
 			interaction.reply({
 				content: `Unbanned ${user.username}.`
 			});

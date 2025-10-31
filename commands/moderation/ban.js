@@ -16,7 +16,7 @@ module.exports = {
 		const reason = interaction.options.getString('reason');
 
 		try {
-			interaction.guild.members.ban(user);
+			await interaction.guild.members.ban(user);
 			interaction.reply({
 				content: `Banned ${user.username}.`,
 				flags: MessageFlags.Ephemeral
