@@ -22,7 +22,7 @@ module.exports = {
 		const length = interaction.options.getInteger('length');
 
 		try {
-			user.timeout(length);
+			await user.timeout(length);
 			interaction.reply({
 				content: `Timed ${user.username} out for ${length}.`,
 				flags: MessageFlags.Ephemeral

@@ -15,7 +15,7 @@ module.exports = {
 		const user = interaction.options.getUser('user');
 
 		try {
-			user.timeout(null);
+			await user.timeout(null);
 			interaction.reply({
 				content: `Removed the timeout from ${user.username}`,
 				flags: MessageFlags.Ephemeral
