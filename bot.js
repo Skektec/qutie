@@ -6,6 +6,8 @@ const { discordToken } = require('./data/config.json');
 const notify = require('./functions/notify');
 const { setClient } = require('./data/clientInstance');
 const database = require('./functions/database');
+const fetchNews = require('./functions/warThunder/fetchNews.js');
+const fetchDev = require('./functions/warThunder/fetchDev.js');
 
 const client = new Client({
 	intents: [
@@ -100,6 +102,19 @@ cron.schedule('0 13 * * *', async () => {
 	} catch (err) {
 		notify.error('Error displaying birthday:', err, '2x36112');
 	}
+});
+
+cron.schedule('10 * * * *', async () => {
+	fetchNews.findLinks();
+	fetchDev.findLinks();
+});
+cron.schedule('30 * * * *', async () => {
+	fetchNews.findLinks();
+	fetchDev.findLinks();
+});
+cron.schedule('50 * * * *', async () => {
+	fetchNews.findLinks();
+	fetchDev.findLinks();
 });
 
 client.login(discordToken);

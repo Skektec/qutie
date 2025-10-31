@@ -39,11 +39,11 @@ module.exports = {
 				.setImage(imageFromText ? imageFromText[0] : quote.image)
 				.setFooter({ text: formattedDate });
 
-			if (quote.image && quote.image.match(/\.(mp4|mov|webm|avi|mkv|wmv|flv|mpeg|mpg)$/i)) {
-				const quoteMessage = `${quote.text}\n${quote.image}\n- <@${quote.userid}> [(Jump)](https://discordapp.com/channels/${serverId}/${quote.channel}/${quote.messageid})`;
+			if (quote.image && quote.image.match(/\.(mp4|mov|webm|avi|mkv|wmv|flv|mpeg|mpg|gif)/i)) {
+				const quoteMessage = `**Quote #${quote.rownum}**\n${quote.text}\n${quote.image}\n- <@${quote.userid}> [(Jump)](https://discordapp.com/channels/${serverId}/${quote.channel}/${quote.messageid})`;
 				message.channel.send(quoteMessage);
 			} else {
-				message.channel.send({ embeds: [quoteEmbed] });
+				message.channel.send({ embeds: [quoteEmbed], allowedMentions: { User: false } });
 			}
 		};
 
@@ -87,7 +87,7 @@ module.exports = {
 				count = rows[0]?.count || 0;
 			} catch (err) {
 				count = 0;
-				notify.error('Error fetching latest quote:', err);
+				notify.error('Error fetching latest quote:', err, '0x000000');
 			}
 
 			query = `
@@ -128,7 +128,7 @@ module.exports = {
 			const quote = useAll ? rows[Math.floor(Math.random() * rows.length)] : rows[0];
 			sendQuoteEmbed(quote);
 		} catch (err) {
-			notify.error(`Error querying ${tableName}:`, err);
+			notify.error(`Error querying ${tableName}:`, err, '0x000000');
 			message.channel.send('An error occurred while retrieving quotes.');
 		}
 	}

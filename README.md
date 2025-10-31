@@ -2,7 +2,7 @@
 
 A bot I started to replace the quote function of another before we hit the limit, as of now I just add random features to replace other bots as we have quite the clutter.
 
-## Error Code Index
+## Error Code Index (To be replaced)
 
 XxXXXXX
 
@@ -27,8 +27,8 @@ Commands:
 
 - 01 - birthdays/addbirthday
 - 02 - birthdays/birthdays
-- 03 - misc/formteam
-- 04 - misc/mapBlacklist
+- 03 - games/formteam
+- 04 - games/mapBlacklist
 - 05 - music/add
 - 06 - music/play
 - 07 - python_commands/echo

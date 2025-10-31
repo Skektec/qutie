@@ -9,7 +9,6 @@ module.exports = {
 		try {
 			botHasReacted = await reaction.users.fetch().then((users) => users.has(client.user.id));
 		} catch {
-			console.log(`Couldn't check if bot had reacted.`);
 			botHasReacted = null;
 		}
 
@@ -31,7 +30,7 @@ module.exports = {
 			await database.query(
 				`CREATE TABLE IF NOT EXISTS "${tableName}" (
           nick TEXT,
-          userId TEXT,
+          userId TEXT,	
           channel TEXT,
           server TEXT,
           text TEXT,
@@ -92,7 +91,7 @@ module.exports = {
 				allowedMentions: { repliedUser: false }
 			});
 		} catch (err) {
-			notify.error(`Error adding quote: ${err}`);
+			notify.error(`Error adding quote`, err, '0x000000');
 		}
 	}
 };

@@ -1,0 +1,20 @@
+name: Deploy To Server
+
+on:
+  push:
+    branches:
+      - main
+      
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, ARM64]
+    steps:
+      - name: Deploy commands
+        run: |
+              echo "Navigating"
+              cd ~/qutie/
+              echo "Pulling"
+              git pull git@github.com:Skektec/qutie.git
+              echo "Restarting"
+              sudo systemctl restart quoteBot.service
+              echo "Done all"

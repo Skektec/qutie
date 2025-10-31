@@ -1,6 +1,6 @@
-const { Events, MessageFlags, EmbedBuilder } = require('discord.js');
+const { Events, MessageFlags, ClientApplication } = require('discord.js');
 const { botAdimn } = require('../data/config.json');
-const { nvmGif, neverKysVideo } = require('../data/pubconfig.js');
+const { nvmGif, neverKysVideo, zLink } = require('../data/pubconfig.js');
 // const mutedUsers = require('../data/mutedUsers.json');
 const fetchquote = require('../functions/fetchquote');
 const notify = require('../functions/notify');
@@ -10,9 +10,13 @@ const sendEmoji = require('../functions/sendEmoji');
 const messageAddQuote = require('../functions/messageAddQuote.js');
 const clean = require('../functions/removeTracker');
 const fs = require('fs');
+const storeMessage = require('../functions/storeMessage.js');
+const fetchNews = require('../functions/warThunder/fetchNews.js');
+const fetchDev = require('../functions/warThunder/fetchDev.js');
 
 // const repostDetection = require('../functions/repostDetection');
 const { exec } = require('child_process');
+const { json } = require('stream/consumers');
 
 const words = ['uwu', 'owo', 'blahaj'];
 
@@ -25,18 +29,21 @@ const prevMessages = [];
 module.exports = {
 	name: Events.MessageCreate,
 	execute: async (message) => {
-		// Just messing around with a mute function that deletes messages, not implemented.
-		// if (Array.isArray(mutedUsers) && mutedUsers.includes(message.author.id)) {
-		// 	message.reply({
-		// 		content: 'You are muted.',
-		// 		flags: MessageFlags.Ephemeral,
-		// 	});
-		//
-		// 	message.delete();
-		// 	return;
-		// }
-
 		jarvis.execute(message);
+		const lowerCaseMessage = message.content.toLowerCase();
+
+		if (message.content.startsWith('runTest')) {
+			// message.reply({
+			// 	content: `No test to execute.`,
+			// 	flags: MessageFlags.Ephemeral
+			// });'
+			fetchDev.findLinks();
+			fetchNews.findLinks();
+		}
+
+		if (message.channel == 1200118011806367825) return;
+
+		// if (message.guild && message.guild.id === '973484576703905802') storeMessage.save(message);
 
 		if (message.author.bot) return;
 
@@ -50,19 +57,10 @@ module.exports = {
 
 		if (
 			prevMessages.length === 3 &&
-			prevMessages.every(
-				(msg) => msg === prevMessages[0] && !message.content.startsWith('.q' || 'runTest')
-			)
+			prevMessages.every((msg) => msg === prevMessages[0] && !message.content.startsWith('.q'))
 		) {
 			message.channel.send(prevMessages[2]);
 		}
-
-		// if (message.content === "nvm") {
-		//   message.reply({
-		//     content: nvmGif,
-		//     allowedMentions: { repliedUser: false },
-		//   });
-		// }
 
 		if (message.content.match(/kms|kill myself|killing myself/i)) {
 			message.reply({
@@ -70,6 +68,18 @@ module.exports = {
 				allowedMentions: { repliedUser: false }
 			});
 		}
+
+		// if (lowerCaseMessage.match(/zov/)) {
+		// 	if (message.content.match('https://')) return;
+		// 	const zMessage = message.content.replace(/c/g, 'z').replace(/s/g, 'Z');
+		// 	message.channel.send(`${zMessage} 🇷🇺🇷🇺🇷🇺`);
+		// 	message.channel.send('ZZZ');
+		// 	delay(400);
+		// 	message.channel.send('Z🇷🇺Z🇷🇺Z');
+		// 	delay(400);
+		// 	message.channel.send('ZZ');
+		// 	message.channel.send(`${zLink}`);
+		// }
 
 		if (
 			message.content.match(
@@ -125,7 +135,6 @@ module.exports = {
 						}
 
 						const response = stdout.trim();
-						console.log(`Running command: python "${commandFilePath}" with no arguments`);
 
 						if (response === '') {
 							message.reply('No response from the command.');
@@ -145,7 +154,6 @@ module.exports = {
 						}
 
 						const response = stdout.trim();
-						console.log(`Running command: python "${commandFilePath}" "${extraArguments}"`);
 
 						if (response === '') {
 							message.reply('No response from the command.');
@@ -157,17 +165,28 @@ module.exports = {
 			});
 		}
 
-		if (message.content.startsWith('runTest')) {
-			message.reply({
-				content: 'No test to execute.',
-				flags: MessageFlags.Ephemeral
-			});
-		}
-
 		// unreliable
 
 		// if (message.embeds.length > 0) {
 		// 	repostDetection.execute(message);
+		// }
+
+		// Just messing around with a mute function that deletes messages, not implemented.
+		// if (Array.isArray(mutedUsers) && mutedUsers.includes(message.author.id)) {
+		// 	message.reply({
+		// 		content: 'You are muted.',
+		// 		flags: MessageFlags.Ephemeral,
+		// 	});
+		//
+		// 	message.delete();
+		// 	return;
+		// }
+
+		// if (message.content === "nvm") {
+		//   message.reply({
+		//     content: nvmGif,
+		//     allowedMentions: { repliedUser: false },
+		//   });
 		// }
 	}
 };

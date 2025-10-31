@@ -1,6 +1,7 @@
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
+const { avg1, avg2 } = require('../commands/games/formTeam');
 
- module.exports = {
+module.exports = {
 	updateTeamEmbed(team1, team2, randomMapName, randomMapUrl, winner = null) {
 		return new EmbedBuilder()
 			.setColor(0x0ff08b)
@@ -16,13 +17,13 @@ const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('
 			)
 			.addFields(
 				{
-					name: winner === 1 ? 'Team 1  👑' : 'Team 1',
-					value: team1.map((member) => `<@${member.id}>`).join('\n') || 'No members',
+					name: winner === 1 ? 'Team 1  👑' : `Team 1`,
+					value: team1.map((z) => `<@${z}>`).join('\n') || 'No members',
 					inline: true
 				},
 				{
-					name: winner === 2 ? 'Team 2  👑' : 'Team 2',
-					value: team2.map((member) => `<@${member.id}>`).join('\n') || 'No members',
+					name: winner === 2 ? 'Team 2  👑' : `Team 2`,
+					value: team2.map((x) => `<@${x}>`).join('\n') || 'No members',
 					inline: true
 				}
 			)
