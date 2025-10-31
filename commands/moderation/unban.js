@@ -13,7 +13,7 @@ module.exports = {
 		try {
 			interaction.guild.members.unban(user);
 			interaction.reply({
-				content: `Unbanned ${user.nickname}.`,
+				content: `Unbanned ${user.nick}.`,
 				flags: MessageFlags.Ephemeral
 			});
 		} catch {

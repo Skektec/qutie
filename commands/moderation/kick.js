@@ -18,7 +18,7 @@ module.exports = {
 		try {
 			interaction.guild.members.kick(user);
 			interaction.reply({
-				content: `Kicked ${user.nickname}.`,
+				content: `Kicked ${user.nick}.`,
 				flags: MessageFlags.Ephemeral
 			});
 

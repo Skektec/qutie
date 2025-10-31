@@ -18,7 +18,7 @@ module.exports = {
 		try {
 			interaction.guild.members.ban(user);
 			interaction.reply({
-				content: `Banned ${user.nickname}.`,
+				content: `Banned ${user.nick}.`,
 				flags: MessageFlags.Ephemeral
 			});
 

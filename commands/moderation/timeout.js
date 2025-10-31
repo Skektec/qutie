@@ -24,7 +24,7 @@ module.exports = {
 		try {
 			user.timeout(length);
 			interaction.reply({
-				content: `Timed ${user.nickname} out for ${length}.`,
+				content: `Timed ${user.nick} out for ${length}.`,
 				flags: MessageFlags.Ephemeral
 			});
 
