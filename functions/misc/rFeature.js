@@ -1,3 +1,4 @@
+const { EmbedBuilder } = require('discord.js');
 const { getClient } = require('../../data/clientInstance');
 const { rUser } = require('../../data/config.json');
 
@@ -29,11 +30,18 @@ module.exports = {
 
 			const info = detailsList.find(getDetails);
 
-			user.send(
-				`${info.details} - \n"${reaction.message.content}" - ${
-					reaction.message.author
-				}\n-# At ${new Date(reaction.message.createdTimestamp)}`
-			);
+			const dateTimestamp = new Date(reaction.message.createdTimestamp).toUTCString();
+
+			const quoteEmbed = new EmbedBuilder()
+				.setColor(0x0099ff)
+				.setTitle(`${info.details}`)
+				.setDescription(
+					`${reaction.message.content}\n- <@${reaction.message.author}> [(Jump)](https://discordapp.com/channels/${reaction.message.guildId}/${reaction.message.channelId}/${reaction.message.id})`
+				)
+				.setImage(imageFromText ? imageFromText[0] : quote.image)
+				.setFooter(dateTimestamp);
+
+			user.send({ embeds: [quoteEmbed] });
 		} else return;
 		return;
 	}

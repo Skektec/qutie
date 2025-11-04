@@ -7,9 +7,16 @@ const { rUser } = require('../data/config.json');
 module.exports = {
 	name: Events.MessageReactionAdd,
 	async execute(reaction) {
+		if (reaction.partial) {
+			try {
+				await reaction.fetch();
+			} catch (error) {
+				notify.error('Something went wrong when fetching the message', error, 'no error code');
+				return;
+			}
+		}
+
 		try {
-			if (reaction.partial) await reaction.fetch();
-			if (reaction.message.partial) await reaction.message.fetch();
 			if (reaction.message.author.bot) return;
 
 			if (reaction.emoji.name == '💬') {
