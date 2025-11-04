@@ -11,8 +11,6 @@ const messageAddQuote = require('../functions/messageAddQuote.js');
 const clean = require('../functions/removeTracker');
 const fs = require('fs');
 const storeMessage = require('../functions/storeMessage.js');
-const fetchNews = require('../functions/warThunder/fetchNews.js');
-const fetchDev = require('../functions/warThunder/fetchDev.js');
 
 // const repostDetection = require('../functions/repostDetection');
 const { exec } = require('child_process');
@@ -30,15 +28,14 @@ module.exports = {
 	name: Events.MessageCreate,
 	execute: async (message) => {
 		jarvis.execute(message);
-		const lowerCaseMessage = message.content.toLowerCase();
 
 		if (message.content.startsWith('runTest')) {
 			// message.reply({
 			// 	content: `No test to execute.`,
 			// 	flags: MessageFlags.Ephemeral
 			// });'
-			fetchDev.findLinks();
-			fetchNews.findLinks();
+			// fetchDev.findLinks();
+			// fetchNews.findLinks();
 		}
 
 		if (message.channel == 1200118011806367825) return;

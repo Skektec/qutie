@@ -1,24 +1,26 @@
-const { EmbedBuilder } = require("discord.js");
-const { getClient } = require("../data/clientInstance");
+const { EmbedBuilder } = require('discord.js');
+const { getClient } = require('../data/clientInstance');
+const { fstat } = require('fs');
+const { setDefaultCACertificates } = require('tls');
 client = getClient();
 
 module.exports = {
-  answer: async (message, args) => {
-    const channelId = args[0];
-    const reply = args.slice(1).join(" ");
+	answer: async (message, args) => {
+		const channelId = args[0];
+		const reply = args.slice(1).join(' ');
 
-    const channel = await client.channels.fetch(channelId);
+		const channel = await client.channels.fetch(channelId);
 
-    try {
-      const supportEmbed = new EmbedBuilder()
-        .setColor(0x0099ff)
-        .setTitle("**Qutie Support**")
-        .addFields({ name: "Reply:", value: reply })
-        .setFooter({ text: `Answered by ${message.author.username}` });
+		try {
+			const supportEmbed = new EmbedBuilder()
+				.setColor(0x0099ff)
+				.setTitle('**Qutie Support**')
+				.addFields({ name: 'Reply:', value: reply })
+				.setFooter({ text: `Answered by ${message.author.username}` });
 
-      channel.send({ embeds: [supportEmbed] });
-    } catch (err) {
-      message.channel.send(`Reply failed: ${err}`);
-    }
-  },
+			channel.send({ embeds: [supportEmbed] });
+		} catch (err) {
+			message.channel.send(`Reply failed: ${err}`);
+		}
+	}
 };

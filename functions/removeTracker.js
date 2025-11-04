@@ -4,6 +4,12 @@ module.exports = {
 			return new Promise((resolve) => setTimeout(resolve, time));
 		}
 
+		function suppressEmbed() {
+			message.suppressEmbeds(true);
+			delay(1000);
+			message.suppressEmbeds(true);
+		}
+
 		let cleaned = message.content;
 
 		if (message.content.includes('http')) {
@@ -19,15 +25,14 @@ module.exports = {
 
 			cleaned = cleaned.replace(
 				/(https?:\/\/(?:www\.)?x\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
-				'https://fixupx.com$2'
+				'https://fixupx.com$2/en'
 			);
 
 			if (cleaned === message.content) {
 				return;
 			} else {
 				try {
-					await message.suppressEmbeds(true);
-					delay(600);
+					suppressEmbed();
 					return `-# ${cleaned}`;
 				} catch {
 					return `-# ${cleaned}`;

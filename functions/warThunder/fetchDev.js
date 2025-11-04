@@ -73,6 +73,8 @@ module.exports = {
 
 				devblog.newPost(newArticle[0].articleNumber);
 			}
+
+			return newArticle.length;
 		} catch (error) {
 			notify.error('Error fetching or parsing the page:', error, 'no error code');
 		}
