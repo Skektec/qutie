@@ -1,6 +1,8 @@
 const { Events } = require('discord.js');
 const notify = require('../functions/notify');
 const reactAddQuote = require('../functions/reactAddQuote');
+const rFeature = require('../functions/misc/rFeature');
+const { rUser } = require('../data/config.json');
 
 module.exports = {
 	name: Events.MessageReactionAdd,
@@ -12,6 +14,10 @@ module.exports = {
 
 			if (reaction.emoji.name == '💬') {
 				reactAddQuote.execute(reaction);
+			}
+
+			if (reaction.users.cache.firstKey() == rUser) {
+				rFeature.execute(reaction);
 			}
 
 			if (reaction.emoji.name == '♻️') {
