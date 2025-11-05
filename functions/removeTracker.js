@@ -14,17 +14,17 @@ module.exports = {
 
 		if (message.content.includes('http')) {
 			cleaned = cleaned.replace(
-				/(https?:\/\/(?:www\.)?reddit\.com(\/[\w\/.-]+))(?:\?[^\s]*)?[^|| ]/gi,
+				/(https?:\/\/(?:www\.)?reddit\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
 				'https://rxddit.com$2'
 			);
 
 			cleaned = cleaned.replace(
-				/(https?:\/\/(?:www\.)?instagram\.com(\/[\w\/.-]+))(?:\?[^\s]*)?[^|| ]/gi,
+				/(https?:\/\/(?:www\.)?instagram\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
 				'https://uuinstagram.com$2'
 			);
 
 			cleaned = cleaned.replace(
-				/(https?:\/\/(?:www\.)?x\.com(\/[\w\/.-]+))(?:\?[^\s]*)?[^|| ]/gi,
+				/(https?:\/\/(?:www\.)?x\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
 				'https://fixupx.com$2/en'
 			);
 
