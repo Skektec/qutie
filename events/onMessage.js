@@ -52,7 +52,7 @@ module.exports = {
 
 		if (message.tts === true) {
 			message.reply('kys');
-			delay(300);
+			delay(800);
 			message.delete();
 		}
 
