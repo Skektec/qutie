@@ -50,7 +50,11 @@ module.exports = {
 
 		if (words.includes(message.content)) sendEmoji.execute(message);
 
-		if (message.tts === true) message.reply('kys');
+		if (message.tts === true) {
+			message.reply('kys');
+			delay(300);
+			message.delete();
+		}
 
 		if (
 			prevMessages.length === 3 &&
