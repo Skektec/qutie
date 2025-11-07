@@ -8,6 +8,7 @@ const jarvis = require('../jarvis');
 const support = require('../functions/support');
 const sendEmoji = require('../functions/sendEmoji');
 const messageAddQuote = require('../functions/messageAddQuote.js');
+const pixiv = require('../functions/pixiv.js');
 const clean = require('../functions/removeTracker');
 const fs = require('fs');
 const storeMessage = require('../functions/storeMessage.js');
@@ -95,6 +96,10 @@ module.exports = {
 			delay(2000);
 			await message.suppressEmbeds(true);
 			return;
+		}
+
+		if (message.content.match(/https:\/\/www.pixiv.net/gi)) {
+			pixiv.execute(message);
 		}
 
 		if (message.content.startsWith('.answer') && message.author.id === botAdimn) {
