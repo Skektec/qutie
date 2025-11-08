@@ -29,7 +29,7 @@ module.exports = {
 			serverContext[channelId].shift();
 		}
 
-		if (!message.content.startsWith('grok')) return;
+		if (!message.content.toLowerCase().startsWith('grok')) return;
 
 		try {
 			const messageReply = message.reference?.messageId
