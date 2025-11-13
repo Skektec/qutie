@@ -8,7 +8,7 @@ const notify = require('../../notify');
 module.exports = {
 	newPost: async (articleNumber) => {
 		try {
-			const response = await fetch(
+			const response = await got.get(
 				`https://warthunder.com/en/game/changelog/current/${articleNumber}`
 			);
 			const html = await response.body;
@@ -53,6 +53,9 @@ module.exports = {
 
 			headings.forEach((item) => getInfo(item));
 
+			let image = $('img[class=e-figure__img]').attr('src');
+			if (image) image = image.replace(/ /g, '%20');
+
 			const developmentEmbed = new EmbedBuilder()
 				.setColor(0xff0000)
 				.setTitle(`Server ${$('.content__title').text().trim()}`)
@@ -63,7 +66,7 @@ module.exports = {
 				})
 				.setURL(`https://warthunder.com/en/game/changelog/current/${articleNumber}`)
 				.setFields(changesBlock)
-				.setImage($('.e-figure__img').attr('src'))
+				.setImage(image || undefined)
 				.setFooter({
 					text: `Link: https://warthunder.com/en/game/changelog/current/${articleNumber} on ${dateString}`
 				});

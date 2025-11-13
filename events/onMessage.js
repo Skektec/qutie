@@ -12,6 +12,9 @@ const clean = require('../functions/removeTracker');
 const fs = require('fs');
 const storeMessage = require('../functions/storeMessage.js');
 
+const fetchDev = require('../functions/warThunder/fetchDev.js');
+const fetchNews = require('../functions/warThunder/fetchNews.js');
+
 // const repostDetection = require('../functions/repostDetection');
 const { exec } = require('child_process');
 const { json } = require('stream/consumers');
