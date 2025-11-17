@@ -57,6 +57,9 @@ module.exports = {
 			await message.reply('kys');
 			message.delete();
 		}
+		if (message.content.match(/—/g)) {
+			await message.reply('em dash detected\nclanka clanka clanka');
+		}
 
 		if (
 			prevMessages.length === 3 &&
