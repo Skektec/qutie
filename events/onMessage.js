@@ -113,7 +113,11 @@ module.exports = {
 		}
 
 		if (message.content.toLowerCase().startsWith('.q')) {
-			fetchquote.execute(message, message.content.slice(2).trim().split(/ +/));
+			if (message.content.toLowerCase().startsWith('.q help')) {
+				message.reply("- /addquote - Manually add a quote.\n- /deletequote - Manually delete a quote.\n- /quoteboard - Creates a leaderboard with the amount of quotes from each user in the server.\n- /searchquote - Search for specific keywords in quotes.")
+			} else {
+				fetchquote.execute(message, message.content.slice(2).trim().split(/ +/));
+			}
 		}
 
 		if (message.content.startsWith('!p')) {
