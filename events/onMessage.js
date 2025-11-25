@@ -30,153 +30,150 @@ const prevMessages = [];
 module.exports = {
     name: Events.MessageCreate,
     execute: async (message) => {
+        jarvis.execute(message);
+
+        if (message.content.startsWith('runTest')) {
+            // message.reply({
+            // 	content: `No test to execute.`,
+            // 	flags: MessageFlags.Ephemeral
+            // });'
+            // fetchDev.findLinks();
+            // fetchNews.findLinks();
+        }
+
+        if (message.channel === 1200118011806367825) return;
+
+        // if (message.guild && message.guild.id === '973484576703905802') storeMessage.save(message);
 
         if (message.author.bot) return;
-        jarvis.execute(message);
+
+        prevMessages.push(message.content);
+
+        if (prevMessages.length > 3) prevMessages.shift();
+
         if (words.includes(message.content)) sendEmoji.execute(message);
+
         if (message.tts === true) {
             await message.reply('kys');
             message.delete();
         }
-
-
-        switch (true) {
-            case (message.content.startsWith('runTest')):
-                message.reply({
-                    content: `No test to execute.`,
-                    flags: MessageFlags.Ephemeral
-                });
-                // fetchDev.findLinks();
-                // fetchNews.findLinks();
-                break;
-
-            case (message.content.startsWith('.answer') && message.author.id === botAdimn):
-                support.answer(message, message.content.slice(7).trim().split(/ +/));
-                break;
-
-            case (message.content.toLowerCase().startsWith('.q')):
-                fetchquote.execute(message, message.content.slice(2).trim().split(/ +/));
-                break;
-
-            case (message.content.startsWith('!p')):
-                //For running python commands, seems to be broken but is unused.
-
-                const args = message.content.slice(3).trim().split(' ');
-                const command = args.shift();
-                const extraArguments = args.join(' ');
-
-                const commandFilePath = path.join(__dirname, 'commands', 'python_commands', `${command}.py`);
-
-                fs.access(commandFilePath, fs.constants.F_OK, (err) => {
-                    if (err) {
-                        message.reply(`Command "${command}" not found.`);
-                        return;
-                    }
-
-                    if (!extraArguments.trim()) {
-                        exec(`python "${commandFilePath}"`, (error, stdout, stderr) => {
-                            if (error) {
-                                message.reply(`Error: ${error.message} (Occured in python code)`);
-                                return;
-                            }
-                            if (stderr) {
-                                message.reply(`Python Error: ${stderr}`);
-                                return;
-                            }
-
-                            const response = stdout.trim();
-
-                            if (response === '') {
-                                message.reply('No response from the command.');
-                            } else {
-                                message.reply(response);
-                            }
-                        });
-                    } else {
-                        exec(`python "${commandFilePath}" "${extraArguments}"`, (error, stdout, stderr) => {
-                            if (error) {
-                                message.reply(`Error: ${error.message}  (Occured in python code)`);
-                                return;
-                            }
-                            if (stderr) {
-                                message.reply(`Python Error: ${stderr}`);
-                                return;
-                            }
-
-                            const response = stdout.trim();
-
-                            if (response === '') {
-                                message.reply('No response from the command.');
-                            } else {
-                                message.reply(response);
-                            }
-                        });
-                    }
-                });
-                break;
-
-            case (
-                prevMessages.length === 3 &&
-                prevMessages.every((msg) => msg === prevMessages[0] && !message.content.startsWith('.q'))
-            ):
-                message.channel.send(prevMessages[2]);
-                break;
-
-            default:
-                break;
+        if (message.content.match(/—/g)) {
+            await message.reply('em dash detected\nclanka clanka clanka');
         }
 
-        switch (true) {
-            case (message.content.match(/kms|kill myself|killing myself/i)):
+        if (
+            prevMessages.length === 3 &&
+            prevMessages.every((msg) => msg === prevMessages[0] && !message.content.startsWith('.q'))
+        ) {
+            message.channel.send(prevMessages[2]);
+        }
+
+        if (message.content.match(/kms|kill myself|killing myself/i)) {
+            message.reply({
+                content: neverKysVideo,
+                allowedMentions: {repliedUser: false}
+            });
+        }
+
+        // if (lowerCaseMessage.match(/zov/)) {
+        // 	if (message.content.match('https://')) return;
+        // 	const zMessage = message.content.replace(/c/g, 'z').replace(/s/g, 'Z');
+        // 	message.channel.send(`${zMessage} 🇷🇺🇷🇺🇷🇺`);
+        // 	message.channel.send('ZZZ');
+        // 	delay(400);
+        // 	message.channel.send('Z🇷🇺Z🇷🇺Z');
+        // 	delay(400);
+        // 	message.channel.send('ZZ');
+        // 	message.channel.send(`${zLink}`);
+        // }
+
+        if (
+            message.content.match(
+                /https:\/\/x.com|https:\/\/reddit.com|https:\/\/www.reddit.com|https:\/\/instagram.com/i
+            )
+        ) {
+            const cleanLink = await clean.execute(message);
+            if (cleanLink)
                 message.reply({
-                    content: neverKysVideo,
+                    content: cleanLink,
                     allowedMentions: {repliedUser: false}
                 });
-                break;
-
-            case message.content.match(
-                /https:\/\/x.com|https:\/\/reddit.com|https:\/\/www.reddit.com|https:\/\/instagram.com/i
-            ):
-                const cleanLink = await clean.execute(message);
-                if (cleanLink)
-                    message.reply({
-                        content: cleanLink,
-                        allowedMentions: {repliedUser: false}
-                    });
-                delay(2000);
-                await message.suppressEmbeds(true);
-                break;
-
-            case (message.content.toLowerCase().match(/^ok garmin,? video speichern/)):
-                const messageReply = await message.channel.messages.fetch(message.reference.messageId);
-                messageAddQuote.execute(messageReply, message.author);
-                break;
-
-            case (message.content.toLowerCase().match(/zov/)):
-                // if (message.content.match('https://')) return;
-                // const zMessage = message.content.replace(/c/g, 'z').replace(/s/g, 'Z');
-                // message.channel.send(`${zMessage} 🇷🇺🇷🇺🇷🇺`);
-                // message.channel.send('ZZZ');
-                // delay(400);
-                // message.channel.send('Z🇷🇺Z🇷🇺Z');
-                // delay(400);
-                // message.channel.send('ZZ');
-                // message.channel.send(`${zLink}`);
-                break;
-
-            case (message.content.match(/—/g)):
-                await message.reply('em dash detected\nclanka clanka clanka');
-                break;
-
-            default:
-                break;
+            delay(2000);
+            await message.suppressEmbeds(true);
+            return;
         }
 
-        if (message.channel === 1200118011806367825) return;
-        prevMessages.push(message.content);
-        if (prevMessages.length > 3) prevMessages.shift();
+        if (message.content.startsWith('.answer') && message.author.id === botAdimn) {
+            support.answer(message, message.content.slice(7).trim().split(/ +/));
+        }
 
-        // if (message.guild && message.guild.id === '973484576703905802') storeMessage.save(message);
+        if (message.content.toLowerCase().match(/^ok garmin,? video speichern/)) {
+            const messageReply = await message.channel.messages.fetch(message.reference.messageId);
+            messageAddQuote.execute(messageReply, message.author);
+        }
+
+        if (message.content.toLowerCase().startsWith('.q')) {
+            if (message.content.toLowerCase().startsWith('.q help')) {
+                message.reply("- /addquote - Manually add a quote.\n- /deletequote - Manually delete a quote.\n- /quoteboard - Creates a leaderboard with the amount of quotes from each user in the server.\n- /searchquote - Search for specific keywords in quotes.")
+            } else {
+                fetchquote.execute(message, message.content.slice(2).trim().split(/ +/));
+            }
+        }
+
+        if (message.content.startsWith('!p')) {
+            const args = message.content.slice(3).trim().split(' ');
+            const command = args.shift();
+            const extraArguments = args.join(' ');
+
+            const commandFilePath = path.join(__dirname, 'commands', 'python_commands', `${command}.py`);
+
+            fs.access(commandFilePath, fs.constants.F_OK, (err) => {
+                if (err) {
+                    message.reply(`Command "${command}" not found.`);
+                    return;
+                }
+
+                if (!extraArguments.trim()) {
+                    exec(`python "${commandFilePath}"`, (error, stdout, stderr) => {
+                        if (error) {
+                            message.reply(`Error: ${error.message} (Occured in python code)`);
+                            return;
+                        }
+                        if (stderr) {
+                            message.reply(`Python Error: ${stderr}`);
+                            return;
+                        }
+
+                        const response = stdout.trim();
+
+                        if (response === '') {
+                            message.reply('No response from the command.');
+                        } else {
+                            message.reply(response);
+                        }
+                    });
+                } else {
+                    exec(`python "${commandFilePath}" "${extraArguments}"`, (error, stdout, stderr) => {
+                        if (error) {
+                            message.reply(`Error: ${error.message}  (Occured in python code)`);
+                            return;
+                        }
+                        if (stderr) {
+                            message.reply(`Python Error: ${stderr}`);
+                            return;
+                        }
+
+                        const response = stdout.trim();
+
+                        if (response === '') {
+                            message.reply('No response from the command.');
+                        } else {
+                            message.reply(response);
+                        }
+                    });
+                }
+            });
+        }
 
         // unreliable
 
