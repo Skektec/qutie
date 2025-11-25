@@ -42,12 +42,14 @@ module.exports = {
             message.delete();
         }
 
-        switch (message) {
+
+        switch (true) {
             case (message.content.startsWith('runTest')):
-                // message.reply({
-                // 	content: `No test to execute.`,
-                // 	flags: MessageFlags.Ephemeral
-                // });'
+                message.reply({
+                    content: `No test to execute.`,
+                    flags: MessageFlags.Ephemeral
+                });
+                q
                 // fetchDev.findLinks();
                 // fetchNews.findLinks();
                 break;
@@ -57,11 +59,7 @@ module.exports = {
                 break;
 
             case (message.content.toLowerCase().startsWith('.q')):
-                if (message.content.toLowerCase().startsWith('.q help')) {
-                    message.reply("- /addquote - Manually add a quote.\n- /deletequote - Manually delete a quote.\n- /quoteboard - Creates a leaderboard with the amount of quotes from each user in the server.\n- /searchquote - Search for specific keywords in quotes.")
-                } else {
-                    fetchquote.execute(message, message.content.slice(2).trim().split(/ +/));
-                }
+                fetchquote.execute(message, message.content.slice(2).trim().split(/ +/));
                 break;
 
             case (message.content.startsWith('!p')):
@@ -132,7 +130,7 @@ module.exports = {
                 break;
         }
 
-        switch (message) {
+        switch (true) {
             case (message.content.match(/kms|kill myself|killing myself/i)):
                 message.reply({
                     content: neverKysVideo,
