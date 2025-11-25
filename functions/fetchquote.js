@@ -101,6 +101,7 @@ module.exports = {
             useAll = true;
         } else if (nick === "help") {
             message.reply("- /addquote - Manually add a quote.\n- /deletequote - Manually delete a quote.\n- /quoteboard - Creates a leaderboard with the amount of quotes from each user in the server.\n- /searchquote - Search for specific keywords in quotes.");
+            params.push(null);
         } else if (nick) {
             query = `
                 SELECT *
@@ -120,13 +121,15 @@ module.exports = {
         }
 
         try {
-            const {rows} = await database.query(query, params);
-            if (!rows.length) {
-                message.channel.send(useAll ? 'No matching quotes found.' : 'No matching quote found.');
-                return;
+            if (params != null) {
+                const {rows} = await database.query(query, params);
+                if (!rows.length) {
+                    message.channel.send(useAll ? 'No matching quotes found.' : 'No matching quote found.');
+                    return;
+                }
+                const quote = useAll ? rows[Math.floor(Math.random() * rows.length)] : rows[0];
+                sendQuoteEmbed(quote);
             }
-            const quote = useAll ? rows[Math.floor(Math.random() * rows.length)] : rows[0];
-            sendQuoteEmbed(quote);
         } catch (err) {
             notify.error(`Error querying ${tableName}:`, err, '0x000000');
             message.channel.send('An error occurred while retrieving quotes.');

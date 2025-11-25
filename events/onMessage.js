@@ -33,9 +33,6 @@ module.exports = {
 
         if (message.author.bot) return;
         jarvis.execute(message);
-        if (message.channel === 1200118011806367825) return;
-        prevMessages.push(message.content);
-        if (prevMessages.length > 3) prevMessages.shift();
         if (words.includes(message.content)) sendEmoji.execute(message);
         if (message.tts === true) {
             await message.reply('kys');
@@ -49,7 +46,6 @@ module.exports = {
                     content: `No test to execute.`,
                     flags: MessageFlags.Ephemeral
                 });
-                q
                 // fetchDev.findLinks();
                 // fetchNews.findLinks();
                 break;
@@ -175,6 +171,10 @@ module.exports = {
             default:
                 break;
         }
+
+        if (message.channel === 1200118011806367825) return;
+        prevMessages.push(message.content);
+        if (prevMessages.length > 3) prevMessages.shift();
 
         // if (message.guild && message.guild.id === '973484576703905802') storeMessage.save(message);
 
