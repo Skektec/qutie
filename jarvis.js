@@ -101,7 +101,7 @@ module.exports = {
 
             const gifCommand = content.match(/\$\$gif of (.*?)\$\$/);
 
-            const truth = content.replace(/\$\$gif of (.*?)\$\$/, "");
+            const truth = content.replace(/\$\$gif of .*\$\$/, "");
 
             if (gifCommand) {
                 gif.execute(gifCommand, message);
