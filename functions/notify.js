@@ -1,7 +1,7 @@
 //This is to log error messages directly to my DMs
 const { EmbedBuilder } = require('discord.js');
 const { Client, GatewayIntentBits, Partials } = require('discord.js');
-const { botAdimn } = require('../data/config.json');
+const { botAdmin } = require('../data/config.json');
 const { getClient, setClient } = require('../data/clientInstance');
 const { discordToken } = require('../data/config.json');
 
@@ -10,7 +10,7 @@ module.exports = {
 		try {
 			try {
 				client = getClient();
-				user = await client.users.fetch(botAdimn);
+				user = await client.users.fetch(botAdmin);
 			} catch {
 				client = new Client({
 					intents: [
@@ -29,7 +29,7 @@ module.exports = {
 
 				client.login(discordToken);
 
-				user = await client.users.fetch(botAdimn);
+				user = await client.users.fetch(botAdmin);
 			}
 
 			let errorMessage = 'No error message provided';
@@ -69,7 +69,7 @@ module.exports = {
 		}
 	},
 	log: async (message) => {
-		const user = await client.users.fetch(botAdimn);
+		const user = await client.users.fetch(botAdmin);
 
 		user.send(message);
 	}
