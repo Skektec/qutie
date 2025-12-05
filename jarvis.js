@@ -107,7 +107,7 @@ module.exports = {
                 gif.execute(gifCommand, message);
             }
             if (truth && truth != "") {
-                message.reply(truth?.[1]);
+                message.reply(truth);
             }
         } catch (err) {
             notify.error('Error in jarvis.js', err, '-1x40113');
