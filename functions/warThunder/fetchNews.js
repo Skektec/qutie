@@ -9,86 +9,90 @@ const generic = require('./newsTypes/generic');
 const event = require('./newsTypes/event');
 
 module.exports = {
-	findLinks: async () => {
-		try {
-			const response = await got.get(warThunderLink);
-			const html = response.body;
-			const $ = cheerio.load(html);
+    findLinks: async () => {
 
-			const urls = [];
-			const targetHostname = new URL(warThunderLink).hostname;
+        try {
+            const response = await got.get(warThunderLink);
+            const html = response.body;
+            const $ = cheerio.load(html);
 
-			$('a').each((index, element) => {
-				const href = $(element).attr('href');
+            const urls = [];
+            const targetHostname = new URL(warThunderLink).hostname;
 
-				if (href) {
-					try {
-						const fullUrl = new URL(href, warThunderLink);
+            $('a').each((index, element) => {
+                const href = $(element).attr('href');
 
-						if (fullUrl.hostname === targetHostname) {
-							urls.push(fullUrl.href);
-						}
-					} catch (error) {
-						console.error(error);
-					}
-				}
-			});
+                if (href) {
+                    try {
+                        const fullUrl = new URL(href, warThunderLink);
 
-			const newsUrls = urls
-				.filter((url) => /^https:\/\/warthunder\.com\/en\/news\/\d{4}/.test(url))
-				.map((url) => {
-					url = url
-						.replace(/^https:\/\/warthunder\.com\/en\/news\/\d{4}.*#comments/, '')
-						.trim()
-						.toLowerCase();
-					if (url != '') {
-						articleNumber = url.slice(31, 35);
-						articleType = url.match(/-.*/)[0].slice(1);
-						return { url, articleNumber, articleType };
-					} else {
-						return '';
-					}
-				})
-				.filter((url) => url !== '');
+                        if (fullUrl.hostname === targetHostname) {
+                            urls.push(fullUrl.href);
+                        }
+                    } catch (error) {
+                        console.error(error);
+                    }
+                }
+            });
 
-			const currentUrls = JSON.parse(fs.readFileSync('./data/newsUrls.json', 'utf8'));
+            const newsUrls = urls
+                .filter((url) => /^https:\/\/warthunder\.com\/en\/news\/\d{4}/.test(url))
+                .map((url) => {
+                    url = url
+                        .replace(/^https:\/\/warthunder\.com\/en\/news\/\d{4}.*#comments/, '')
+                        .trim()
+                        .toLowerCase();
+                    if (url != '') {
+                        articleNumber = url.slice(31, 35);
+                        articleType = url.match(/-.*/)[0].slice(1);
+                        return {url, articleNumber, articleType};
+                    } else {
+                        return '';
+                    }
+                })
+                .filter((url) => url !== '');
 
-			const uniqueNewsUrls = [...new Set(newsUrls)];
+            const currentUrls = JSON.parse(fs.readFileSync('./data/newsUrls.json', 'utf8'));
 
-			const normalizedCurrentUrls = new Set(
-				currentUrls.map((item) => item.url.trim().toLowerCase())
-			);
+            const uniqueNewsUrls = [...new Set(newsUrls)];
 
-			let newArticle = uniqueNewsUrls.filter((newItem) => {
-				const normalizedNewUrl = newItem.url.trim().toLowerCase();
+            const normalizedCurrentUrls = new Set(
+                currentUrls.map((item) => item.url.trim().toLowerCase())
+            );
 
-				return !normalizedCurrentUrls.has(normalizedNewUrl);
-			});
+            let newArticle = uniqueNewsUrls.filter((newItem) => {
+                const normalizedNewUrl = newItem.url.trim().toLowerCase();
 
-			if (newArticle.length > 0) {
-				const updatedUrls = currentUrls.concat(newArticle);
-				fs.writeFileSync('./data/newsUrls.json', JSON.stringify(updatedUrls));
+                return !normalizedCurrentUrls.has(normalizedNewUrl);
+            });
 
-				if (newArticle[0].articleType.startsWith('esport')) {
-					await esport.newPost(newArticle[0].articleNumber);
-				} else if (newArticle[0].articleType.startsWith('development')) {
-					await development.newPost(newArticle[0].articleNumber);
-				} else if (newArticle[0].articleType.startsWith('shop-development')) {
-					await development.newPost(newArticle[0].articleNumber);
-				} else if (newArticle[0].articleType.startsWith('event')) {
-					await event.newPost(newArticle[0].articleNumber);
-				} else {
-					await generic.newPost(newArticle[0].articleNumber);
-				}
+            if (newArticle.length > 0) {
+                const updatedUrls = currentUrls.concat(newArticle);
+                fs.writeFileSync('./data/newsUrls.json', JSON.stringify(updatedUrls));
 
-				// if (newArticle[0].articleType.startsWith('shop-development')) {
-				// 	development.newPost(newArticle[0].articleNumber);
-				// }
-			}
+                newArticle.forEach((article) => {
+                    if (article.articleType.startsWith('esport')) {
+                        esport.newPost(article.articleNumber);
+                    } else if (article.articleType.startsWith('development')) {
+                        development.newPost(article.articleNumber);
+                    } else if (article.articleType.startsWith('shop-development')) {
+                        development.newPost(article.articleNumber);
+                    } else if (article.articleType.startsWith('event')) {
+                        event.newPost(article.articleNumber);
+                    } else {
+                        generic.newPost(article.articleNumber);
+                    }
+                });
 
-			return newArticle.length;
-		} catch (error) {
-			notify.error('Error fetching or parsing the page:', error, 'no error code');
-		}
-	}
+
+                // if (article.articleType.startsWith('shop-development')) {
+                // 	development.newPost(article.articleNumber);
+                // }
+            }
+
+            return newArticle.length;
+        } catch (error) {
+            notify.error('Error fetching or parsing the page:', error, 'no error code');
+        }
+    }
 };
