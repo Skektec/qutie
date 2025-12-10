@@ -29,7 +29,7 @@ module.exports = {
             serverContext[channelId].shift();
         }
 
-        if (!message.content.toLowerCase().startsWith('grok')) return;
+        if (!message.content.toLowerCase().startsWith('grok') && !message.mentions.has(config.clientId)) return;
 
         try {
             const messageReply = message.reference?.messageId
@@ -107,7 +107,13 @@ module.exports = {
                 gif.execute(gifCommand, message);
             }
             if (truth && truth != "") {
-                message.reply(truth);
+                if (truth.length >= 2000) {
+                    truthArray = truth.split(1999)
+
+                    truthArray.forEach(response => message.reply(response))
+                } else {
+                    message.reply(truth);
+                }
             }
         } catch (err) {
             notify.error('Error in jarvis.js', err, '-1x40113');
