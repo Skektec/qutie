@@ -30,7 +30,7 @@ const prevMessages = [];
 module.exports = {
     name: Events.MessageCreate,
     execute: async (message) => {
-        // jarvis.execute(message);
+        jarvis.execute(message);
 
         if (message.content.startsWith('runTest')) {
             // message.reply({
