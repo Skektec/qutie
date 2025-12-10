@@ -36,5 +36,6 @@ Begin immediately. From now on, respond only with $$repost$$ or not a repost.
     neverKysVideo:
         'https://cdn.discordapp.com/attachments/599671298209218573/1362030981497749584/yKLaIxz.mp4',
     zLink:
-        'https://media.discordapp.net/attachments/1257252480505352255/1294540842505338931/1-1.gif?ex=6901055c&is=68ffb3dc&hm=b9e802258b0512d84c6b4ebbeb6ea94d19e12ca9196a0abdd364192f46fa92e9&'
+        'https://media.discordapp.net/attachments/1257252480505352255/1294540842505338931/1-1.gif?ex=6901055c&is=68ffb3dc&hm=b9e802258b0512d84c6b4ebbeb6ea94d19e12ca9196a0abdd364192f46fa92e9&',
+    jschlatt21: 'https://cdn.discordapp.com/attachments/1034191014451236894/1448114063040319640/21_jschlatt.mp4?ex=693a14d1&is=6938c351&hm=79740c24d5334e8192d9285dac4577089f1c5f983f8d95d15deb08676bcf0256&'
 };

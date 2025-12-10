@@ -29,7 +29,7 @@ module.exports = {
             serverContext[channelId].shift();
         }
 
-        if (!message.content.toLowerCase().startsWith('grok') && !message.mentions.has(config.clientId)) return;
+        if (!message.content.toLowerCase().startsWith('grok') && !message.mentions.has(config.clientId) && message.author.id != config.clientId) return;
 
         try {
             const messageReply = message.reference?.messageId
@@ -110,9 +110,20 @@ module.exports = {
                 if (truth.length >= 2000) {
                     truthArray = truth.split(1999)
 
-                    truthArray.forEach(response => message.reply(response))
+                    truthArray.forEach(response => message.reply({
+                            content: response,
+                            allowed_mentions: {
+                                "parse": ["roles", "users"],
+                            }
+                        })
+                    )
                 } else {
-                    message.reply(truth);
+                    message.reply({
+                        content: truth,
+                        allowed_mentions: {
+                            "parse": ["roles", "users"],
+                        }
+                    });
                 }
             }
         } catch (err) {

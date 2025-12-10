@@ -1,6 +1,6 @@
 const {Events, MessageFlags, ClientApplication} = require('discord.js');
 const {botAdmin} = require('../data/config.json');
-const {nvmGif, neverKysVideo, zLink} = require('../data/pubconfig.js');
+const {nvmGif, neverKysVideo, zLink, jschlatt21} = require('../data/pubconfig.js');
 // const mutedUsers = require('../data/mutedUsers.json');
 const fetchquote = require('../functions/fetchquote');
 const notify = require('../functions/notify');
@@ -71,6 +71,13 @@ module.exports = {
         if (message.content.match(/kms|kill myself|killing myself/i)) {
             message.reply({
                 content: neverKysVideo,
+                allowedMentions: {repliedUser: false}
+            });
+        }
+
+        if (message.content.match(/21/i)) {
+            message.reply({
+                content: jschlatt21,
                 allowedMentions: {repliedUser: false}
             });
         }
