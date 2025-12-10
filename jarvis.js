@@ -29,7 +29,7 @@ module.exports = {
             serverContext[channelId].shift();
         }
 
-        if (!message.content.toLowerCase().startsWith('grok') && !message.mentions.has(config.clientId) && message.author.id != config.clientId) return;
+        if (!message.content.toLowerCase().startsWith('grok') || !message.mentions.has(config.clientId) || message.author.id == config.clientId) return;
 
         try {
             const messageReply = message.reference?.messageId
@@ -113,7 +113,10 @@ module.exports = {
                     truthArray.forEach(response => message.reply({
                             content: response,
                             allowed_mentions: {
-                                "parse": ["roles", "users"],
+                                user: false,
+                                roles: false,
+                                everyone: false,
+                                repliedUser: false
                             }
                         })
                     )
