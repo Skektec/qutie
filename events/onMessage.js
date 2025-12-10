@@ -75,7 +75,7 @@ module.exports = {
             });
         }
 
-        if (message.content.match(/21/i)) {
+        if (message.content.match(/ 21 /i)) {
             message.reply({
                 content: jschlatt21,
                 allowedMentions: {repliedUser: false}
