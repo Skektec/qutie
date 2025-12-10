@@ -29,7 +29,9 @@ module.exports = {
             serverContext[channelId].shift();
         }
 
-        if (!message.content.toLowerCase().startsWith('grok') && !message.mentions.has(config.clientId) || message.author.id == config.clientId) return;
+        if (!message.content.toLowerCase().startsWith('grok') || message.author.id == config.clientId) return;
+        
+        //&& !message.mentions.has(config.clientId)
 
         try {
             const messageReply = message.reference?.messageId
