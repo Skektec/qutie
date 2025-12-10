@@ -30,7 +30,7 @@ module.exports = {
         }
 
         if (!message.content.toLowerCase().startsWith('grok') || message.author.id == config.clientId) return;
-        
+
         //&& !message.mentions.has(config.clientId)
 
         try {
@@ -114,7 +114,7 @@ module.exports = {
 
                     truthArray.forEach(response => message.reply({
                             content: response,
-                            allowed_mentions: {
+                            allowedMentions: {
                                 user: false,
                                 roles: false,
                                 everyone: false,
@@ -125,8 +125,11 @@ module.exports = {
                 } else {
                     message.reply({
                         content: truth,
-                        allowed_mentions: {
-                            "parse": ["roles", "users"],
+                        allowedMentions: {
+                            user: false,
+                            roles: false,
+                            everyone: false,
+                            repliedUser: false
                         }
                     });
                 }
