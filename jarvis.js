@@ -103,32 +103,48 @@ module.exports = {
 
             const gifCommand = content.match(/\$\$gif of (.*?)\$\$/);
 
-            const truth = content.replace(/\$\$gif of .*\$\$/, "");
+            let truth = content.replace(/\$\$gif of .*\$\$/, "");
 
             if (gifCommand) {
                 gif.execute(gifCommand, message);
             }
             if (truth && truth != "") {
                 if (truth.length >= 2000) {
-                    truthArray = truth.split(1999)
+                    let parts = []
+                    let i = 0
+                    let j = 0
 
-                    truthArray.forEach(response => message.reply({
-                            content: response,
-                            allowedMentions: {
-                                user: false,
-                                roles: false,
-                                everyone: false,
-                                repliedUser: false
-                            }
-                        })
+                    while (truth.length >= 2000) {
+                        parts[j] = truth.slice(i, i + 2000)
+                        truth = truth.slice(i + 2000)
+
+                        i = i + 2000
+                        j++
+                    }
+
+                    message.reply({
+                        content: parts[0],
+                        allowedMentions: {
+                            repliedUser: false
+                        }
+                    })
+
+                    parts = parts.splice(0);
+
+                    parts.forEach((response) => {
+                            message.channel.send({
+                                content: response + " ",
+                                allowedMentions: {
+                                    repliedUser: false
+                                }
+                            })
+                        }
                     )
+
                 } else {
                     message.reply({
                         content: truth,
                         allowedMentions: {
-                            user: false,
-                            roles: false,
-                            everyone: false,
                             repliedUser: false
                         }
                     });
