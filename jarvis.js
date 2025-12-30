@@ -109,12 +109,12 @@ module.exports = {
                 gif.execute(gifCommand, message);
             }
             if (truth && truth != "") {
-                if (truth.length > 2000) {
+                if (truth.length >= 2000) {
                     let parts = []
                     let i = 0
                     let j = 0
 
-                    while (truth.length > 2000) {
+                    while (truth.length >= 2000) {
                         parts[j] = truth.slice(i, i + 2000)
                         truth = truth.slice(i + 2000)
 
