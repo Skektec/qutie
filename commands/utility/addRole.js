@@ -1,4 +1,5 @@
 const {SlashCommandBuilder} = require('discord.js');
+const {notify} = require('../../functions/notify');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -13,6 +14,11 @@ module.exports = {
     async execute(interaction) {
         const member = interaction.options.getMember('member');
         const role = member.guild.roles.cache.find(role => role.id === 973496514917842975);
-        member.roles.add(role);
+
+        try {
+            member.roles.add(role);
+        } catch (e) {
+            notify.error(e)
+        }
     },
 };
