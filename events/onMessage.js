@@ -36,7 +36,7 @@ module.exports = {
             // message.reply({
             // 	content: `No test to execute.`,
             // 	flags: MessageFlags.Ephemeral
-            // });'
+            // });
             // fetchDev.findLinks();
             // fetchNews.findLinks();
         }

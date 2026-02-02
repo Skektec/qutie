@@ -1,4 +1,4 @@
-const {SlashCommandBuilder} = require('discord.js');
+const {SlashCommandBuilder, MessageFlags} = require('discord.js');
 const {notify} = require('../../functions/notify');
 
 module.exports = {
@@ -17,6 +17,10 @@ module.exports = {
 
         try {
             member.roles.add(role);
+            interaction.reply({
+                content: `bwa.`,
+                flags: MessageFlags.Ephemeral
+            });
         } catch (e) {
             notify.error(e)
         }
