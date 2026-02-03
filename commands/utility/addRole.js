@@ -18,7 +18,7 @@ module.exports = {
         try {
             member.roles.add(role);
             interaction.reply({
-                content: `bwa.`,
+                content: `bwa`,
                 flags: MessageFlags.Ephemeral
             });
         } catch (e) {

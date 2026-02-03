@@ -25,7 +25,7 @@ module.exports = {
             role: 'user',
             content: `${message.author.username}: ${message.content}`
         });
-        if (serverContext[channelId].length > 15) {
+        if (serverContext[channelId].length > 25) {
             serverContext[channelId].shift();
         }
 
@@ -86,7 +86,7 @@ module.exports = {
                 .map((msg) => `${msg.role}: ${msg.content}`)
                 .join('\n')}`;
             const chatResponse = await aiClient.chat.completions.create({
-                model: 'grok-4-fast-non-reasoning',
+                model: 'grok-4-1-fast-non-reasoning',
                 messages: [
                     {
                         role: 'system',
