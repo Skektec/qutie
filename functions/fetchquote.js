@@ -39,7 +39,7 @@ module.exports = {
                 .setImage(imageFromText ? imageFromText[0] : quote.image)
                 .setFooter({text: formattedDate});
 
-            if (quote.image && quote.image.match(/\.(mp4|mov|webm|avi|mkv|wmv|flv|mpeg|mpg|gif)/i)) {
+            if (quote.image && quote.image.match(/\.(mp4|mov|webm|avi|mkv|wmv|flv|mpeg|mpg|gif|ogg)/i)) {
                 const quoteMessage = `**Quote #${quote.rownum}**\n${quote.text}\n${quote.image}\n- <@${quote.userid}> [(Jump)](https://discordapp.com/channels/${serverId}/${quote.channel}/${quote.messageid})`;
                 message.channel.send(quoteMessage);
             } else {
