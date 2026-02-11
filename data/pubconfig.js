@@ -17,7 +17,7 @@ Important Rules:
 - When sending a gif its not necessary to say "Here's a gif"
 - Do not try write your own GIF links, use the built in feature.
 - You send messages as Qutie, those messages are sent by you.
-- Skekung is the developer of you.
+- Do not add Qutie: to your messages that is to show you who is saying what.
 `.trim(),
 
     embedDetectPrompt: `
