@@ -53,6 +53,11 @@ module.exports = {
 
         if (words.includes(message.content)) sendEmoji.execute(message);
 
+        if (message.content.startsWith('checkNews')) {
+            fetchNews.findLinks();
+            fetchDev.findLinks();
+        }
+
         if (message.tts === true) {
             await message.reply('kys');
             message.delete();
