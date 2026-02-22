@@ -9,9 +9,9 @@ import time
 
 # Dict Structure:
 # userid:elo
-type UserIdType = str
-type MemberDict = dict[UserIdType, int]
-type OutputType = tuple[tuple[UserIdType, ...], tuple[UserIdType, ...]] | None
+UserIdType = str
+MemberDict = dict[UserIdType, int]
+OutputType = tuple[tuple[UserIdType, ...], tuple[UserIdType, ...]] | None
 
 
 def generateTeam(members: MemberDict, stdev: float = 1) -> OutputType:
@@ -19,7 +19,7 @@ def generateTeam(members: MemberDict, stdev: float = 1) -> OutputType:
     eloSum = sum(members.values())
     lowestDifference = 999999999
     # Calculate permutations for one team (other team elo will be diff to eloSum)
-    permutations: dict[list[UserIdType], int] = {}  # Key -> Team arrangement, Value: Elo Difference
+    permutations: dict[tuple[UserIdType, ...], int] = {}  # Key -> Team arrangement, Value: Elo Difference
     for permutation in itertools.permutations(members, int(len(members) / 2)):
         # Calculate elo difference to other team, which has elo of eloSum - elo of this permutation
         eloDifference = np.abs(eloSum - 2 * sum(members[uid] for uid in permutation))
@@ -29,7 +29,7 @@ def generateTeam(members: MemberDict, stdev: float = 1) -> OutputType:
     sample = lowestDifference + np.abs(np.random.normal(0, stdev))
     sortedArrangements = list(reversed(
         sorted(permutations.items(), key=lambda item: item[1])))  # Sort entries by elo difference, descending order
-    validArrangements: list[list[UserIdType]] = []
+    validArrangements: list[tuple[UserIdType, ...]] = []
     closestValue = 999999999
     for arr in sortedArrangements:
         # First entry below the sampled threshold will be taken as closest match (not really true but whatever idc)

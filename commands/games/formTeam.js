@@ -20,7 +20,7 @@ function getMap(maps) {
 
 function calculateTeamsPy(param1, param2) {
     return new Promise((resolve, reject) => {
-        exec(`python ./commands/games/math.py ${param1} ${param2}`, (error, stdout, stderr) => {
+        exec(`python3 ./commands/games/math.py ${param1} ${param2}`, (error, stdout, stderr) => {
             if (error) {
                 console.error('Python error:', error);
                 return null;
