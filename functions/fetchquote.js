@@ -47,8 +47,6 @@ module.exports = {
             }
         };
 
-        // This is a test commit
-
         const {rowCount} = await database.query(
             `SELECT 1
              FROM information_schema.tables

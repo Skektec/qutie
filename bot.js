@@ -57,58 +57,58 @@ for (const file of eventFiles) {
     }
 }
 
-// cron.schedule('0 13 * * *', async () => {
-try {
-    const today = new Date();
-    const currentDate = `${today.getDate()}-${today.toLocaleString('en-US', {month: 'long'})}`;
+cron.schedule('0 13 * * *', async () => {
+    try {
+        const today = new Date();
+        const currentDate = `${today.getDate()}-${today.toLocaleString('en-US', {month: 'long'})}`;
 
-    database.query(
-        `SELECT *
-         FROM birthdays
-         WHERE date LIKE '%${currentDate}%'`,
-        async (err, result) => {
-            if (err) {
-                notify.error('Error querying the database:', err, '1x36079');
-                return;
-            }
-
-            const rows = result.rows;
-
-            if (rows.length === 0) {
-                return;
-            }
-
-            for (const row of rows) {
-                try {
-
-                    const dateLength = row.date.length;
-                    if (row.date.slice(0, dateLength - 5) !== currentDate) return;
-
-                    const birthdayUser = row.id && row.id !== '0' ? `<@${row.id}>` : row.nick || 'unknown';
-                    const channel = await client.channels.fetch(row.channel);
-
-                    if (!channel) {
-                        console.log(`Channel ${row.channel} not found`);
-                        continue;
-                    }
-
-                    channel.send(`🎉 Happy Birthday ${birthdayUser}! 🎉`);
-                    return;
-                } catch (channelError) {
-                    notify.error(
-                        `Error fetching channel ${row.channel} or id ${row.id} or nick ${row.nick}:`,
-                        channelError,
-                        '4x36104'
-                    );
+        database.query(
+            `SELECT *
+             FROM birthdays
+             WHERE date LIKE '%${currentDate}%'`,
+            async (err, result) => {
+                if (err) {
+                    notify.error('Error querying the database:', err, '1x36079');
                     return;
                 }
+
+                const rows = result.rows;
+
+                if (rows.length === 0) {
+                    return;
+                }
+
+                for (const row of rows) {
+                    try {
+
+                        const dateLength = row.date.length;
+                        if (row.date.slice(0, dateLength - 5) !== currentDate) return;
+
+                        const birthdayUser = row.id && row.id !== '0' ? `<@${row.id}>` : row.nick || 'unknown';
+                        const channel = await client.channels.fetch(row.channel);
+
+                        if (!channel) {
+                            console.log(`Channel ${row.channel} not found`);
+                            continue;
+                        }
+
+                        channel.send(`🎉 Happy Birthday ${birthdayUser}! 🎉`);
+                        return;
+                    } catch (channelError) {
+                        notify.error(
+                            `Error fetching channel ${row.channel} or id ${row.id} or nick ${row.nick}:`,
+                            channelError,
+                            '4x36104'
+                        );
+                        return;
+                    }
+                }
             }
-        }
-    );
-} catch (err) {
-    notify.error('Error displaying birthday:', err, '2x36112');
-}
-// });
+        );
+    } catch (err) {
+        notify.error('Error displaying birthday:', err, '2x36112');
+    }
+});
 
 cron.schedule('10 * * * *', async () => {
     fetchNews.findLinks();
