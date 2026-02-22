@@ -1,5 +1,9 @@
+import ast
+import itertools
 import numpy as np
-import random, time, itertools, ast, sys
+import random
+import sys
+import time
 
 # Credit to kAerospace for the team math
 
@@ -7,22 +11,24 @@ import random, time, itertools, ast, sys
 # userid:elo
 type UserIdType = str
 type MemberDict = dict[UserIdType, int]
-type OutputType = tuple[tuple[UserIdType]] | None # Should return a 2-long tuple containing tuples with the team composition
+type OutputType = tuple[tuple[UserIdType, ...], tuple[UserIdType, ...]] | None
+
 
 def generateTeam(members: MemberDict, stdev: float = 1) -> OutputType:
     if len(members) < 2 or stdev < 0: return None
     eloSum = sum(members.values())
     lowestDifference = 999999999
     # Calculate permutations for one team (other team elo will be diff to eloSum)
-    permutations: dict[list[UserIdType], int] = {} # Key -> Team arrangement, Value: Elo Difference
-    for permutation in itertools.permutations(members, int(len(members)/2)):
+    permutations: dict[list[UserIdType], int] = {}  # Key -> Team arrangement, Value: Elo Difference
+    for permutation in itertools.permutations(members, int(len(members) / 2)):
         # Calculate elo difference to other team, which has elo of eloSum - elo of this permutation
         eloDifference = np.abs(eloSum - 2 * sum(members[uid] for uid in permutation))
         if (eloDifference < lowestDifference): lowestDifference = eloDifference
         permutations[permutation] = eloDifference
     np.random.RandomState(int(time.time()))
     sample = lowestDifference + np.abs(np.random.normal(0, stdev))
-    sortedArrangements = list(reversed(sorted(permutations.items(), key = lambda item: item[1]))) # Sort entries by elo difference, descending order
+    sortedArrangements = list(reversed(
+        sorted(permutations.items(), key=lambda item: item[1])))  # Sort entries by elo difference, descending order
     validArrangements: list[list[UserIdType]] = []
     closestValue = 999999999
     for arr in sortedArrangements:
@@ -39,7 +45,8 @@ def generateTeam(members: MemberDict, stdev: float = 1) -> OutputType:
     otherTeam = tuple(set(members.keys()) - set(teamArrangement))
     return (teamArrangement, otherTeam)
 
+
 members = ast.literal_eval(sys.argv[1])
-stdev   = int(ast.literal_eval(sys.argv[2]))
+stdev = int(ast.literal_eval(sys.argv[2]))
 
 print(generateTeam(members, stdev))
