@@ -18,12 +18,17 @@ function getMap(maps) {
     return {randomMapName, randomMapUrl};
 }
 
+const {execFile} = require('child_process');
+
 function calculateTeamsPy(param1, param2) {
     return new Promise((resolve, reject) => {
-        exec(`python3 ./commands/games/math.py ${param1} ${param2}`, (error, stdout, stderr) => {
+        const pythonPath = './venv/bin/python';
+        const scriptPath = './commands/games/math.py';
+
+        execFile(pythonPath, [scriptPath, param1, param2], (error, stdout, stderr) => {
             if (error) {
                 console.error('Python error:', error);
-                return null;
+                return reject(error);
             }
             if (stderr) {
                 console.error('Python stderr:', stderr);

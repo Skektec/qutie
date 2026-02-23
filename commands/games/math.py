@@ -1,9 +1,10 @@
 import ast
 import itertools
-import numpy as np
 import random
 import sys
 import time
+
+import numpy as np
 
 # Credit to kAerospace for the team math
 
@@ -18,10 +19,10 @@ def generateTeam(members: MemberDict, stdev: float = 1) -> OutputType:
     if len(members) < 2 or stdev < 0: return None
     eloSum = sum(members.values())
     lowestDifference = 999999999
-    # Calculate permutations for one team (other team elo will be diff to eloSum)
+    # Calculate permutations for one team (other team elo will be diffed to eloSum)
     permutations: dict[tuple[UserIdType, ...], int] = {}  # Key -> Team arrangement, Value: Elo Difference
     for permutation in itertools.permutations(members, int(len(members) / 2)):
-        # Calculate elo difference to other team, which has elo of eloSum - elo of this permutation
+        # Calculate elo difference to another team, which has elo of eloSum - elo of this permutation
         eloDifference = np.abs(eloSum - 2 * sum(members[uid] for uid in permutation))
         if (eloDifference < lowestDifference): lowestDifference = eloDifference
         permutations[permutation] = eloDifference
