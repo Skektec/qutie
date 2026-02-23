@@ -22,8 +22,33 @@ const {execFile} = require('child_process');
 
 function calculateTeamsPy(param1, param2) {
     return new Promise((resolve, reject) => {
-        const pythonPath = './venv/bin/python';
-        const scriptPath = './commands/games/math.py';
+        const scriptPath = path.join(__dirname, 'math.py');
+        let pythonPath = 'python';
+
+        const venvFolders = ['.venv', 'venv'];
+        let foundVenv = null;
+
+        for (const folder of venvFolders) {
+            const potentialPath = path.join(process.cwd(), folder);
+            if (fs.existsSync(potentialPath)) {
+                foundVenv = potentialPath;
+                break;
+            }
+        }
+
+        if (foundVenv) {
+            pythonPath =
+                process.platform === 'win32'
+                    ? path.join(foundVenv, 'Scripts', 'python.exe')
+                    : path.join(foundVenv, 'bin', 'python');
+
+            if (!fs.existsSync(pythonPath)) {
+                console.warn(`Venv folder found at ${foundVenv} but python executable not found at ${pythonPath}. Falling back to system 'python'.`);
+                pythonPath = 'python';
+            }
+        } else {
+            console.warn("No virtual environment (.venv or venv) found. Falling back to system 'python'.");
+        }
 
         execFile(pythonPath, [scriptPath, param1, param2], (error, stdout, stderr) => {
             if (error) {

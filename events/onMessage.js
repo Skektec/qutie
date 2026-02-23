@@ -139,7 +139,7 @@ module.exports = {
             const command = args.shift();
             const extraArguments = args.join(' ');
 
-            const commandFilePath = path.join(__dirname, 'commands', 'python_commands', `${command}.py`);
+            const commandFilePath = path.join(__dirname, '..', 'commands', 'python_commands', `${command}.py`);
 
             fs.access(commandFilePath, fs.constants.F_OK, (err) => {
                 if (err) {
@@ -147,45 +147,51 @@ module.exports = {
                     return;
                 }
 
-                if (!extraArguments.trim()) {
-                    exec(`python "${commandFilePath}"`, (error, stdout, stderr) => {
-                        if (error) {
-                            message.reply(`Error: ${error.message} (Occured in python code)`);
-                            return;
-                        }
-                        if (stderr) {
-                            message.reply(`Python Error: ${stderr}`);
-                            return;
-                        }
+                let pythonPath = 'python';
+                const venvFolders = ['.venv', 'venv'];
+                let foundVenv = null;
 
-                        const response = stdout.trim();
-
-                        if (response === '') {
-                            message.reply('No response from the command.');
-                        } else {
-                            message.reply(response);
-                        }
-                    });
-                } else {
-                    exec(`python "${commandFilePath}" "${extraArguments}"`, (error, stdout, stderr) => {
-                        if (error) {
-                            message.reply(`Error: ${error.message}  (Occured in python code)`);
-                            return;
-                        }
-                        if (stderr) {
-                            message.reply(`Python Error: ${stderr}`);
-                            return;
-                        }
-
-                        const response = stdout.trim();
-
-                        if (response === '') {
-                            message.reply('No response from the command.');
-                        } else {
-                            message.reply(response);
-                        }
-                    });
+                for (const folder of venvFolders) {
+                    const potentialPath = path.join(process.cwd(), folder);
+                    if (fs.existsSync(potentialPath)) {
+                        foundVenv = potentialPath;
+                        break;
+                    }
                 }
+
+                if (foundVenv) {
+                    const venvPython =
+                        process.platform === 'win32'
+                            ? path.join(foundVenv, 'Scripts', 'python.exe')
+                            : path.join(foundVenv, 'bin', 'python');
+
+                    if (fs.existsSync(venvPython)) {
+                        pythonPath = venvPython;
+                    }
+                }
+
+                const commandToRun = extraArguments.trim()
+                    ? `"${pythonPath}" "${commandFilePath}" "${extraArguments}"`
+                    : `"${pythonPath}" "${commandFilePath}"`;
+
+                exec(commandToRun, (error, stdout, stderr) => {
+                    if (error) {
+                        message.reply(`Error: ${error.message} (Occured in python code)`);
+                        return;
+                    }
+                    if (stderr) {
+                        message.reply(`Python Error: ${stderr}`);
+                        return;
+                    }
+
+                    const response = stdout.trim();
+
+                    if (response === '') {
+                        message.reply('No response from the command.');
+                    } else {
+                        message.reply(response);
+                    }
+                });
             });
         }
 
