@@ -57,12 +57,13 @@ async function formTeam(userId, gameName, playerRecordArray) {
         playerRecordArray.push({[playerRecord.id]: playerRecord.points});
     }
 
+    let team1 = [];
+    let team2 = [];
+
     if (playerRecordArray.length < 2) {
         team1 = [userId];
         team2 = [];
-    }
-
-    if (playerRecordArray.length >= 2) {
+    } else {
         let players = Object.assign(
             {},
             ...playerRecordArray.map((x) => {
@@ -76,19 +77,21 @@ async function formTeam(userId, gameName, playerRecordArray) {
 
         const output = await calculateTeamsPy(playerArg, std);
 
-        const teams = output.slice(2, -2);
-        const splitTeams = teams.split('), (').filter(Boolean);
+        if (output && output !== 'None') {
+            const teams = output.slice(2, -2);
+            const splitTeams = teams.split('), (').filter(Boolean);
 
-        if (splitTeams.length >= 2) {
-            const assignIds = (teamString) => {
-                return teamString
-                    .split(',')
-                    .map((id) => id.replace(/'/g, '').trim())
-                    .filter(Boolean);
-            };
+            if (splitTeams.length >= 2) {
+                const assignIds = (teamString) => {
+                    return teamString
+                        .split(',')
+                        .map((id) => id.replace(/'/g, '').trim())
+                        .filter(Boolean);
+                };
 
-            team1 = assignIds(splitTeams[0]);
-            team2 = assignIds(splitTeams[1]);
+                team1 = assignIds(splitTeams[0]);
+                team2 = assignIds(splitTeams[1]);
+            }
         }
     }
 
@@ -98,8 +101,15 @@ async function formTeam(userId, gameName, playerRecordArray) {
 }
 
 async function rollTeam(playerRecordArray) {
-    team1 = [];
-    team2 = [];
+    let team1 = [];
+    let team2 = [];
+
+    if (playerRecordArray.length < 2) {
+        if (playerRecordArray.length === 1) {
+            team1 = [Object.keys(playerRecordArray[0])[0]];
+        }
+        return {team1, team2};
+    }
 
     let players = Object.assign(
         {},
@@ -114,24 +124,21 @@ async function rollTeam(playerRecordArray) {
 
     const output = await calculateTeamsPy(playerArg, std);
 
-    const teams = output.slice(2, -2);
-    const splitTeams = teams.split('), (').filter(Boolean);
+    if (output && output !== 'None') {
+        const teams = output.slice(2, -2);
+        const splitTeams = teams.split('), (').filter(Boolean);
 
-    if (playerRecordArray.length < 2) {
-        team1 = [userId];
-        team2 = [];
-    }
+        if (splitTeams.length >= 2) {
+            const assignIds = (teamString) => {
+                return teamString
+                    .split(',')
+                    .map((id) => id.replace(/'/g, '').trim())
+                    .filter(Boolean);
+            };
 
-    if (splitTeams.length >= 2) {
-        const assignIds = (teamString) => {
-            return teamString
-                .split(',')
-                .map((id) => id.replace(/'/g, '').trim())
-                .filter(Boolean);
-        };
-
-        team1 = assignIds(splitTeams[0]);
-        team2 = assignIds(splitTeams[1]);
+            team1 = assignIds(splitTeams[0]);
+            team2 = assignIds(splitTeams[1]);
+        }
     }
 
     return {team1, team2};
