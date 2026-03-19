@@ -2,7 +2,7 @@ const {SlashCommandBuilder, EmbedBuilder} = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('heighchart')
+        .setName('heightchart')
         .setDescription('Pulls up a height chart of the server.'),
     async execute(interaction) {
         const heightEmbed = new EmbedBuilder()
