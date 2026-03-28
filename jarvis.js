@@ -29,7 +29,7 @@ module.exports = {
             serverContext[channelId].shift();
         }
 
-        if (!message.content.toLowerCase().startsWith('jarvis') || message.author.id == config.clientId) return;
+        if (!message.content.toLowerCase().startsWith('grok') || message.author.id == config.clientId) return;
 
         //&& !message.mentions.has(config.clientId)
 
