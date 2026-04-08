@@ -12,6 +12,7 @@ const aiClient = new OpenAI({
 });
 
 const serverContext = {};
+let permanentContext = '';
 
 module.exports = {
     execute: async (message) => {
@@ -84,7 +85,8 @@ module.exports = {
             }.
 			Last 25 chat messages as context: ${serverContext[channelId]
                 .map((msg) => `${msg.role}: ${msg.content}`)
-                .join('\n')}`;
+                .join('\n')} \n 
+                Permanent Context: ${permanentContext}`;
             const chatResponse = await aiClient.chat.completions.create({
                 model: 'grok-4-1-fast-non-reasoning',
                 messages: [
@@ -98,13 +100,17 @@ module.exports = {
                     }
                 ]
             });
+            
+            message.send(commandSen);
 
             const content = chatResponse.choices[0].message.content;
 
             const gifCommand = content.match(/\$\$gif of (.*?)\$\$/);
+            permanentContext = content.match(/\#\#(.*?)\#\#/);
 
-            let truth = content.replace(/\$\$gif of .*\$\$/, "");
-
+            truth = content.replace(/\$\$gif of .*\$\$/, "");
+            truth = content.replace(/\#\#(.*?)\#\#/, "");
+            
             if (gifCommand) {
                 gif.execute(gifCommand, message);
             }
