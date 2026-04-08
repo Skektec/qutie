@@ -101,7 +101,7 @@ module.exports = {
                 ]
             });
             
-            message.send(commandSen);
+            message.channel.send(commandSen);
 
             const content = chatResponse.choices[0].message.content;
 
