@@ -104,8 +104,12 @@ module.exports = {
             const content = chatResponse.choices[0].message.content;
 
             const gifCommand = content.match(/\$\$gif of (.*?)\$\$/);
-            permanentContext = content.match(/\#\#(.*?)\#\#/);
-
+            
+            if (content.match(/##(.*?)##/))
+            {
+                permanentContext = content.match(/##(.*?)##/);
+            }
+            
             truth = content.replace(/\$\$gif of .*\$\$/, "");
             truth = content.replace(/\#\#(.*?)\#\#/, "");
             
