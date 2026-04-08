@@ -78,15 +78,13 @@ module.exports = {
             if (imageResponse) imageDesc = imageResponse.choices[0].message.content;
             else imageDesc = 'N/A';
 
-            const commandSen = `User Input: ${message.content}, Message they replied to: ${
+            const commandSen = `User Input: ${message.content},\nMessage they replied to: ${
                 messageReply?.content
-            },\n Image description (if applicable): ${imageDesc}, \n replied messages embed description: ${
+            },\nImage description (if applicable): ${imageDesc},\nReplied messages embed description: ${
                 messageReply?.embeds[0]?.description
-            }.
-			Last 25 chat messages as context: ${serverContext[channelId]
+            }.\nLast 25 chat messages as context: ${serverContext[channelId]
                 .map((msg) => `${msg.role}: ${msg.content}`)
-                .join('\n')} \n 
-                Permanent Context: ${permanentContext}`;
+                .join('\n')}\nPermanent Context: ${permanentContext}`;
             const chatResponse = await aiClient.chat.completions.create({
                 model: 'grok-4-1-fast-non-reasoning',
                 messages: [
