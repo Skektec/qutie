@@ -99,7 +99,7 @@ module.exports = {
                 ]
             });
             
-            message.channel.send(commandSen);
+            // message.channel.send(commandSen);
 
             const content = chatResponse.choices[0].message.content;
 
