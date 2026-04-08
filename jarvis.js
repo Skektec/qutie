@@ -82,7 +82,7 @@ module.exports = {
             },\n Image description (if applicable): ${imageDesc}, \n replied messages embed description: ${
                 messageReply?.embeds[0]?.description
             }.
-			Last 15 chat messages as context: ${serverContext[channelId]
+			Last 25 chat messages as context: ${serverContext[channelId]
                 .map((msg) => `${msg.role}: ${msg.content}`)
                 .join('\n')}`;
             const chatResponse = await aiClient.chat.completions.create({
