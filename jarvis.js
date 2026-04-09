@@ -110,7 +110,7 @@ module.exports = {
                 permanentContext = content.match(/##(.*?)##/);
             }
             
-            truth = content.replace(/\$\$gif of .*\$\$/, "");
+            truth = content.replace(/\$\$gif of (.*?)\$\$/, "");
             truth = content.replace(/\#\#(.*?)\#\#/, "");
             
             if (gifCommand) {
