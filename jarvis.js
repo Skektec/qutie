@@ -111,7 +111,7 @@ module.exports = {
             }
             
             truth = content.replace(/\$\$gif of (.*?)\$\$/, "");
-            truth = content.replace(/\#\#(.*?)\#\#/, "");
+            truth = truth.replace(/\#\#(.*?)\#\#/, "");
             
             if (gifCommand) {
                 gif.execute(gifCommand, message);
