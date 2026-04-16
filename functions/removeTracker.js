@@ -25,7 +25,7 @@ module.exports = {
 
             cleaned = cleaned.replace(
                 /(https?:\/\/(?:www\.)?x\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
-                'https://vxtwitter.com$2 ||'
+                'https://vxtwitter.com$2/en ||'
             );
 
             // TODO: This can all be replaced with much simpler code
