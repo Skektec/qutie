@@ -87,17 +87,17 @@ module.exports = {
             });
         }
 
-        // if (lowerCaseMessage.match(/zov/)) {
-        // 	if (message.content.match('https://')) return;
-        // 	const zMessage = message.content.replace(/c/g, 'z').replace(/s/g, 'Z');
-        // 	message.channel.send(`${zMessage} 🇷🇺🇷🇺🇷🇺`);
-        // 	message.channel.send('ZZZ');
-        // 	delay(400);
-        // 	message.channel.send('Z🇷🇺Z🇷🇺Z');
-        // 	delay(400);
-        // 	message.channel.send('ZZ');
-        // 	message.channel.send(`${zLink}`);
-        // }
+        if (lowerCaseMessage.match(/zov/)) {
+        	if (message.content.match('https://')) return;
+        	const zMessage = message.content.replace(/c/g, 'z').replace(/s/g, 'Z');
+        	message.channel.send(`${zMessage} 🇷🇺🇷🇺🇷🇺`);
+        	message.channel.send('ZZZ');
+        	delay(400);
+        	message.channel.send('Z🇷🇺Z🇷🇺Z');
+        	delay(400);
+        	message.channel.send('ZZ');
+        	message.channel.send(`${zLink}`);
+        }
 
         if (
             message.content.match(
