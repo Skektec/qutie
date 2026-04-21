@@ -87,7 +87,7 @@ module.exports = {
             });
         }
 
-        if (lowerCaseMessage.match(/zov/)) {
+        if (message.content.toLowerCase().match(/zov/)) {
         	if (message.content.match('https://')) return;
         	const zMessage = message.content.replace(/c/g, 'z').replace(/s/g, 'Z');
         	message.channel.send(`${zMessage} 🇷🇺🇷🇺🇷🇺`);
