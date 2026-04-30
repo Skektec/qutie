@@ -9,10 +9,13 @@ module.exports = {
     findLinks: async () => {
         try {
             const response = await fetch(warThunderLink);
-            // const response = await got.get(warThunderLink);
-            const html = response.body;
-            const $ = cheerio.load(html);
+            const html = await response.text();
 
+            // const response = await got.get(warThunderLink);
+            // const html = response.body;
+
+            const $ = cheerio.load(html);
+            
             const urls = [];
             const targetHostname = new URL(warThunderLink).hostname;
 
