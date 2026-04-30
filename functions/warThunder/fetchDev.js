@@ -8,7 +8,8 @@ const devblog = require('./development/devblog');
 module.exports = {
     findLinks: async () => {
         try {
-            const response = await got.get(warThunderLink);
+            const response = await fetch(warThunderLink);
+            // const response = await got.get(warThunderLink);
             const html = response.body;
             const $ = cheerio.load(html);
 
