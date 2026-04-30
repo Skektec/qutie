@@ -36,10 +36,10 @@ module.exports = {
             });
 
             const newsUrls = urls
-                .filter((url) => /^https:\/\/warthunder\.com\/en\/news\/\d{4}/.test(url))
+                .filter((url) => /^https:\/\/warthunder\.com\/en\/news\/\d{5}/.test(url))
                 .map((url) => {
                     url = url
-                        .replace(/^https:\/\/warthunder\.com\/en\/news\/\d{4}.*#comments/, '')
+                        .replace(/^https:\/\/warthunder\.com\/en\/news\/\d{5}.*#comments/, '')
                         .trim()
                         .toLowerCase();
                     if (url != '') {
