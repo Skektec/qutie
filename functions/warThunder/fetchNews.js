@@ -43,7 +43,7 @@ module.exports = {
                         .trim()
                         .toLowerCase();
                     if (url != '') {
-                        articleNumber = url.match(/\/news\*.-/)[0].slice(1);
+                        articleNumber = url.match(/\/news\*.-/).slice(1);
                         articleType = url.match(/news\/\d*/)[0].slice(4);
                         return {url, articleNumber, articleType};
                     } else {
