@@ -3,7 +3,7 @@ const { db_password } = require('../data/config.json');
 
 const pool = new Pool({
 	user: 'bot',
-	host: 'localhost',
+	host: '192.168.1.115',
 	database: 'qutie_db',
 	password: db_password,
 	port: 5432

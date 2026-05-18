@@ -86,7 +86,7 @@ module.exports = {
                 .map((msg) => `${msg.role}: ${msg.content}`)
                 .join('\n')}\nPermanent Context: ${permanentContext}`;
             const chatResponse = await aiClient.chat.completions.create({
-                model: 'grok-4-1-fast-non-reasoning',
+                model: 'grok-4.20-0309-non-reasoning',
                 messages: [
                     {
                         role: 'system',
