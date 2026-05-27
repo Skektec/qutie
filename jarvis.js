@@ -53,7 +53,7 @@ module.exports = {
 
             if (imageUrl != '') {
                 imageResponse = await aiClient.chat.completions.create({
-                    model: 'grok-4-fast-non-reasoning',
+                    model: 'grok-4.20-0309-non-reasoning',
                     messages: [
                         {
                             role: 'user',
