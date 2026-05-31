@@ -15,7 +15,7 @@ module.exports = {
         if (message.content.includes('http')) {
             cleaned = cleaned.replace(
                 /(https?:\/\/(?:www\.)?reddit\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
-                'https://rxddit.com$2'
+                'https://redditez.com$2'
             );
 
             cleaned = cleaned.replace(
