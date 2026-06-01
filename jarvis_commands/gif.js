@@ -1,4 +1,4 @@
-const { tenorToken } = require('../data/config.json');
+const { giphyToken } = require('../data/config.json');
 const notify = require('../functions/notify');
 
 module.exports = {
@@ -9,9 +9,9 @@ module.exports = {
 			const fetch = (await import('node-fetch')).default;
 
 			const response = await fetch(
-				`https://tenor.googleapis.com/v2/search?q=${encodeURIComponent(
+				`https://api.giphy.com/v2/search?q=${encodeURIComponent(
 					searchTerm
-				)}&key=${tenorToken}&limit=1`
+				)}&key=${giphyToken}&limit=1`
 			);
 
 			const data = await response.json();
