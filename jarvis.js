@@ -30,7 +30,7 @@ module.exports = {
             serverContext[channelId].shift();
         }
 
-        if (!message.content.toLowerCase().includes('grok') || message.author.id == config.clientId) return;
+        if (!message.content.toLowerCase().includes('grokkieboo') || message.author.id == config.clientId) return;
 
         //&& !message.mentions.has(config.clientId)
 
