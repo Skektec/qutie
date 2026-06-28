@@ -13,10 +13,10 @@ module.exports = {
         let cleaned = message.content;
 
         if (message.content.includes('http')) {
-            cleaned = cleaned.replace(
-                /(https?:\/\/(?:www\.)?reddit\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
-                'https://redditez.com$2'
-            );
+            // cleaned = cleaned.replace(
+            //     /(https?:\/\/(?:www\.)?reddit\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
+            //     'https://redditez.com$2'
+            // );
 
             cleaned = cleaned.replace(
                 /(https?:\/\/(?:www\.)?instagram\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
