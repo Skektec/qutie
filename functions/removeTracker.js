@@ -29,11 +29,9 @@ module.exports = {
             );
 
             // TODO: This can all be replaced with much simpler code
-            // instead of trying to match the entire link I should look for (in twitter for example) the status/XXXXXXXXX/ and then just attach to that depending on the preceding message.
+            // instead of trying to match the entire link I should look for (in Twitter for example) the status/XXXXXXXXX/ and then just attach to that depending on the preceding message.
 
-            if (cleaned === message.content) {
-
-            } else {
+            if (cleaned !== message.content) {
                 try {
                     suppressEmbed();
                     return `-# ${cleaned}`;
@@ -41,8 +39,6 @@ module.exports = {
                     return `-# ${cleaned}`;
                 }
             }
-        } else {
-
         }
     }
 };
