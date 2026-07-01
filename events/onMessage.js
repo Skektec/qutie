@@ -39,6 +39,7 @@ module.exports = {
             // });
             // fetchDev.findLinks();
             // fetchNews.findLinks();
+            message.channel.send("<:loader:1338449085811785738>")
         }
 
         if (message.channel == 1200118011806367825) return;

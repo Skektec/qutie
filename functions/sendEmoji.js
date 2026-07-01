@@ -7,6 +7,6 @@ module.exports = {
 		const match = emojis.find((item) => item.name === message.content);
 		if (match) {
 			message.channel.send(`<:${match.name}:${match.id}>`);
-		} else return;
+		}
 	}
 };
