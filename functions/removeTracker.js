@@ -12,7 +12,7 @@ module.exports = {
 
         let cleaned = message.content;
 
-        if (message.content.includes(/(https?:\/\/(?:www\.)?x\.com)/)) {
+        if (message.content.includes("https://x.com")) {
             cleaned = cleaned.replace(
                 /(https?:\/\/(?:www\.)?x\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
                 'https://fixupx.com$2/en ||'
