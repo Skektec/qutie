@@ -87,22 +87,20 @@ module.exports = {
             });
         }
 
-        if (message.content.toLowerCase().match(/zov/)) {
-        	if (message.content.match('https://')) return;
-        	const zMessage = message.content.replace(/c/g, 'z').replace(/s/g, 'Z');
-        	message.channel.send(`${zMessage} 🇷🇺🇷🇺🇷🇺`);
-        	message.channel.send('ZZZ');
-        	delay(400);
-        	message.channel.send('Z🇷🇺Z🇷🇺Z');
-        	delay(400);
-        	message.channel.send('ZZ');
-        	message.channel.send(`${zLink}`);
-        }
+        // if (message.content.toLowerCase().match(/zov/)) {
+        // 	if (message.content.match('https://')) return;
+        // 	const zMessage = message.content.replace(/c/g, 'z').replace(/s/g, 'Z');
+        // 	message.channel.send(`${zMessage} 🇷🇺🇷🇺🇷🇺`);
+        // 	message.channel.send('ZZZ');
+        // 	delay(400);
+        // 	message.channel.send('Z🇷🇺Z🇷🇺Z');
+        // 	delay(400);
+        // 	message.channel.send('ZZ');
+        // 	message.channel.send(`${zLink}`);
+        // }
 
         if (
-            message.content.match(
-                /https:\/\/x.com|https:\/\/reddit.com|https:\/\/www.reddit.com|https:\/\/instagram.com/i
-            )
+            message.content.match(/https:\/\/x.com/i)
         ) {
             const cleanLink = await clean.execute(message);
             if (cleanLink)
