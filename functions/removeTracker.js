@@ -12,17 +12,7 @@ module.exports = {
 
         let cleaned = message.content;
 
-        if (message.content.includes('http')) {
-            // cleaned = cleaned.replace(
-            //     /(https?:\/\/(?:www\.)?reddit\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
-            //     'https://redditez.com$2'
-            // );
-
-            cleaned = cleaned.replace(
-                /(https?:\/\/(?:www\.)?instagram\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
-                'https://kkinstagram.com$2'
-            );
-
+        if (message.content.includes(/(https?:\/\/(?:www\.)?x\.com)/)) {
             cleaned = cleaned.replace(
                 /(https?:\/\/(?:www\.)?x\.com(\/[\w\/.-]+))(?:\?[^\s]*)?/gi,
                 'https://fixupx.com$2/en ||'
