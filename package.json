@@ -1,5 +1,9 @@
 {
   "dependencies": {
-    "discord.js": "^14.26.4"
+    "discord-api-types": "^0.38.53",
+    "discord.js": "^14.26.4",
+    "fs": "^0.0.1-security",
+    "node-cron": "^4.6.0",
+    "pg": "^8.23.0"
   }
 }

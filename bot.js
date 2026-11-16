@@ -3,7 +3,7 @@ const path = require('node:path');
 const cron = require('node-cron');
 const {Client, Collection, GatewayIntentBits, Partials} = require('discord.js');
 const {discordToken} = require('./data/config.json');
-const notify = require('./functions/notify');
+// const notify = require('./functions/notify');
 // const {setClient} = require('./data/clientInstance');
 const database = require('./functions/database');
 
@@ -19,11 +19,6 @@ const client = new Client({
     ],
     partials: [Partials.Message, Partials.Channel, Partials.Reaction]
 });
-
-// Stores the client instance.
-// Old thing to handle issues gracefully by still being able to send me a DM
-// I don't think it worked, so I'll disable it for now
-// setClient(client);
 
 // We create a new command collection
 client.commands = new Collection();
@@ -78,75 +73,10 @@ for (const file of eventFiles) {
         client.on(event.name, (...args) => event.execute(...args));
     }
 }
+// Cron Schedules for various functions
 
-// This scheduler checked the database for birthdays
-// I'll break it down into its own file
+// Birthday schedule; Every day at 13:00 GMT +2
 cron.schedule('0 13 * * *', async () => {
-    try {
-        const today = new Date();
-        const currentDate = `${today.getDate()}-${today.toLocaleString('en-US', {month: 'long'})}`;
-
-        database.query(
-            `SELECT *
-             FROM birthdays
-             WHERE date LIKE '%${currentDate}%'`,
-            async (err, result) => {
-                if (err) {
-                    notify.error('Error querying the database:', err, '1x36079');
-                    return;
-                }
-
-                const rows = result.rows;
-
-                if (rows.length === 0) {
-                    return;
-                }
-
-                for (const row of rows) {
-                    try {
-
-                        const dateLength = row.date.length;
-                        if (row.date.slice(0, dateLength - 5) !== currentDate) return;
-
-                        const birthdayUser = row.id && row.id !== '0' ? `<@${row.id}>` : row.nick || 'unknown';
-                        const channel = await client.channels.fetch(row.channel);
-
-                        if (!channel) {
-                            console.log(`Channel ${row.channel} not found`);
-                            continue;
-                        }
-
-                        channel.send(`🎉 Happy Birthday ${birthdayUser}! 🎉`);
-                        return;
-                    } catch (channelError) {
-                        notify.error(
-                            `Error fetching channel ${row.channel} or id ${row.id} or nick ${row.nick}:`,
-                            channelError,
-                            '4x36104'
-                        );
-                        return;
-                    }
-                }
-            }
-        );
-    } catch (err) {
-        notify.error('Error displaying birthday:', err, '2x36112');
-    }
 });
 
-// These schedulers were for War thunder news, which will become its own bot.
-// cron.schedule('10 * * * *', async () => {
-//     fetchNews.findLinks();
-//     fetchDev.findLinks();
-// });
-// cron.schedule('30 * * * *', async () => {
-//     fetchNews.findLinks();
-//     fetchDev.findLinks();
-// });
-// cron.schedule('50 * * * *', async () => {
-//     fetchNews.findLinks();
-//     fetchDev.findLinks();
-// });
-
-// Logs in bot.
 client.login(discordToken);

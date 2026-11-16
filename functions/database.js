@@ -3,7 +3,7 @@ const { db_password } = require('../data/config.json');
 
 const pool = new Pool({
     user: 'bot',
-    host: 'localhost',
+    host: '192.168.1.248',
     database: 'qutie_db',
     password: db_password,
     port: 5432
@@ -17,7 +17,7 @@ pool
     })
     .catch((err) => {
         console.error('Postgres connection failed:', err.message);
-        process.exit(1);
+        process.exit(-1);
     });
 
 module.exports = {
