@@ -1,11 +1,10 @@
 ﻿const database = require("../database");
-const EmbedBuilder = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 
 module.exports = {
     numericDisplay: async (message, args) =>
     {
         const tableName = `${message.guildId}-quotes`;
-        console.log(args)
 
         // Database query builder
         
@@ -14,31 +13,55 @@ module.exports = {
         let useAll = false;
                 
         let s;
-        args[1] ? s = args[1] : s = null;
+        args[1] ? s = args[1] : s = undefined;
+        
         switch (true){
-            case isNaN(s):
+            case !isNaN(s):
                 // is s a number check
                 databaseQuery = `WHERE rownum = $1`;
                 queryParameters.push(args[1]);
                 break;
             case /latest/.test(s):
                 // text "latest" check
-                queryParameters = `WHERE rownum = $1`; // Currently uses similar method to the rest, but I think I could do order by and fetch the first?
-                databaseQuery.push(count);
+                // Currently uses similar method to the rest, but I think I could do order by and fetch the first?
+                
+                let count = 0;
+                try {
+                    const {rows} = await database.query(`SELECT COUNT(*) ::int AS count
+                                                     FROM "${tableName}"`);
+                    count = rows[0]?.count;
+                } catch (err) {
+                    message.reply('Error fetching latest quote, are there any quotes?');
+                }
+
+                databaseQuery = `WHERE rownum = $1`;
+                queryParameters.push(count);
                 useAll = true;
                 break;
             case /help/.test(s):
                 // text "help" check
-                message.reply("- /addquote - Manually add a quote.\n- /deletequote - Manually delete a quote.\n- /quoteboard - Creates a leaderboard with the amount of quotes from each user in the server.\n- /searchquote - Search for specific keywords in quotes.");
+                message.reply("__Slash Commands__\n" +
+                    "- /addquote - Manually add a quote.\n" +
+                    "- /deletequote - Manually delete a quote.\n" +
+                    "- /quoteboard - Creates a leaderboard with the amount of quotes from each user in the server.\n" +
+                    "- /searchquote - Search for specific keywords in quotes.\n" +
+                    "__Prefix Commands__\n" +
+                    "- .q - Fetches a random Quote.\n" +
+                    "- .q XX - Fetches the quote with the associated number.\n" +
+                    "- .q latest - Fetches the most recent quote.\n" +
+                    "- .q @mention - Fetches a quote from the mentioned member.\n"+
+                    "- .q nickname - Fetches a quote from the associated nickname.\n" +
+                    "- .q help - Sends this message.\n" 
+                );
                 return;
             case /[<@!>]/g.test(s):
                 // user mentions check
-                const userId = args[0].replace(/[<@!>]/g, '');
+                const userId = args[1].replace(/[<@!>]/g, '');
                 databaseQuery = `WHERE userid = $1`;
                 queryParameters.push(userId);
                 useAll = true;
                 break;
-            case s: // when it reaches here it should fallback to nickname check
+            case s !== undefined: // when it reaches here it should fallback to nickname check
                 // does s exist check
                 databaseQuery = `WHERE nick = $1`;
                 queryParameters.push(s);
