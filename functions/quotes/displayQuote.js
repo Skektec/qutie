@@ -1,11 +1,10 @@
-﻿const { database } = require("../database");
-const {EmbedBuilder} = require("discord.js");
+﻿const database = require("../database");
+const EmbedBuilder = require("discord.js");
 
 module.exports = {
     numericDisplay: async (message, args) =>
     {
-        const serverId = message.guildId;
-        const tableName = `${serverId}-quotes`;
+        const tableName = `${message.guildId}-quotes`;
         console.log(args)
 
         // Database query builder
@@ -13,8 +12,9 @@ module.exports = {
         let databaseQuery = "";
         let queryParameters = [];
         let useAll = false;
-        
-        let s = args[1];
+                
+        let s;
+        args[1] ? s = args[1] : s = null;
         switch (true){
             case isNaN(s):
                 // is s a number check
@@ -31,7 +31,7 @@ module.exports = {
                 // text "help" check
                 message.reply("- /addquote - Manually add a quote.\n- /deletequote - Manually delete a quote.\n- /quoteboard - Creates a leaderboard with the amount of quotes from each user in the server.\n- /searchquote - Search for specific keywords in quotes.");
                 return;
-            case /<@/.test(s):
+            case /[<@!>]/g.test(s):
                 // user mentions check
                 const userId = args[0].replace(/[<@!>]/g, '');
                 databaseQuery = `WHERE userid = $1`;
@@ -66,6 +66,7 @@ async function callDb(databaseQuery, queryParameters, useAll, message) {
             sendQuoteEmbed(quote, message);
     } catch (err) {
         message.channel.send('An error occurred while retrieving quotes.');
+        console.error(err)
     }
 }
 
@@ -83,24 +84,22 @@ const sendQuoteEmbed = (quote, message) => {
         month: 'long',
         day: 'numeric',
         hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-        hour12: true
+        minute: 'numeric'
     });
 
     const imageFromText = quote.text.match(/(https?:\/\/\S+\.(jpg|jpeg|png|gif))/i);
-
+    
     const quoteEmbed = new EmbedBuilder()
         .setColor(0x0099ff)
         .setTitle(`Quote #${quote.rownum}`)
         .setDescription(
-            `${quote.text}\n- <@${quote.userid}> [(Jump)](https://discordapp.com/channels/${serverId}/${quote.channel}/${quote.messageid})`
+            `${quote.text}\n- <@${quote.userid}> [(Jump)](https://discordapp.com/channels/${message.guild_id}/${quote.channel}/${quote.messageid})`
         )
         .setImage(imageFromText ? imageFromText[0] : quote.image)
         .setFooter({text: formattedDate});
 
     if (quote.image && quote.image.match(/\.(mp4|mov|webm|avi|mkv|wmv|flv|mpeg|mpg|gif|ogg)/i)) {
-        const quoteMessage = `**Quote #${quote.rownum}**\n${quote.text}\n${quote.image}\n- <@${quote.userid}> [(Jump)](https://discordapp.com/channels/${serverId}/${quote.channel}/${quote.messageid})`;
+        const quoteMessage = `**Quote #${quote.rownum}**\n${quote.text}\n${quote.image}\n- <@${quote.userid}> [(Jump)](https://discordapp.com/channels/${message.guild_id}/${quote.channel}/${quote.messageid})`;
         message.channel.send(quoteMessage);
     } else {
         message.channel.send({embeds: [quoteEmbed], allowedMentions: {User: false}});

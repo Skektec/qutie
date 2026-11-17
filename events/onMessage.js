@@ -15,7 +15,7 @@ module.exports = {
 function InterpretMessage(message, args) {
     switch (args[0]){
         case (".q"):
-            displayQuote.numericDisplay(args);
+            displayQuote.numericDisplay(message, args);
             break;
     }
 }
